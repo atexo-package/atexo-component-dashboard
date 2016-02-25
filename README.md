@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/atexo-package/atexo-component-dashboard.svg?branch=master)](https://travis-ci.org/atexo-package/atexo-component-dashboard)
+
 Atexo component dashboard
 ===========================================
 
