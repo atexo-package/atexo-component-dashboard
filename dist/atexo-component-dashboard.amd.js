@@ -1805,7 +1805,7 @@ define("components/dashboard/dashboard.component", ["require", "exports", 'angul
     }());
     exports.Dashboard = Dashboard;
 });
-define("atexo-dashboard", ["require", "exports", "components/dashboard/dashboard.component"], function (require, exports, dashboard_component_1) {
+define("atexo-component-dashboard", ["require", "exports", "components/dashboard/dashboard.component"], function (require, exports, dashboard_component_1) {
     "use strict";
     function __export(m) {
         for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -2047,4 +2047,4 @@ define("components/dashboard/services/panel.service", ["require", "exports", 'an
     }());
     exports.PanelService = PanelService;
 });
-//# sourceMappingURL=atexo-dashboard.amd.js.map
+//# sourceMappingURL=atexo-component-dashboard.amd.js.map

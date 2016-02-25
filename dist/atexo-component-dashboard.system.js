@@ -2335,7 +2335,7 @@ System.register("components/dashboard/dashboard.component", ['angular2/core', 'a
         }
     }
 });
-System.register("atexo-dashboard", ["components/dashboard/dashboard.component"], function(exports_34, context_34) {
+System.register("atexo-component-dashboard", ["components/dashboard/dashboard.component"], function(exports_34, context_34) {
     "use strict";
     var __moduleName = context_34 && context_34.id;
     function exportStar_4(m) {
@@ -2649,4 +2649,4 @@ System.register("components/dashboard/services/panel.service", ['angular2/core',
         }
     }
 });
-//# sourceMappingURL=atexo-dashboard.system.js.map
+//# sourceMappingURL=atexo-component-dashboard.system.js.map

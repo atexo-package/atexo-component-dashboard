@@ -54,7 +54,7 @@ gulp.task('build.amd', () => {
   tsc({
     module: typescript.ModuleKind.AMD,
     declaration: false,
-    outFile: "./dist/atexo-dashboard.amd.js"
+    outFile: "./dist/atexo-component-dashboard.amd.js"
   });
 });
 
@@ -62,7 +62,7 @@ gulp.task('build.system', () => {
   tsc({
     module: typescript.ModuleKind.System,
     declaration: false,
-    outFile: "./dist/atexo-dashboard.system.js"
+    outFile: "./dist/atexo-component-dashboard.system.js"
   });
 });
 
