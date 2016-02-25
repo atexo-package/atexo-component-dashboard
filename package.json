@@ -1,0 +1,33 @@
+{
+  "name": "atexo-dashboard",
+  "description": "...",
+  "version": "1.0.5",
+  "author": {
+    "name": "Anis ABID",
+    "email": "anab.tn@gmail.com",
+    "url": "https://anisabid.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/node-package/dashboard.git"
+  },
+  "main": "dist/atexo-dashboard.js",
+  "typings": "dist/atexo-dashboard.d.ts",
+  "scripts": {
+    "build": "rimraf dist & gulp build"
+  },
+  "devDependencies": {
+    "gulp": "latest",
+    "gulp-clean": "latest",
+    "gulp-sass": "latest",
+    "glob": "latest",
+    "typescript": "1.8.*"
+  },
+  "dependencies": {
+    "angular2": "latest",
+    "es6-promise": "latest",
+    "es6-shim": "latest",
+    "rxjs": "latest"
+  }
+}
