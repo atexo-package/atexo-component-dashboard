@@ -22,6 +22,6 @@ Component Dependency
 | rxjs                    | latest       |
 
 
-+ [Configuration & install](md/install.md)
-+ [Api REST](md/api_rest.md)
-+ [Utils](md/utils.md)
+* [Configuration & install](md/install.md)
+* [Example](md/example.md)
+* [Utils](md/utils.md)
