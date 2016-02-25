@@ -1,11 +1,18 @@
 language: node_js
+sudo: false
 node_js:
-  - "4.2.4"
+- '5.4.1'
+
+cache:
+  directories:
+    - $HOME/.pub-cache
+
 before_install:
+  - npm install -g npm@3.5.3
   - npm install -g gulp-cli
-  - npm install
 after_success :
-  - gulp
+  - npm install
+  - gulp build
 notifications:
   email:
     recipients:
