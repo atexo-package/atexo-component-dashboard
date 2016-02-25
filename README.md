@@ -8,7 +8,7 @@ Atexo component dashboard
 | Angular 2               | 2.0.0-beta.3 |
 
 
-ComponentDependency
+Component Dependency
 -------------------------------------------
 
 | Dependency              | Version      |
