@@ -1,7 +1,7 @@
 {
-  "name": "atexo-dashboard",
-  "description": "...",
-  "version": "1.0.5",
+  "name": "atexo-component-dashboard",
+  "description": "Component of Atexo Dashboard",
+  "version": "1.0.1",
   "author": {
     "name": "Anis ABID",
     "email": "anab.tn@gmail.com",
@@ -10,10 +10,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/node-package/dashboard.git"
+    "url": "git+https://github.com/atexo-package/atexo-component-dashboard.git"
   },
-  "main": "dist/atexo-dashboard.js",
-  "typings": "dist/atexo-dashboard.d.ts",
+  "main": "dist/atexo-component-dashboard.js",
+  "typings": "dist/atexo-component-dashboard.d.ts",
   "scripts": {
     "build": "rimraf dist & gulp build"
   },
