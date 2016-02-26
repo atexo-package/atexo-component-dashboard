@@ -7,6 +7,7 @@ export declare var AtexoRestConstant: {
         panel: {
             all: {
                 method: RequestMethod;
+                header: {};
                 url: string;
                 type: RequestUrlType;
                 _format: string;
@@ -24,6 +25,7 @@ export declare var AtexoRestConstant: {
         alert: {
             all: {
                 method: RequestMethod;
+                header: {};
                 url: string;
                 type: RequestUrlType;
                 _format: string;
@@ -36,6 +38,7 @@ export declare var AtexoRestConstant: {
         news: {
             all: {
                 method: RequestMethod;
+                header: {};
                 url: string;
                 type: RequestUrlType;
                 _format: string;
@@ -46,6 +49,7 @@ export declare var AtexoRestConstant: {
             };
             byId: {
                 method: RequestMethod;
+                header: {};
                 url: string;
                 type: RequestUrlType;
             };

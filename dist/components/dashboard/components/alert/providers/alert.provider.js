@@ -16,12 +16,14 @@ var AlertProvider = (function () {
     function AlertProvider(http) {
         this.http = http;
     }
-    AlertProvider.prototype.all = function (_parameter) {
-        _parameter = (typeof _parameter !== 'undefined') ? _parameter : atexo_constant_1.AtexoRestConstant.request.panel.all.parameter;
+    AlertProvider.prototype.all = function (_search, _header) {
+        _search = (typeof _search !== 'undefined') ? _search : atexo_constant_1.AtexoRestConstant.request.alert.all.parameter;
+        _header = (typeof _header !== 'undefined') ? _header : atexo_constant_1.AtexoRestConstant.request.alert.all.header;
         var options = new http_1.RequestOptions({
             method: atexo_constant_1.AtexoRestConstant.request.alert.all.method,
+            headers: atexo_service_1.Util.getInstance().RequestHeader().setHeaderParams(_header),
             url: atexo_service_1.Util.getInstance().Rest().setPath(atexo_constant_1.AtexoRestConstant.request.alert.all.url).build(),
-            search: atexo_service_1.Util.getInstance().RequestOptions().setSearchParams(_parameter)
+            search: atexo_service_1.Util.getInstance().RequestOptions().setSearchParams(_search)
         });
         var req = new http_1.Request(options);
         return this.http.request(req);

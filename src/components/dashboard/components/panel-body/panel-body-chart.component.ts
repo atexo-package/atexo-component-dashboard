@@ -11,6 +11,7 @@ import {Util, Convert} from '../../../../common/services/atexo.service';
 import {AtexoChartsJs} from '../../../../common/components/atexo-charts.component';
 
 import {PanelBodyChartProvider} from './providers/panel-body-chart.provider';
+import {AtexoSpinner} from '../../../../common/components/atexo-spinner.component';
 
 //PanelBodyEditorProvider
 
@@ -24,7 +25,7 @@ import {PanelBodyChartProvider} from './providers/panel-body-chart.provider';
     template: `
             <div class="{{ panelBodyObj.type.category | toClass}}">
 
-                <div class="clearfix sub-header">
+                <div class="clearfix sub-header" *ngIf="xhrLoadResouce">
                     <ul class="atexoui-list right horizontal">
                         <li *ngFor="#type of chartTypes; #i=index"
                             [ngClass]="{ available: chartTypes[i].active, disabled: !chartTypes[i].active }">
@@ -37,8 +38,10 @@ import {PanelBodyChartProvider} from './providers/panel-body-chart.provider';
                         </li>
                     </ul>
                 </div>
+                <atexo-spinner *ngIf="xhrStatusDisplaySpinner"></atexo-spinner>
 
                 <panel-body-charts-js
+                        *ngIf="xhrStatusDisplayResources"
                         [data]="chartData"
                         [labels]="chartLabels"
                         [options]="chartOptions"
@@ -48,6 +51,10 @@ import {PanelBodyChartProvider} from './providers/panel-body-chart.provider';
                         [chartType]="chartType"
                         (chartHover)="chartHovered($event)"
                         (chartClick)="chartClicked($event)"></panel-body-charts-js>
+
+                <div class="error" *ngIf="xhrStatusDisplayError">
+                    <p class="text-danger text-center"><strong>Données temporairement indisponible</strong></p>
+                </div>
 
 
                 <ul class="atexoui-list center horizontal">
@@ -66,13 +73,18 @@ import {PanelBodyChartProvider} from './providers/panel-body-chart.provider';
             </div>
             `,
     pipes: [ToClassPipe],
-    directives: [AtexoChartsJs]
+    directives: [AtexoChartsJs, AtexoSpinner]
 })
 
 export class PanelBodyChart {
 
     @Input() panelBodyObj;
     panelBodyChartProvider:PanelBodyChartProvider;
+
+
+    public xhrStatusDisplaySpinner:boolean = true;
+    public xhrStatusDisplayResources:boolean = false;
+    public xhrStatusDisplayError:boolean = false;
     // chart
     private chartData:Array<any> = [[]];
     private chartDataOld:Array<any> = this.chartData;
@@ -111,7 +123,7 @@ export class PanelBodyChart {
     }
 
     private ngOnInit() {
-        this.panelBodyChartServiceGetData(this.panelBodyObj.urlData);
+        this.panelBodyChartServiceGetData(this.panelBodyObj);
         this.panelBodyChartServiceGetOptions(this.panelBodyObj.chart);
         return true;
     }
@@ -149,44 +161,61 @@ export class PanelBodyChart {
 
     }
 
-    panelBodyChartServiceGetData(url) {
+    panelBodyChartServiceGetData(panelBodyObj) {
 
-        this.panelBodyChartProvider.get(url).subscribe((res:Response) => {
+        this.panelBodyChartProvider.get(panelBodyObj).subscribe(
+            // Http Success
+            (res:Response) => {
 
-            if (res.status === 200) {
+                this.xhrStatusDisplaySpinner = false;
 
-                this.getChartDataArray(res);
 
-                var jsonInstance:any = Util.getInstance().Json();
-                jsonInstance.setEasting(this.easting);
+                if (res.status === 200) {
 
-                jsonInstance.getByProperty(
-                    this.chartDataArray
-                );
+                    this.xhrStatusDisplayResources = true;
 
-                jsonInstance.groupByProperty(['annee', 'mois', 'count']);
+                    this.getChartDataArray(res);
 
-                this.chartData = jsonInstance.getArrayResult();
-                this.chartDataOld = this.chartData;
+                    var jsonInstance:any = Util.getInstance().Json();
+                    jsonInstance.setEasting(this.easting);
 
-                this.chartLabels = jsonInstance.getEasting();
+                    jsonInstance.getByProperty(
+                        this.chartDataArray
+                    );
 
-                this.chartSeries = jsonInstance.getOrdered();
+                    jsonInstance.groupByProperty(['annee', 'mois', 'count']);
 
-                this.chartSeriesColors = [];
-                this.chartSeriesActive = [];
+                    this.chartData = jsonInstance.getArrayResult();
+                    this.chartDataOld = this.chartData;
 
-                for (let i = 0; i < this.chartSeries.length; i++) {
-                    this.chartSeriesColors.push(this.chartColoursOld[i].strokeColor);
-                    this.chartSeriesActive.push(true);
+                    this.chartLabels = jsonInstance.getEasting();
+
+                    this.chartSeries = jsonInstance.getOrdered();
+
+                    this.chartSeriesColors = [];
+                    this.chartSeriesActive = [];
+
+                    for (let i = 0; i < this.chartSeries.length; i++) {
+                        this.chartSeriesColors.push(this.chartColoursOld[i].strokeColor);
+                        this.chartSeriesActive.push(true);
+                    }
+
+                    if (AtexoChartConstant.typeCategory.single.indexOf(this.chartType) !== -1) {
+                        this.getChartDataSingle(0);
+                    }
                 }
 
-                if (AtexoChartConstant.typeCategory.single.indexOf(this.chartType) !== -1) {
-                    this.getChartDataSingle(0);
-                }
-            }
+            },
+            // Http Error
+            ((err:Response) => {
 
-        });
+                if (err.status === 404) {
+                    this.xhrStatusDisplayError = true;
+                    this.xhrStatusDisplaySpinner = false;
+                    console.log(err);
+                }
+            })
+        );
     }
 
     // Check display Series

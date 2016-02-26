@@ -8,6 +8,7 @@ exports.AtexoRestConstant = {
         panel: {
             all: {
                 method: http_1.RequestMethod.Get,
+                header: {},
                 url: 'panel',
                 type: atexo_enum_constant_1.RequestUrlType.Relative,
                 _format: 'json',
@@ -25,6 +26,7 @@ exports.AtexoRestConstant = {
         alert: {
             all: {
                 method: http_1.RequestMethod.Get,
+                header: {},
                 url: 'alert',
                 type: atexo_enum_constant_1.RequestUrlType.Relative,
                 _format: 'json',
@@ -37,6 +39,7 @@ exports.AtexoRestConstant = {
         news: {
             all: {
                 method: http_1.RequestMethod.Get,
+                header: {},
                 url: 'news',
                 type: atexo_enum_constant_1.RequestUrlType.Relative,
                 _format: 'json',
@@ -47,6 +50,7 @@ exports.AtexoRestConstant = {
             },
             byId: {
                 method: http_1.RequestMethod.Get,
+                header: {},
                 url: 'news',
                 type: atexo_enum_constant_1.RequestUrlType.Relative
             }

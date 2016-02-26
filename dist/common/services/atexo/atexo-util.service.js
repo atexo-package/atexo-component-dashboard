@@ -40,6 +40,9 @@ var Util = (function () {
     Util.prototype.RequestOptions = function () {
         return new RequestOptions();
     };
+    Util.prototype.RequestHeader = function () {
+        return new RequestHeader();
+    };
     Util.prototype.Json = function () {
         return new Json();
     };
@@ -154,6 +157,30 @@ var RequestOptions = (function () {
         }
     };
     return RequestOptions;
+}());
+var RequestHeader = (function () {
+    function RequestHeader() {
+        this.header = new http_1.Headers();
+    }
+    RequestHeader.prototype.setHeaderParams = function (data) {
+        console.log(data);
+        if (!lang_1.isPresent(data)) {
+            return;
+        }
+        else {
+            if (lang_1.isJsObject(data)) {
+                for (var item in data) {
+                    if (data.hasOwnProperty(item)) {
+                        console.log(item);
+                        console.log(data[item]);
+                        this.header.append(item, data[item]);
+                    }
+                }
+            }
+            return this.header;
+        }
+    };
+    return RequestHeader;
 }());
 var URLParams = (function () {
     function URLParams() {

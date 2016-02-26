@@ -6,7 +6,7 @@
  */
 
 import {Injectable} from 'angular2/core';
-import {URLSearchParams} from 'angular2/http';
+import {URLSearchParams, Headers} from 'angular2/http';
 import {isPresent, isJsObject, isString, isArray, isBlank } from 'angular2/src/facade/lang';
 
 import {AtexoPathConstant, AtexoRestConstant, RequestUrlType} from '../../constants/atexo.constant';
@@ -42,6 +42,10 @@ export class Util {
 
     RequestOptions() {
         return new RequestOptions();
+    }
+
+    RequestHeader() {
+        return new RequestHeader();
     }
 
     Json() {
@@ -167,6 +171,34 @@ class RequestOptions {
                 }
             }
             return this.searchParams;
+        }
+    }
+}
+
+
+class RequestHeader {
+
+    header:Headers;
+
+    constructor() {
+        this.header = new Headers();
+    }
+
+    setHeaderParams(data?:Object):Headers {
+        console.log(data);
+        if (!isPresent(data)) {
+            return;
+        } else {
+            if (isJsObject(data)) {
+                for (var item in data) {
+                    if (data.hasOwnProperty(item)) {
+                        console.log(item);
+                        console.log(data[item]);
+                        this.header.append(item, data[item]);
+                    }
+                }
+            }
+            return this.header;
         }
     }
 }

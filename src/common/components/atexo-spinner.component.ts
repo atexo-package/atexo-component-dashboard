@@ -8,7 +8,7 @@ import {RouteParams} from 'angular2/router';
 
 @View({
     template: `
-                <div class="atexo-spinner">
+                <div class="atexo-spinner center">
                     <div class="rect1"></div>
                     <div class="rect2"></div>
                     <div class="rect3"></div>
@@ -17,7 +17,7 @@ import {RouteParams} from 'angular2/router';
                 </div>
             `,
     styles:[`
-          .atexo-spinner {
+            .atexo-spinner {
               width: 25px;
               height: 20px;
               text-align: center;
@@ -26,6 +26,10 @@ import {RouteParams} from 'angular2/router';
               -webkit-transition-duration: 1s;
               -o-transition-duration: 1s;
               transition-duration: 1s;
+            }
+
+            .atexo-spinner.center{
+               margin: 0 auto;
             }
 
             .hide-atexo-spinner .atexo-spinner,

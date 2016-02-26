@@ -39,6 +39,7 @@ define("common/constants/atexo/atexo-rest.constant", ["require", "exports", 'ang
             panel: {
                 all: {
                     method: http_1.RequestMethod.Get,
+                    header: {},
                     url: 'panel',
                     type: atexo_enum_constant_1.RequestUrlType.Relative,
                     _format: 'json',
@@ -56,6 +57,7 @@ define("common/constants/atexo/atexo-rest.constant", ["require", "exports", 'ang
             alert: {
                 all: {
                     method: http_1.RequestMethod.Get,
+                    header: {},
                     url: 'alert',
                     type: atexo_enum_constant_1.RequestUrlType.Relative,
                     _format: 'json',
@@ -68,6 +70,7 @@ define("common/constants/atexo/atexo-rest.constant", ["require", "exports", 'ang
             news: {
                 all: {
                     method: http_1.RequestMethod.Get,
+                    header: {},
                     url: 'news',
                     type: atexo_enum_constant_1.RequestUrlType.Relative,
                     _format: 'json',
@@ -78,6 +81,7 @@ define("common/constants/atexo/atexo-rest.constant", ["require", "exports", 'ang
                 },
                 byId: {
                     method: http_1.RequestMethod.Get,
+                    header: {},
                     url: 'news',
                     type: atexo_enum_constant_1.RequestUrlType.Relative
                 }
@@ -198,6 +202,9 @@ define("common/services/atexo/atexo-util.service", ["require", "exports", 'angul
         Util.prototype.RequestOptions = function () {
             return new RequestOptions();
         };
+        Util.prototype.RequestHeader = function () {
+            return new RequestHeader();
+        };
         Util.prototype.Json = function () {
             return new Json();
         };
@@ -312,6 +319,30 @@ define("common/services/atexo/atexo-util.service", ["require", "exports", 'angul
             }
         };
         return RequestOptions;
+    }());
+    var RequestHeader = (function () {
+        function RequestHeader() {
+            this.header = new http_2.Headers();
+        }
+        RequestHeader.prototype.setHeaderParams = function (data) {
+            console.log(data);
+            if (!lang_1.isPresent(data)) {
+                return;
+            }
+            else {
+                if (lang_1.isJsObject(data)) {
+                    for (var item in data) {
+                        if (data.hasOwnProperty(item)) {
+                            console.log(item);
+                            console.log(data[item]);
+                            this.header.append(item, data[item]);
+                        }
+                    }
+                }
+                return this.header;
+            }
+        };
+        return RequestHeader;
     }());
     var URLParams = (function () {
         function URLParams() {
@@ -632,12 +663,14 @@ define("components/dashboard/components/alert/providers/alert.provider", ["requi
         function AlertProvider(http) {
             this.http = http;
         }
-        AlertProvider.prototype.all = function (_parameter) {
-            _parameter = (typeof _parameter !== 'undefined') ? _parameter : atexo_constant_3.AtexoRestConstant.request.panel.all.parameter;
+        AlertProvider.prototype.all = function (_search, _header) {
+            _search = (typeof _search !== 'undefined') ? _search : atexo_constant_3.AtexoRestConstant.request.alert.all.parameter;
+            _header = (typeof _header !== 'undefined') ? _header : atexo_constant_3.AtexoRestConstant.request.alert.all.header;
             var options = new http_4.RequestOptions({
                 method: atexo_constant_3.AtexoRestConstant.request.alert.all.method,
+                headers: atexo_service_2.Util.getInstance().RequestHeader().setHeaderParams(_header),
                 url: atexo_service_2.Util.getInstance().Rest().setPath(atexo_constant_3.AtexoRestConstant.request.alert.all.url).build(),
-                search: atexo_service_2.Util.getInstance().RequestOptions().setSearchParams(_parameter)
+                search: atexo_service_2.Util.getInstance().RequestOptions().setSearchParams(_search)
             });
             var req = new http_4.Request(options);
             return this.http.request(req);
@@ -662,8 +695,8 @@ define("common/components/atexo-spinner.component", ["require", "exports", 'angu
                 selector: 'atexo-spinner'
             }),
             core_9.View({
-                template: "\n                <div class=\"atexo-spinner\">\n                    <div class=\"rect1\"></div>\n                    <div class=\"rect2\"></div>\n                    <div class=\"rect3\"></div>\n                    <div class=\"rect4\"></div>\n                    <div class=\"rect5\"></div>\n                </div>\n            ",
-                styles: ["\n          .atexo-spinner {\n              width: 25px;\n              height: 20px;\n              text-align: center;\n              font-size: 5px;\n              -moz-transition-duration: 1s;\n              -webkit-transition-duration: 1s;\n              -o-transition-duration: 1s;\n              transition-duration: 1s;\n            }\n\n            .hide-atexo-spinner .atexo-spinner,\n            .atexo-spinner:hover{\n                opacity: 0;\n            }\n\n            .atexo-spinner > div {\n              background-color: #BBDEFB;\n              height: 100%;\n              width: 3px;\n              display: inline-block;\n\n              -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;\n              animation: sk-stretchdelay 1.2s infinite ease-in-out;\n            }\n\n            .atexo-spinner .rect2 {\n              -webkit-animation-delay: -1.1s;\n              animation-delay: -1.1s;\n              background-color: #64B5F6;\n            }\n\n            .atexo-spinner .rect3 {\n              -webkit-animation-delay: -1.0s;\n              animation-delay: -1.0s;\n              background-color: #2196F3;\n            }\n\n            .atexo-spinner .rect4 {\n              -webkit-animation-delay: -0.9s;\n              animation-delay: -0.9s;\n              background-color: #1976D2;\n            }\n\n            .atexo-spinner .rect5 {\n              -webkit-animation-delay: -0.8s;\n              animation-delay: -0.8s;\n              background-color: #0D47A1;\n            }\n\n            @-webkit-keyframes sk-stretchdelay {\n              0%, 40%, 100% { -webkit-transform: scaleY(0.4) }\n              20% { -webkit-transform: scaleY(1.0) }\n            }\n\n            @keyframes sk-stretchdelay {\n              0%, 40%, 100% {\n                transform: scaleY(0.4);\n                -webkit-transform: scaleY(0.4);\n              }  20% {\n                transform: scaleY(1.0);\n                -webkit-transform: scaleY(1.0);\n              }\n            }\n    "]
+                template: "\n                <div class=\"atexo-spinner center\">\n                    <div class=\"rect1\"></div>\n                    <div class=\"rect2\"></div>\n                    <div class=\"rect3\"></div>\n                    <div class=\"rect4\"></div>\n                    <div class=\"rect5\"></div>\n                </div>\n            ",
+                styles: ["\n            .atexo-spinner {\n              width: 25px;\n              height: 20px;\n              text-align: center;\n              font-size: 5px;\n              -moz-transition-duration: 1s;\n              -webkit-transition-duration: 1s;\n              -o-transition-duration: 1s;\n              transition-duration: 1s;\n            }\n\n            .atexo-spinner.center{\n               margin: 0 auto;\n            }\n\n            .hide-atexo-spinner .atexo-spinner,\n            .atexo-spinner:hover{\n                opacity: 0;\n            }\n\n            .atexo-spinner > div {\n              background-color: #BBDEFB;\n              height: 100%;\n              width: 3px;\n              display: inline-block;\n\n              -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;\n              animation: sk-stretchdelay 1.2s infinite ease-in-out;\n            }\n\n            .atexo-spinner .rect2 {\n              -webkit-animation-delay: -1.1s;\n              animation-delay: -1.1s;\n              background-color: #64B5F6;\n            }\n\n            .atexo-spinner .rect3 {\n              -webkit-animation-delay: -1.0s;\n              animation-delay: -1.0s;\n              background-color: #2196F3;\n            }\n\n            .atexo-spinner .rect4 {\n              -webkit-animation-delay: -0.9s;\n              animation-delay: -0.9s;\n              background-color: #1976D2;\n            }\n\n            .atexo-spinner .rect5 {\n              -webkit-animation-delay: -0.8s;\n              animation-delay: -0.8s;\n              background-color: #0D47A1;\n            }\n\n            @-webkit-keyframes sk-stretchdelay {\n              0%, 40%, 100% { -webkit-transform: scaleY(0.4) }\n              20% { -webkit-transform: scaleY(1.0) }\n            }\n\n            @keyframes sk-stretchdelay {\n              0%, 40%, 100% {\n                transform: scaleY(0.4);\n                -webkit-transform: scaleY(0.4);\n              }  20% {\n                transform: scaleY(1.0);\n                -webkit-transform: scaleY(1.0);\n              }\n            }\n    "]
             }), 
             __metadata('design:paramtypes', [])
         ], AtexoSpinner);
@@ -1119,17 +1152,22 @@ define("components/dashboard/components/panel-body/panel-body-list.component", [
     }());
     exports.PanelBodyList = PanelBodyList;
 });
-define("components/dashboard/components/panel-body/providers/panel-body-chart.provider", ["require", "exports", 'angular2/core', 'angular2/http'], function (require, exports, core_14, http_6) {
+define("components/dashboard/components/panel-body/providers/panel-body-chart.provider", ["require", "exports", 'angular2/core', 'angular2/http', "common/services/atexo.service", "common/constants/atexo.constant", 'angular2/src/facade/lang'], function (require, exports, core_14, http_6, atexo_service_3, atexo_constant_5, lang_5) {
     "use strict";
     var PanelBodyChartProvider = (function () {
         function PanelBodyChartProvider(http) {
             this.http = http;
         }
-        PanelBodyChartProvider.prototype.get = function (url) {
+        PanelBodyChartProvider.prototype.get = function (panelBodyObj) {
+            var _search = (!lang_5.isBlank(panelBodyObj['search'])) ? panelBodyObj['search'] : atexo_constant_5.AtexoRestConstant.request.panel.all.parameter;
+            var _header = (!lang_5.isBlank(panelBodyObj['header'])) ? panelBodyObj['header'] : atexo_constant_5.AtexoRestConstant.request.panel.all.header;
             var options = new http_6.RequestOptions({
-                method: http_6.RequestMethod.Get,
-                url: url
+                method: atexo_constant_5.AtexoRestConstant.request.alert.all.method,
+                headers: atexo_service_3.Util.getInstance().RequestHeader().setHeaderParams(_header),
+                url: panelBodyObj['urlData'],
+                search: atexo_service_3.Util.getInstance().RequestOptions().setSearchParams(_search)
             });
+            console.log(options);
             var req = new http_6.Request(options);
             return this.http.request(req);
         };
@@ -1142,10 +1180,13 @@ define("components/dashboard/components/panel-body/providers/panel-body-chart.pr
     }());
     exports.PanelBodyChartProvider = PanelBodyChartProvider;
 });
-define("components/dashboard/components/panel-body/panel-body-chart.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/constants/atexo.constant", "common/pipe/atexo.pipe", "common/services/atexo.service", "common/components/atexo-charts.component", "components/dashboard/components/panel-body/providers/panel-body-chart.provider"], function (require, exports, core_15, lang_5, atexo_constant_5, atexo_pipe_3, atexo_service_3, atexo_charts_component_2, panel_body_chart_provider_1) {
+define("components/dashboard/components/panel-body/panel-body-chart.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/constants/atexo.constant", "common/pipe/atexo.pipe", "common/services/atexo.service", "common/components/atexo-charts.component", "components/dashboard/components/panel-body/providers/panel-body-chart.provider", "common/components/atexo-spinner.component"], function (require, exports, core_15, lang_6, atexo_constant_6, atexo_pipe_3, atexo_service_4, atexo_charts_component_2, panel_body_chart_provider_1, atexo_spinner_component_2) {
     "use strict";
     var PanelBodyChart = (function () {
         function PanelBodyChart(panelBodyChartProvider) {
+            this.xhrStatusDisplaySpinner = true;
+            this.xhrStatusDisplayResources = false;
+            this.xhrStatusDisplayError = false;
             this.chartData = [[]];
             this.chartDataOld = this.chartData;
             this.chartLabels = [];
@@ -1153,7 +1194,7 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
             this.chartSeriesColors = [];
             this.chartSeriesActive = [];
             this.chartOptions = this.getChartOptions();
-            this.chartColours = atexo_constant_5.AtexoColorChartConstant;
+            this.chartColours = atexo_constant_6.AtexoColorChartConstant;
             this.chartColoursOld = this.chartColours;
             this.chartLegend = false;
             this.chartType = 'Line';
@@ -1178,7 +1219,7 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
             }
         }
         PanelBodyChart.prototype.ngOnInit = function () {
-            this.panelBodyChartServiceGetData(this.panelBodyObj.urlData);
+            this.panelBodyChartServiceGetData(this.panelBodyObj);
             this.panelBodyChartServiceGetOptions(this.panelBodyObj.chart);
             return true;
         };
@@ -1187,12 +1228,12 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
         };
         PanelBodyChart.prototype.panelBodyChartServiceGetOptions = function (chart) {
             var _this = this;
-            if (lang_5.isPresent(chart.type) && chart.type !== '') {
+            if (lang_6.isPresent(chart.type) && chart.type !== '') {
                 this.chartType = chart.type;
             }
-            if (lang_5.isPresent(chart.types) && !lang_5.isBlank(chart.types)) {
+            if (lang_6.isPresent(chart.types) && !lang_6.isBlank(chart.types)) {
                 this.chartTypes = chart.types;
-                var i = atexo_service_3.Util.getInstance().arrayObjectFindIndex(this.chartTypes, function (e) {
+                var i = atexo_service_4.Util.getInstance().arrayObjectFindIndex(this.chartTypes, function (e) {
                     return e.type === _this.chartType;
                 });
                 if (i === -1) {
@@ -1201,16 +1242,18 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
                 }
                 this.updateChartType(i);
             }
-            if (lang_5.isPresent(chart.easting) && !lang_5.isBlank(chart.easting)) {
+            if (lang_6.isPresent(chart.easting) && !lang_6.isBlank(chart.easting)) {
                 this.easting = chart.easting;
             }
         };
-        PanelBodyChart.prototype.panelBodyChartServiceGetData = function (url) {
+        PanelBodyChart.prototype.panelBodyChartServiceGetData = function (panelBodyObj) {
             var _this = this;
-            this.panelBodyChartProvider.get(url).subscribe(function (res) {
+            this.panelBodyChartProvider.get(panelBodyObj).subscribe(function (res) {
+                _this.xhrStatusDisplaySpinner = false;
                 if (res.status === 200) {
+                    _this.xhrStatusDisplayResources = true;
                     _this.getChartDataArray(res);
-                    var jsonInstance = atexo_service_3.Util.getInstance().Json();
+                    var jsonInstance = atexo_service_4.Util.getInstance().Json();
                     jsonInstance.setEasting(_this.easting);
                     jsonInstance.getByProperty(_this.chartDataArray);
                     jsonInstance.groupByProperty(['annee', 'mois', 'count']);
@@ -1224,11 +1267,17 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
                         _this.chartSeriesColors.push(_this.chartColoursOld[i].strokeColor);
                         _this.chartSeriesActive.push(true);
                     }
-                    if (atexo_constant_5.AtexoChartConstant.typeCategory.single.indexOf(_this.chartType) !== -1) {
+                    if (atexo_constant_6.AtexoChartConstant.typeCategory.single.indexOf(_this.chartType) !== -1) {
                         _this.getChartDataSingle(0);
                     }
                 }
-            });
+            }, (function (err) {
+                if (err.status === 404) {
+                    _this.xhrStatusDisplayError = true;
+                    _this.xhrStatusDisplaySpinner = false;
+                    console.log(err);
+                }
+            }));
         };
         PanelBodyChart.prototype.checkUpdateChart = function () {
             var i = 0, count = 0;
@@ -1240,7 +1289,7 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
             return (count > 0);
         };
         PanelBodyChart.prototype.updateChartData = function (i) {
-            if (atexo_constant_5.AtexoChartConstant.typeCategory.multiple.indexOf(this.chartType) !== -1) {
+            if (atexo_constant_6.AtexoChartConstant.typeCategory.multiple.indexOf(this.chartType) !== -1) {
                 this.chartSeriesActive[i] = !this.chartSeriesActive[i];
                 if (this.checkUpdateChart()) {
                     var _chartData = [];
@@ -1265,7 +1314,7 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
         };
         PanelBodyChart.prototype.activeChartSerie = function (i) {
             var index = 0;
-            if (lang_5.isPresent(i)) {
+            if (lang_6.isPresent(i)) {
                 index = i;
             }
             for (var j = 0; j < this.chartSeriesActive.length; j++) {
@@ -1294,13 +1343,13 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
             };
         };
         PanelBodyChart.prototype.getChartDataArray = function (res) {
-            atexo_service_3.Convert.getInstance().cvsToJson(res.text());
-            this.chartDataArray = atexo_service_3.Convert.getInstance().getArrayData();
+            atexo_service_4.Convert.getInstance().cvsToJson(res.text());
+            this.chartDataArray = atexo_service_4.Convert.getInstance().getArrayData();
             return this.chartDataArray;
         };
         PanelBodyChart.prototype.getChartDataSingle = function (i) {
             var index = 0, arr;
-            if (lang_5.isPresent(i)) {
+            if (lang_6.isPresent(i)) {
                 index = i;
             }
             this.activeChartSerie(index);
@@ -1321,9 +1370,9 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
                 providers: [panel_body_chart_provider_1.PanelBodyChartProvider]
             }),
             core_15.View({
-                template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n\n                <div class=\"clearfix sub-header\">\n                    <ul class=\"atexoui-list right horizontal\">\n                        <li *ngFor=\"#type of chartTypes; #i=index\"\n                            [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                            <a href=\"#\"\n                               [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                               (click)=\"updateChartType(i)\">\n                                <span class=\"{{type.icons}}\"></span>\n                                {{type.type}}\n                            </a>\n                        </li>\n                    </ul>\n                </div>\n\n                <panel-body-charts-js\n                        [data]=\"chartData\"\n                        [labels]=\"chartLabels\"\n                        [options]=\"chartOptions\"\n                        [series]=\"chartSeries\"\n                        [colours]=\"chartColours\"\n                        [legend]=\"chartLegend\"\n                        [chartType]=\"chartType\"\n                        (chartHover)=\"chartHovered($event)\"\n                        (chartClick)=\"chartClicked($event)\"></panel-body-charts-js>\n\n\n                <ul class=\"atexoui-list center horizontal\">\n                    <li *ngFor=\"#serie of chartSeries; #i=index\"\n                        [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                        <a href=\"#\"\n                           (click)=\"updateChartData(i)\"\n                           [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                            <span [ngStyle]=\"{ 'color': chartSeriesColors[i] }\" class=\"fa fa-eye\"\n                                  [ngClass]=\"{ 'fa-eye': chartSeriesActive[i], 'fa-eye-slash': !chartSeriesActive[i] }\"></span>\n                            {{serie}}\n                        </a>\n                    </li>\n                </ul>\n\n            </div>\n            ",
+                template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n\n                <div class=\"clearfix sub-header\" *ngIf=\"xhrLoadResouce\">\n                    <ul class=\"atexoui-list right horizontal\">\n                        <li *ngFor=\"#type of chartTypes; #i=index\"\n                            [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                            <a href=\"#\"\n                               [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                               (click)=\"updateChartType(i)\">\n                                <span class=\"{{type.icons}}\"></span>\n                                {{type.type}}\n                            </a>\n                        </li>\n                    </ul>\n                </div>\n                <atexo-spinner *ngIf=\"xhrStatusDisplaySpinner\"></atexo-spinner>\n\n                <panel-body-charts-js\n                        *ngIf=\"xhrStatusDisplayResources\"\n                        [data]=\"chartData\"\n                        [labels]=\"chartLabels\"\n                        [options]=\"chartOptions\"\n                        [series]=\"chartSeries\"\n                        [colours]=\"chartColours\"\n                        [legend]=\"chartLegend\"\n                        [chartType]=\"chartType\"\n                        (chartHover)=\"chartHovered($event)\"\n                        (chartClick)=\"chartClicked($event)\"></panel-body-charts-js>\n\n                <div class=\"error\" *ngIf=\"xhrStatusDisplayError\">\n                    <p class=\"text-danger text-center\"><strong>Donn\u00E9es temporairement indisponible</strong></p>\n                </div>\n\n\n                <ul class=\"atexoui-list center horizontal\">\n                    <li *ngFor=\"#serie of chartSeries; #i=index\"\n                        [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                        <a href=\"#\"\n                           (click)=\"updateChartData(i)\"\n                           [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                            <span [ngStyle]=\"{ 'color': chartSeriesColors[i] }\" class=\"fa fa-eye\"\n                                  [ngClass]=\"{ 'fa-eye': chartSeriesActive[i], 'fa-eye-slash': !chartSeriesActive[i] }\"></span>\n                            {{serie}}\n                        </a>\n                    </li>\n                </ul>\n\n            </div>\n            ",
                 pipes: [atexo_pipe_3.ToClassPipe],
-                directives: [atexo_charts_component_2.AtexoChartsJs]
+                directives: [atexo_charts_component_2.AtexoChartsJs, atexo_spinner_component_2.AtexoSpinner]
             }), 
             __metadata('design:paramtypes', [panel_body_chart_provider_1.PanelBodyChartProvider])
         ], PanelBodyChart);
@@ -1331,7 +1380,7 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
     }());
     exports.PanelBodyChart = PanelBodyChart;
 });
-define("components/dashboard/components/panel-body/providers/panel-body-search.provider", ["require", "exports", 'angular2/core', 'angular2/http', "common/services/atexo.service"], function (require, exports, core_16, http_7, atexo_service_4) {
+define("components/dashboard/components/panel-body/providers/panel-body-search.provider", ["require", "exports", 'angular2/core', 'angular2/http', "common/services/atexo.service"], function (require, exports, core_16, http_7, atexo_service_5) {
     "use strict";
     var PanelBodySearchProvider = (function () {
         function PanelBodySearchProvider(http) {
@@ -1341,7 +1390,7 @@ define("components/dashboard/components/panel-body/providers/panel-body-search.p
             var options = new http_7.RequestOptions({
                 method: http_7.RequestMethod.Get,
                 url: _url,
-                search: atexo_service_4.Util.getInstance().URLParams().parse(_search)
+                search: atexo_service_5.Util.getInstance().URLParams().parse(_search)
             });
             var req = new http_7.Request(options);
             return this.http.request(req);
@@ -1355,7 +1404,7 @@ define("components/dashboard/components/panel-body/providers/panel-body-search.p
     }());
     exports.PanelBodySearchProvider = PanelBodySearchProvider;
 });
-define("components/dashboard/components/panel-body/panel-body-search.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/pipe/atexo.pipe", "components/dashboard/components/panel-body/providers/panel-body-search.provider"], function (require, exports, core_17, lang_6, atexo_pipe_4, panel_body_search_provider_1) {
+define("components/dashboard/components/panel-body/panel-body-search.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/pipe/atexo.pipe", "components/dashboard/components/panel-body/providers/panel-body-search.provider"], function (require, exports, core_17, lang_7, atexo_pipe_4, panel_body_search_provider_1) {
     "use strict";
     var PanelBodySearch = (function () {
         function PanelBodySearch(panelBodySearchProvider) {
@@ -1385,7 +1434,7 @@ define("components/dashboard/components/panel-body/panel-body-search.component",
             var _timeOut, _milliseconds = 100;
             clearTimeout(_timeOut);
             _timeOut = setTimeout(function () {
-                if (lang_6.isPresent(display)) {
+                if (lang_7.isPresent(display)) {
                     _this.display = display;
                     _this.focusClass = display;
                 }
@@ -1567,7 +1616,7 @@ define("components/dashboard/components/panel-body/providers/panel-body-article.
     }());
     exports.PanelBodyArticleProvider = PanelBodyArticleProvider;
 });
-define("components/dashboard/components/panel-body/panel-body-article.component", ["require", "exports", 'angular2/core', "common/pipe/atexo.pipe", "components/dashboard/components/panel-body/providers/panel-body-article.provider", "common/services/atexo.service", "common/components/atexo-spinner.component"], function (require, exports, core_21, atexo_pipe_6, panel_body_article_provider_1, atexo_service_5, atexo_spinner_component_2) {
+define("components/dashboard/components/panel-body/panel-body-article.component", ["require", "exports", 'angular2/core', "common/pipe/atexo.pipe", "components/dashboard/components/panel-body/providers/panel-body-article.provider", "common/services/atexo.service", "common/components/atexo-spinner.component"], function (require, exports, core_21, atexo_pipe_6, panel_body_article_provider_1, atexo_service_6, atexo_spinner_component_3) {
     "use strict";
     var PanelBodyArticle = (function () {
         function PanelBodyArticle(el, panelBodyArticleProvider) {
@@ -1603,7 +1652,7 @@ define("components/dashboard/components/panel-body/panel-body-article.component"
             return false;
         };
         PanelBodyArticle.prototype.selectArticle = function (id) {
-            this.articleSelected = atexo_service_5.Util.getInstance().Grep(this.articles, function (item) {
+            this.articleSelected = atexo_service_6.Util.getInstance().Grep(this.articles, function (item) {
                 return (item.id === id);
             });
             this.articleSelected = this.articleSelected[0];
@@ -1625,7 +1674,7 @@ define("components/dashboard/components/panel-body/panel-body-article.component"
             core_21.View({
                 template: "\n            <div class=\"panel-body-article-wrap {{ panelBodyObj.type.category | toClass}}\">\n\n                <ul class=\"list-unstyled articles article-list\">\n                    <li *ngFor=\"#article of articles; #i=index\">\n\n                        <article class=\"article article-item\"\n                                 *ngIf=\"i < offset\">\n                            <header class=\"header\">\n\n                                <h4 class=\"title\">\n                                    <a href=\"#\"\n                                       title=\"{{article.title}}\">{{article.title}}</a>\n                                    <span class=\"date\">{{article.date | toDate | date}}</span>\n                                </h4>\n\n                            </header>\n\n                            <div class=\"body\">\n\n                                <div class=\"content\">\n                                    <p>{{article.content | trancate:120}}</p>\n                                </div>\n\n                                <footer class=\"footer\">\n                                    <div class=\"links\">\n                                        <a href=\"\"\n                                           (click)=\"selectArticle(article.id)\"\n                                           title=\"lire la suite\">lire la suite</a>\n                                    </div>\n                                </footer>\n\n                            </div>\n\n\n                        </article>\n\n                    </li>\n                    <li *ngIf=\" offset < articles.length \">\n                        <a href=\"\" class=\"atexoui-link center more\"\n                           (click)=\"moreArticles()\">Plus d'actualit\u00E9s</a>\n                    </li>\n                    <li *ngIf=\" offset === articles.length \">\n                        <a href=\"\" class=\"atexoui-link center less\"\n                           (click)=\"lessArticles()\">Moins d'actualit\u00E9s</a>\n                    </li>\n                </ul>\n                <div class=\"article-full-screen\" *ngIf=\"articleSelected\">\n                    <article class=\"article article-selected\">\n                        <header class=\"header\">\n\n                            <div class=\"options row\">\n                                <div class=\"col-md-12\">\n                                    <div class=\"pull-left\">\n                                        <h4 class=\"title\">\n                                            <a href=\"\"\n                                               title=\"{{articleSelected.title}}\">{{articleSelected.title}}</a>\n                                        </h4>\n                                        <span class=\"date\">{{articleSelected.date | toDate | date}}</span>\n                                    </div>\n                                    <div class=\"pull-right\">\n                                        <a href=\"\"\n                                           title=\"Close Article\"\n                                           data-widgster=\"close\" (click)=\"closeSelectArticle()\"\n                                        class=\"btn btn-sm\">\n                                            <i class=\"fa fa-chevron-left\"></i> Retour\n                                        </a>\n                                    </div>\n                                </div>\n                            </div>\n\n                        </header>\n\n                        <div class=\"body\">\n\n                            <div class=\"content\">\n                                <p>{{articleSelected.content}}</p>\n                            </div>\n\n                            <footer class=\"footer\">\n                                <div class=\"links\"\n                                     *ngIf=\"articleSelected.links.length\">\n                                    <a href=\"{{link.url}}\"\n                                       target=\"{{link.target}}\"\n                                       title=\"{{link.title}}\"\n                                       *ngFor=\"#link of articleSelected.links; #i=index\">{{link.title}}</a>\n                                </div>\n                            </footer>\n\n                        </div>\n\n                    </article>\n                </div>\n            </div>\n    ",
                 pipes: [atexo_pipe_6.ToClassPipe, atexo_pipe_6.ToDatePipe, atexo_pipe_6.TrancatePipe],
-                directives: [atexo_spinner_component_2.AtexoSpinner]
+                directives: [atexo_spinner_component_3.AtexoSpinner]
             }), 
             __metadata('design:paramtypes', [(typeof (_a = typeof core_21.ElementRef !== 'undefined' && core_21.ElementRef) === 'function' && _a) || Object, panel_body_article_provider_1.PanelBodyArticleProvider])
         ], PanelBodyArticle);
@@ -1705,11 +1754,11 @@ define("components/dashboard/components/panel/panel.component", ["require", "exp
     }());
     exports.Panel = Panel;
 });
-define("components/dashboard/dashboard.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/constants/atexo.constant", "common/services/atexo.service", "components/dashboard/providers/panel.provider", "components/dashboard/components/alert/alert.component", "components/dashboard/components/panel/panel.component"], function (require, exports, core_24, lang_7, atexo_constant_6, atexo_service_6, panel_provider_1, alert_component_1, panel_component_1) {
+define("components/dashboard/dashboard.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/constants/atexo.constant", "common/services/atexo.service", "components/dashboard/providers/panel.provider", "components/dashboard/components/alert/alert.component", "components/dashboard/components/panel/panel.component"], function (require, exports, core_24, lang_8, atexo_constant_7, atexo_service_7, panel_provider_1, alert_component_1, panel_component_1) {
     "use strict";
     var Dashboard = (function () {
         function Dashboard(panelProvider) {
-            this.progress = atexo_service_6.Progress.getInstance();
+            this.progress = atexo_service_7.Progress.getInstance();
             this.panels = [];
             this.panelsZones = {
                 a: new Array(),
@@ -1727,7 +1776,7 @@ define("components/dashboard/dashboard.component", ["require", "exports", 'angul
             this.panelProvider = panelProvider;
         }
         Dashboard.prototype.ngOnInit = function () {
-            if (!lang_7.isPresent(this.config)) {
+            if (!lang_8.isPresent(this.config)) {
                 console.error('ViewError:  Missing identifier "config"');
             }
             else {
@@ -1765,8 +1814,8 @@ define("components/dashboard/dashboard.component", ["require", "exports", 'angul
             return true;
         };
         Dashboard.prototype.initConfig = function () {
-            atexo_constant_6.AtexoRestConstant.request.panel.all.url = this.config.json.panel;
-            atexo_constant_6.AtexoRestConstant.request.alert.all.url = this.config.json.alert;
+            atexo_constant_7.AtexoRestConstant.request.panel.all.url = this.config.json.panel;
+            atexo_constant_7.AtexoRestConstant.request.alert.all.url = this.config.json.alert;
         };
         Dashboard.prototype.panelServiceAll = function () {
             var _this = this;
@@ -1774,12 +1823,12 @@ define("components/dashboard/dashboard.component", ["require", "exports", 'angul
                 limit: this.limit,
                 offset: this.offset
             };
-            atexo_service_6.Progress.getInstance().incrementNbrProgress();
+            atexo_service_7.Progress.getInstance().incrementNbrProgress();
             this.panelProvider.all(param).subscribe(function (res) {
                 if (res.status === 200) {
                     _this.endContent = false;
                     _this.panelsZonesArray = res.json();
-                    atexo_service_6.Progress.getInstance().decrementNbrProgress();
+                    atexo_service_7.Progress.getInstance().decrementNbrProgress();
                 }
                 else {
                     _this.endContent = true;
@@ -1822,207 +1871,17 @@ define("common/config/atexo.config", ["require", "exports"], function (require, 
         }
     };
 });
-define("common/providers/dragula.provider", ["require", "exports", 'angular2/core'], function (require, exports, core_25) {
-    "use strict";
-    var DragulaService = (function () {
-        function DragulaService() {
-            this.cancel = new core_25.EventEmitter();
-            this.cloned = new core_25.EventEmitter();
-            this.drag = new core_25.EventEmitter();
-            this.dragend = new core_25.EventEmitter();
-            this.drop = new core_25.EventEmitter();
-            this.out = new core_25.EventEmitter();
-            this.over = new core_25.EventEmitter();
-            this.remove = new core_25.EventEmitter();
-            this.shadow = new core_25.EventEmitter();
-            this.dropModel = new core_25.EventEmitter();
-            this.removeModel = new core_25.EventEmitter();
-            this.events = [
-                'cancel',
-                'cloned',
-                'drag',
-                'dragend',
-                'drop',
-                'out',
-                'over',
-                'remove',
-                'shadow',
-                'dropModel',
-                'removeModel'
-            ];
-            this.bags = [];
-        }
-        DragulaService.prototype.add = function (name, drake) {
-            var bag = this.find(name);
-            if (bag) {
-                throw new Error('Bag named: "' + name + '" already exists.');
-            }
-            bag = {
-                name: name,
-                drake: drake
-            };
-            this.bags.push(bag);
-            if (drake.models) {
-                this.handleModels(name, drake);
-            }
-            if (!bag.initEvents) {
-                this.setupEvents(bag);
-            }
-            return bag;
-        };
-        DragulaService.prototype.find = function (name) {
-            for (var i = 0; i < this.bags.length; i++) {
-                if (this.bags[i].name === name) {
-                    return this.bags[i];
-                }
-            }
-        };
-        DragulaService.prototype.destroy = function (name) {
-            var bag = this.find(name);
-            var i = this.bags.indexOf(bag);
-            this.bags.splice(i, 1);
-            bag.drake.destroy();
-        };
-        DragulaService.prototype.setOptions = function (name, options) {
-            var bag = this.add(name, dragula(options));
-            this.handleModels(name, bag.drake);
-        };
-        DragulaService.prototype.handleModels = function (name, drake) {
-            var _this = this;
-            var dragElm;
-            var dragIndex;
-            var dropIndex;
-            var sourceModel;
-            drake.on('remove', function (el, source) {
-                if (!drake.models) {
-                    return;
-                }
-                sourceModel = drake.models[drake.containers.indexOf(source)];
-                sourceModel.splice(dragIndex, 1);
-                _this.removeModel.emit([name, el, source]);
-            });
-            drake.on('drag', function (el, source) {
-                dragElm = el;
-                dragIndex = _this.domIndexOf(el, source);
-            });
-            drake.on('drop', function (dropElm, target, source) {
-                if (!drake.models) {
-                    return;
-                }
-                dropIndex = _this.domIndexOf(dropElm, target);
-                sourceModel = drake.models[drake.containers.indexOf(source)];
-                if (target === source) {
-                    sourceModel.splice(dropIndex, 0, sourceModel.splice(dragIndex, 1)[0]);
-                }
-                else {
-                    var notCopy = dragElm === dropElm;
-                    var targetModel = drake.models[drake.containers.indexOf(target)];
-                    var dropElmModel = notCopy ? sourceModel[dragIndex] : JSON.parse(JSON.stringify(sourceModel[dragIndex]));
-                    if (notCopy) {
-                        sourceModel.splice(dragIndex, 1);
-                    }
-                    targetModel.splice(dropIndex, 0, dropElmModel);
-                    target.removeChild(dropElm);
-                }
-                _this.dropModel.emit([name, dropElm, target, source]);
-            });
-        };
-        DragulaService.prototype.setupEvents = function (bag) {
-            bag.initEvents = true;
-            var that = this;
-            var emitter = function (type) {
-                function replicate() {
-                    var args = Array.prototype.slice.call(arguments);
-                    that[type].emit([bag.name].concat(args));
-                }
-                bag.drake.on(type, replicate);
-            };
-            this.events.forEach(emitter);
-        };
-        DragulaService.prototype.domIndexOf = function (child, parent) {
-            return Array.prototype.indexOf.call(parent.children, child);
-        };
-        DragulaService = __decorate([
-            core_25.Injectable(), 
-            __metadata('design:paramtypes', [])
-        ], DragulaService);
-        return DragulaService;
-    }());
-    exports.DragulaService = DragulaService;
-});
-define("common/directives/dragula.directive", ["require", "exports", 'angular2/core', "common/providers/dragula.provider"], function (require, exports, core_26, dragula_provider_1) {
-    "use strict";
-    var DragAndDropDirective = (function () {
-        function DragAndDropDirective(el, dragulaService) {
-            this.el = el;
-            this.container = el.nativeElement;
-            this.dragulaService = dragulaService;
-        }
-        DragAndDropDirective.prototype.ngOnInit = function () {
-            var _this = this;
-            console.log(this.bag);
-            var bag = this.dragulaService.find(this.bag);
-            var checkModel = function () {
-                if (_this.dragulaModel) {
-                    if (_this.drake.models) {
-                        _this.drake.models.push(_this.dragulaModel);
-                    }
-                    else {
-                        _this.drake.models = [_this.dragulaModel];
-                    }
-                }
-            };
-            if (bag) {
-                this.drake = bag.drake;
-                checkModel();
-                this.drake.containers.push(this.container);
-            }
-            return true;
-        };
-        DragAndDropDirective.prototype.ngOnChanges = function (changes) {
-            if (changes && changes['dragulaModel']) {
-                if (this.drake) {
-                    if (this.drake.models) {
-                        var modelIndex = this.drake.models.indexOf(changes['dragulaModel'].previousValue);
-                        this.drake.models.splice(modelIndex, 1, changes['dragulaModel'].currentValue);
-                    }
-                    else {
-                        this.drake.models = [changes['dragulaModel'].currentValue];
-                    }
-                }
-            }
-        };
-        __decorate([
-            core_26.Input('dragula'), 
-            __metadata('design:type', String)
-        ], DragAndDropDirective.prototype, "bag", void 0);
-        __decorate([
-            core_26.Input(), 
-            __metadata('design:type', String)
-        ], DragAndDropDirective.prototype, "dragulaModel", void 0);
-        DragAndDropDirective = __decorate([
-            core_26.Directive({
-                selector: '[dragula]',
-                providers: [dragula_provider_1.DragulaService]
-            }), 
-            __metadata('design:paramtypes', [(typeof (_a = typeof core_26.ElementRef !== 'undefined' && core_26.ElementRef) === 'function' && _a) || Object, dragula_provider_1.DragulaService])
-        ], DragAndDropDirective);
-        return DragAndDropDirective;
-        var _a;
-    }());
-    exports.DragAndDropDirective = DragAndDropDirective;
-});
-define("components/about/about", ["require", "exports", 'angular2/core', 'angular2/router'], function (require, exports, core_27, router_1) {
+define("components/about/about", ["require", "exports", 'angular2/core', 'angular2/router'], function (require, exports, core_25, router_1) {
     "use strict";
     var About = (function () {
         function About(params) {
             this.id = params.get('id');
         }
         About = __decorate([
-            core_27.Component({
+            core_25.Component({
                 selector: 'about'
             }),
-            core_27.View({
+            core_25.View({
                 template: "\n\t\tWelcome to the about page! This is the ID: {{id}}\n\t"
             }), 
             __metadata('design:paramtypes', [(typeof (_a = typeof router_1.RouteParams !== 'undefined' && router_1.RouteParams) === 'function' && _a) || Object])
@@ -2032,14 +1891,14 @@ define("components/about/about", ["require", "exports", 'angular2/core', 'angula
     }());
     exports.About = About;
 });
-define("components/dashboard/services/panel.service", ["require", "exports", 'angular2/core', 'angular2/http'], function (require, exports, core_28, http_10) {
+define("components/dashboard/services/panel.service", ["require", "exports", 'angular2/core', 'angular2/http'], function (require, exports, core_26, http_10) {
     "use strict";
     var PanelService = (function () {
         function PanelService(http) {
             this.http = http;
         }
         PanelService = __decorate([
-            core_28.Injectable(), 
+            core_26.Injectable(), 
             __metadata('design:paramtypes', [(typeof (_a = typeof http_10.Http !== 'undefined' && http_10.Http) === 'function' && _a) || Object])
         ], PanelService);
         return PanelService;

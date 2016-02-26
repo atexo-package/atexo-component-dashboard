@@ -16,6 +16,7 @@ export var AtexoRestConstant = {
         panel: {
             all: {
                 method: RequestMethod.Get,
+                header: {},
                 url: 'panel',
                 type: RequestUrlType.Relative,
                 _format: 'json',
@@ -33,6 +34,7 @@ export var AtexoRestConstant = {
         alert: {
             all: {
                 method: RequestMethod.Get,
+                header: {},
                 url: 'alert',
                 type: RequestUrlType.Relative,
                 _format: 'json',
@@ -45,6 +47,7 @@ export var AtexoRestConstant = {
         news: {
             all: {
                 method: RequestMethod.Get,
+                header: {},
                 url: 'news',
                 type: RequestUrlType.Relative,
                 _format: 'json',
@@ -55,6 +58,7 @@ export var AtexoRestConstant = {
             },
             byId: {
                 method: RequestMethod.Get,
+                header: {},
                 url: 'news',
                 type: RequestUrlType.Relative
             }

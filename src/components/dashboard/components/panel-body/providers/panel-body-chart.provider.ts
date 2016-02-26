@@ -2,6 +2,7 @@ import {Injectable} from 'angular2/core';
 import {Http, RequestOptions, Request, RequestMethod, URLSearchParams} from 'angular2/http';
 import {Util} from '../../../../../common/services/atexo.service';
 import {AtexoRestConstant} from '../../../../../common/constants/atexo.constant';
+import {isBlank} from 'angular2/src/facade/lang';
 
 @Injectable()
 export class PanelBodyChartProvider {
@@ -12,11 +13,19 @@ export class PanelBodyChartProvider {
         this.http = http;
     }
 
-    get(url:string) {
+    get(panelBodyObj:Object) {
+
+        let _search = (!isBlank(panelBodyObj['search'])) ? panelBodyObj['search'] : AtexoRestConstant.request.panel.all.parameter;
+        let _header = (!isBlank(panelBodyObj['header'])) ? panelBodyObj['header'] : AtexoRestConstant.request.panel.all.header;
+
         var options = new RequestOptions({
-            method: RequestMethod.Get,
-            url: url
+            method: AtexoRestConstant.request.alert.all.method,
+            headers: Util.getInstance().RequestHeader().setHeaderParams(_header),
+            url: panelBodyObj['urlData'],
+            search: Util.getInstance().RequestOptions().setSearchParams(_search)
         });
+
+        console.log(options);
         var req = new Request(options);
         return this.http.request(req);
     }

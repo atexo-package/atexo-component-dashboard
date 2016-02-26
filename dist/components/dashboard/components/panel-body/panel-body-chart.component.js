@@ -15,8 +15,12 @@ var atexo_pipe_1 = require('../../../../common/pipe/atexo.pipe');
 var atexo_service_1 = require('../../../../common/services/atexo.service');
 var atexo_charts_component_1 = require('../../../../common/components/atexo-charts.component');
 var panel_body_chart_provider_1 = require('./providers/panel-body-chart.provider');
+var atexo_spinner_component_1 = require('../../../../common/components/atexo-spinner.component');
 var PanelBodyChart = (function () {
     function PanelBodyChart(panelBodyChartProvider) {
+        this.xhrStatusDisplaySpinner = true;
+        this.xhrStatusDisplayResources = false;
+        this.xhrStatusDisplayError = false;
         this.chartData = [[]];
         this.chartDataOld = this.chartData;
         this.chartLabels = [];
@@ -49,7 +53,7 @@ var PanelBodyChart = (function () {
         }
     }
     PanelBodyChart.prototype.ngOnInit = function () {
-        this.panelBodyChartServiceGetData(this.panelBodyObj.urlData);
+        this.panelBodyChartServiceGetData(this.panelBodyObj);
         this.panelBodyChartServiceGetOptions(this.panelBodyObj.chart);
         return true;
     };
@@ -76,10 +80,12 @@ var PanelBodyChart = (function () {
             this.easting = chart.easting;
         }
     };
-    PanelBodyChart.prototype.panelBodyChartServiceGetData = function (url) {
+    PanelBodyChart.prototype.panelBodyChartServiceGetData = function (panelBodyObj) {
         var _this = this;
-        this.panelBodyChartProvider.get(url).subscribe(function (res) {
+        this.panelBodyChartProvider.get(panelBodyObj).subscribe(function (res) {
+            _this.xhrStatusDisplaySpinner = false;
             if (res.status === 200) {
+                _this.xhrStatusDisplayResources = true;
                 _this.getChartDataArray(res);
                 var jsonInstance = atexo_service_1.Util.getInstance().Json();
                 jsonInstance.setEasting(_this.easting);
@@ -99,7 +105,13 @@ var PanelBodyChart = (function () {
                     _this.getChartDataSingle(0);
                 }
             }
-        });
+        }, (function (err) {
+            if (err.status === 404) {
+                _this.xhrStatusDisplayError = true;
+                _this.xhrStatusDisplaySpinner = false;
+                console.log(err);
+            }
+        }));
     };
     PanelBodyChart.prototype.checkUpdateChart = function () {
         var i = 0, count = 0;
@@ -192,9 +204,9 @@ var PanelBodyChart = (function () {
             providers: [panel_body_chart_provider_1.PanelBodyChartProvider]
         }),
         core_1.View({
-            template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n\n                <div class=\"clearfix sub-header\">\n                    <ul class=\"atexoui-list right horizontal\">\n                        <li *ngFor=\"#type of chartTypes; #i=index\"\n                            [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                            <a href=\"#\"\n                               [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                               (click)=\"updateChartType(i)\">\n                                <span class=\"{{type.icons}}\"></span>\n                                {{type.type}}\n                            </a>\n                        </li>\n                    </ul>\n                </div>\n\n                <panel-body-charts-js\n                        [data]=\"chartData\"\n                        [labels]=\"chartLabels\"\n                        [options]=\"chartOptions\"\n                        [series]=\"chartSeries\"\n                        [colours]=\"chartColours\"\n                        [legend]=\"chartLegend\"\n                        [chartType]=\"chartType\"\n                        (chartHover)=\"chartHovered($event)\"\n                        (chartClick)=\"chartClicked($event)\"></panel-body-charts-js>\n\n\n                <ul class=\"atexoui-list center horizontal\">\n                    <li *ngFor=\"#serie of chartSeries; #i=index\"\n                        [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                        <a href=\"#\"\n                           (click)=\"updateChartData(i)\"\n                           [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                            <span [ngStyle]=\"{ 'color': chartSeriesColors[i] }\" class=\"fa fa-eye\"\n                                  [ngClass]=\"{ 'fa-eye': chartSeriesActive[i], 'fa-eye-slash': !chartSeriesActive[i] }\"></span>\n                            {{serie}}\n                        </a>\n                    </li>\n                </ul>\n\n            </div>\n            ",
+            template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n\n                <div class=\"clearfix sub-header\" *ngIf=\"xhrLoadResouce\">\n                    <ul class=\"atexoui-list right horizontal\">\n                        <li *ngFor=\"#type of chartTypes; #i=index\"\n                            [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                            <a href=\"#\"\n                               [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                               (click)=\"updateChartType(i)\">\n                                <span class=\"{{type.icons}}\"></span>\n                                {{type.type}}\n                            </a>\n                        </li>\n                    </ul>\n                </div>\n                <atexo-spinner *ngIf=\"xhrStatusDisplaySpinner\"></atexo-spinner>\n\n                <panel-body-charts-js\n                        *ngIf=\"xhrStatusDisplayResources\"\n                        [data]=\"chartData\"\n                        [labels]=\"chartLabels\"\n                        [options]=\"chartOptions\"\n                        [series]=\"chartSeries\"\n                        [colours]=\"chartColours\"\n                        [legend]=\"chartLegend\"\n                        [chartType]=\"chartType\"\n                        (chartHover)=\"chartHovered($event)\"\n                        (chartClick)=\"chartClicked($event)\"></panel-body-charts-js>\n\n                <div class=\"error\" *ngIf=\"xhrStatusDisplayError\">\n                    <p class=\"text-danger text-center\"><strong>Donn\u00E9es temporairement indisponible</strong></p>\n                </div>\n\n\n                <ul class=\"atexoui-list center horizontal\">\n                    <li *ngFor=\"#serie of chartSeries; #i=index\"\n                        [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                        <a href=\"#\"\n                           (click)=\"updateChartData(i)\"\n                           [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                            <span [ngStyle]=\"{ 'color': chartSeriesColors[i] }\" class=\"fa fa-eye\"\n                                  [ngClass]=\"{ 'fa-eye': chartSeriesActive[i], 'fa-eye-slash': !chartSeriesActive[i] }\"></span>\n                            {{serie}}\n                        </a>\n                    </li>\n                </ul>\n\n            </div>\n            ",
             pipes: [atexo_pipe_1.ToClassPipe],
-            directives: [atexo_charts_component_1.AtexoChartsJs]
+            directives: [atexo_charts_component_1.AtexoChartsJs, atexo_spinner_component_1.AtexoSpinner]
         }), 
         __metadata('design:paramtypes', [panel_body_chart_provider_1.PanelBodyChartProvider])
     ], PanelBodyChart);

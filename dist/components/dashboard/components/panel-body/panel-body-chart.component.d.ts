@@ -2,6 +2,9 @@ import { PanelBodyChartProvider } from './providers/panel-body-chart.provider';
 export declare class PanelBodyChart {
     panelBodyObj: any;
     panelBodyChartProvider: PanelBodyChartProvider;
+    xhrStatusDisplaySpinner: boolean;
+    xhrStatusDisplayResources: boolean;
+    xhrStatusDisplayError: boolean;
     private chartData;
     private chartDataOld;
     private chartDataArray;
@@ -20,7 +23,7 @@ export declare class PanelBodyChart {
     private ngOnInit();
     private ngAfterViewInit();
     panelBodyChartServiceGetOptions(chart: any): void;
-    panelBodyChartServiceGetData(url: any): void;
+    panelBodyChartServiceGetData(panelBodyObj: any): void;
     private checkUpdateChart();
     updateChartData(i?: number): boolean;
     private activeChartSerie(i?);
