@@ -6,6 +6,7 @@ import {isPresent} from 'angular2/src/facade/lang';
 import {ToClassPipe} from '../../../../common/pipe/atexo.pipe';
 
 import {PanelBodySearchProvider} from './providers/panel-body-search.provider';
+import {AtexoSpinner} from '../../../../common/components/atexo-spinner.component';
 
 
 @Component({
@@ -32,6 +33,7 @@ import {PanelBodySearchProvider} from './providers/panel-body-search.provider';
                                        (focus)="quickSearchDisplay(true)"
                                        title="Recherche rapide par mots clés, intitulé ou objet"
                                 >
+
                                 <span class="input-group-btn">
                                     <button type="button"
                                             class="btn btn-default btn-sm quick-search-btn"
@@ -47,12 +49,14 @@ import {PanelBodySearchProvider} from './providers/panel-body-search.provider';
                                    *ngIf="items.length"
                                    (click)="quickSearchClear()"></a>
 
+                                   <atexo-spinner class="quick-search-spinner" *ngIf="displayQuickSearchSpinner"></atexo-spinner>
+
                                 <div class="quick-search-result" *ngIf="display">
                                     <div class="list-group">
                                         <a *ngFor="#item of items; #i=index"
                                            href="{{item.url}}"
                                            class="list-group-item">
-                                            {{item.title}}
+                                           {{item.title}}
                                         </a>
                                     </div>
                                 </div>
@@ -63,7 +67,8 @@ import {PanelBodySearchProvider} from './providers/panel-body-search.provider';
                 </form>
             </div>
             `,
-    pipes: [ToClassPipe]
+    pipes: [ToClassPipe],
+    directives: [AtexoSpinner]
 })
 export class PanelBodySearch {
 
@@ -76,6 +81,7 @@ export class PanelBodySearch {
     q:string;
     display:boolean;
     focusClass:boolean;
+    displayQuickSearchSpinner:boolean;
 
 
     constructor(panelBodySearchProvider:PanelBodySearchProvider) {
@@ -84,6 +90,7 @@ export class PanelBodySearch {
         this.panelBodySearchProvider = panelBodySearchProvider;
         this.q = '';
         this.display = false;
+        this.displayQuickSearchSpinner = false;
     }
 
     ngOnInit() {
@@ -122,13 +129,15 @@ export class PanelBodySearch {
 
         if (this.q) {
             var arraySearch = {
-                motsClefs: this.q
+                motClef: this.q
             };
+            this.displayQuickSearchSpinner = true;
             this.panelBodySearchProvider.all(this.panelBodyObj.urlData, arraySearch).subscribe((res:Response) => {
 
                 if (res.status === 200) {
                     this.items = res.json();
                     this.quickSearchDisplay();
+                    this.displayQuickSearchSpinner = false;
                 }
             });
         } else {

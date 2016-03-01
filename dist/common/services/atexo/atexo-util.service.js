@@ -163,7 +163,6 @@ var RequestHeader = (function () {
         this.header = new http_1.Headers();
     }
     RequestHeader.prototype.setHeaderParams = function (data) {
-        console.log(data);
         if (!lang_1.isPresent(data)) {
             return;
         }
@@ -171,8 +170,6 @@ var RequestHeader = (function () {
             if (lang_1.isJsObject(data)) {
                 for (var item in data) {
                     if (data.hasOwnProperty(item)) {
-                        console.log(item);
-                        console.log(data[item]);
                         this.header.append(item, data[item]);
                     }
                 }
@@ -277,6 +274,9 @@ var Json = (function () {
     Json.prototype.getResult = function () {
         return this.result;
     };
+    Json.prototype.getOrdered = function () {
+        return this.ordered;
+    };
     Json.prototype.getArrayResult = function () {
         return this.arrayResult;
     };
@@ -287,10 +287,17 @@ var Json = (function () {
         this.easting = easting;
         this.setEastingArray();
     };
-    Json.prototype.getOrdered = function () {
-        return this.ordered;
-    };
     Json.prototype.setEastingArray = function () {
+        return true;
+    };
+    Json.prototype.getAbscissa = function () {
+        return this.abscissa;
+    };
+    Json.prototype.setAbscissa = function (abscissa) {
+        this.abscissa = abscissa;
+        this.setAbscissaArray();
+    };
+    Json.prototype.setAbscissaArray = function () {
         return true;
     };
     Json.prototype.checkPropertyValue = function (arrayJson, property, value) {

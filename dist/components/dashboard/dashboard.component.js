@@ -73,6 +73,7 @@ var Dashboard = (function () {
         return true;
     };
     Dashboard.prototype.initConfig = function () {
+        atexo_constant_1.AtexoRestConstant.baseUrl = this.config.json.baseUrl;
         atexo_constant_1.AtexoRestConstant.request.panel.all.url = this.config.json.panel;
         atexo_constant_1.AtexoRestConstant.request.alert.all.url = this.config.json.alert;
     };

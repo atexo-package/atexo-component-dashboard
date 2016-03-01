@@ -25,15 +25,17 @@ import {AtexoSpinner} from '../../../../common/components/atexo-spinner.componen
     template: `
             <div class="{{ panelBodyObj.type.category | toClass}}">
 
-                <div class="clearfix sub-header" *ngIf="xhrLoadResouce">
+                <div class="clearfix sub-header" *ngIf="xhrStatusDisplayResources">
                     <ul class="atexoui-list right horizontal">
                         <li *ngFor="#type of chartTypes; #i=index"
                             [ngClass]="{ available: chartTypes[i].active, disabled: !chartTypes[i].active }">
                             <a href="#"
                                [ngClass]="{ available: chartTypes[i].active, disabled: !chartTypes[i].active }"
-                               (click)="updateChartType(i)">
+                               (click)="updateChartType(i)"
+                               title="{{type.name}}"
+                               name="{{type.name}}">
                                 <span class="{{type.icons}}"></span>
-                                {{type.type}}
+
                             </a>
                         </li>
                     </ul>
@@ -100,19 +102,7 @@ export class PanelBodyChart {
     private chartLegend:boolean = false;
     private chartType:string = 'Line';
     private chartTypes:Array<any> = [];
-    private easting:Array<any> = [
-        'janvier',
-        'février',
-        'mars',
-        'avril',
-        'mai',
-        'juin',
-        'juillet',
-        'août',
-        'septembre',
-        'octobre',
-        'novembre',
-        'décembre'];
+    private easting:Array<any> = [];
 
     constructor(panelBodyChartProvider:PanelBodyChartProvider) {
         this.panelBodyChartProvider = panelBodyChartProvider;
@@ -155,8 +145,8 @@ export class PanelBodyChart {
         }
 
         // Set Chart Easting
-        if (isPresent(chart.easting) && !isBlank(chart.easting)) {
-            this.easting = chart.easting;
+        if (isPresent(chart.eastingArray) && !isBlank(chart.eastingArray)) {
+            this.easting = chart.eastingArray;
         }
 
     }
@@ -183,7 +173,7 @@ export class PanelBodyChart {
                         this.chartDataArray
                     );
 
-                    jsonInstance.groupByProperty(['annee', 'mois', 'count']);
+                    jsonInstance.groupByProperty([panelBodyObj.chart.axes.groupBy, panelBodyObj.chart.axes.easting, panelBodyObj.chart.axes.abscissa]);
 
                     this.chartData = jsonInstance.getArrayResult();
                     this.chartDataOld = this.chartData;

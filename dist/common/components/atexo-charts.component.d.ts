@@ -37,5 +37,6 @@ export declare class AtexoChartsJs {
     getChartBuilder(ctx: any, data: Array<any>, options: any): any;
     getDataObject(label: string, value: any): any;
     getChartData(labels: any, dataObject: any): any;
+    getChartLabel(series: any, labels: any): any;
     private refresh();
 }

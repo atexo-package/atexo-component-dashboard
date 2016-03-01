@@ -38,7 +38,7 @@ import {AtexoSpinner} from '../../../../common/components/atexo-spinner.componen
                             <div class="body">
 
                                 <div class="content">
-                                    <p>{{article.content | trancate:120}}</p>
+                                    <p>{{article.content_text | trancate:120}}</p>
                                 </div>
 
                                 <footer class="footer">
@@ -93,10 +93,10 @@ import {AtexoSpinner} from '../../../../common/components/atexo-spinner.componen
                         <div class="body">
 
                             <div class="content">
-                                <p>{{articleSelected.content}}</p>
+                                <div [innerHTML]="articleSelected.content"></div>
                             </div>
 
-                            <footer class="footer">
+                            <footer class="footer" *ngIf="">
                                 <div class="links"
                                      *ngIf="articleSelected.links.length">
                                     <a href="{{link.url}}"

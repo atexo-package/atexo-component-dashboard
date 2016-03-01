@@ -272,13 +272,25 @@ var AtexoChartsJs = (function () {
             return dataObject;
         }
     };
+    AtexoChartsJs.prototype.getChartLabel = function (series, labels) {
+        if (this.chartType === 'Line'
+            || this.chartType === 'Bar'
+            || this.chartType === 'Radar') {
+            return series;
+        }
+        if (this.chartType === 'Pie'
+            || this.chartType === 'Doughnut'
+            || this.chartType === 'PolarArea') {
+            return labels;
+        }
+    };
     AtexoChartsJs.prototype.refresh = function () {
         this.ngOnDestroy();
         var dataset = [];
         for (var i = 0; i < this.data.length; i++) {
             var colourDesc = [this.getRandomInt(0, 255), this.getRandomInt(0, 255), this.getRandomInt(0, 255)];
             var colour = i < this.colours.length ? this.colours[i] : this.defaultsColours[i] || this.getColour(colourDesc);
-            var data_1 = Object.assign(colour, this.getDataObject(this.series[i] || this.labels[i], this.data[i]));
+            var data_1 = Object.assign(colour, this.getDataObject(this.getChartLabel(this.series[i], this.labels[i]), this.data[i]));
             dataset.push(data_1);
         }
         var data = this.getChartData(this.labels, dataset);

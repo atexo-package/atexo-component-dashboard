@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('angular2/core');
+var lang_1 = require('angular2/src/facade/lang');
 var Convert = (function () {
     function Convert() {
         this.strDelimiter = ';';
@@ -26,12 +27,14 @@ var Convert = (function () {
         return Convert.instance;
     };
     Convert.prototype.cvsToJson = function (csv, strDelimiter) {
-        var lines = csv.split('\n');
+        var lines = csv.split('\n'), linesLength = (lines[lines.length - 1] === '') ? lines.length - 1 : lines.length;
+        if (lang_1.isPresent(strDelimiter)) {
+            this.strDelimiter = strDelimiter;
+        }
         this.arrData = [];
-        this.arrProperty = lines[0].split(';');
-        for (var i = 1; i < lines.length; i++) {
-            var obj = {};
-            var currentline = lines[i].split(';');
+        this.arrProperty = this.getArrProperty(lines[0]);
+        for (var i = 1; i < linesLength; i++) {
+            var obj = {}, currentline = lines[i].split(this.strDelimiter);
             for (var j = 0; j < this.arrProperty.length; j++) {
                 obj[this.arrProperty[j]] = currentline[j];
             }
@@ -43,8 +46,13 @@ var Convert = (function () {
     Convert.prototype.getArrayData = function () {
         return this.arrData;
     };
-    Convert.prototype.getArrProperty = function () {
-        return this.arrProperty;
+    Convert.prototype.getArrProperty = function (lineProperty) {
+        var arrProperty = [];
+        arrProperty = lineProperty.split(this.strDelimiter);
+        if (arrProperty[arrProperty.length - 1] === '') {
+            arrProperty.pop();
+        }
+        return this.arrProperty = arrProperty;
     };
     Convert.isCreating = false;
     Convert = __decorate([

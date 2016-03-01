@@ -33,19 +33,7 @@ var PanelBodyChart = (function () {
         this.chartLegend = false;
         this.chartType = 'Line';
         this.chartTypes = [];
-        this.easting = [
-            'janvier',
-            'février',
-            'mars',
-            'avril',
-            'mai',
-            'juin',
-            'juillet',
-            'août',
-            'septembre',
-            'octobre',
-            'novembre',
-            'décembre'];
+        this.easting = [];
         this.panelBodyChartProvider = panelBodyChartProvider;
         for (var i = 0; i < this.chartSeries.length; i++) {
             this.chartSeriesColors.push(this.chartColoursOld[i].strokeColor);
@@ -76,8 +64,8 @@ var PanelBodyChart = (function () {
             }
             this.updateChartType(i);
         }
-        if (lang_1.isPresent(chart.easting) && !lang_1.isBlank(chart.easting)) {
-            this.easting = chart.easting;
+        if (lang_1.isPresent(chart.eastingArray) && !lang_1.isBlank(chart.eastingArray)) {
+            this.easting = chart.eastingArray;
         }
     };
     PanelBodyChart.prototype.panelBodyChartServiceGetData = function (panelBodyObj) {
@@ -90,7 +78,7 @@ var PanelBodyChart = (function () {
                 var jsonInstance = atexo_service_1.Util.getInstance().Json();
                 jsonInstance.setEasting(_this.easting);
                 jsonInstance.getByProperty(_this.chartDataArray);
-                jsonInstance.groupByProperty(['annee', 'mois', 'count']);
+                jsonInstance.groupByProperty([panelBodyObj.chart.axes.groupBy, panelBodyObj.chart.axes.easting, panelBodyObj.chart.axes.abscissa]);
                 _this.chartData = jsonInstance.getArrayResult();
                 _this.chartDataOld = _this.chartData;
                 _this.chartLabels = jsonInstance.getEasting();
@@ -204,7 +192,7 @@ var PanelBodyChart = (function () {
             providers: [panel_body_chart_provider_1.PanelBodyChartProvider]
         }),
         core_1.View({
-            template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n\n                <div class=\"clearfix sub-header\" *ngIf=\"xhrLoadResouce\">\n                    <ul class=\"atexoui-list right horizontal\">\n                        <li *ngFor=\"#type of chartTypes; #i=index\"\n                            [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                            <a href=\"#\"\n                               [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                               (click)=\"updateChartType(i)\">\n                                <span class=\"{{type.icons}}\"></span>\n                                {{type.type}}\n                            </a>\n                        </li>\n                    </ul>\n                </div>\n                <atexo-spinner *ngIf=\"xhrStatusDisplaySpinner\"></atexo-spinner>\n\n                <panel-body-charts-js\n                        *ngIf=\"xhrStatusDisplayResources\"\n                        [data]=\"chartData\"\n                        [labels]=\"chartLabels\"\n                        [options]=\"chartOptions\"\n                        [series]=\"chartSeries\"\n                        [colours]=\"chartColours\"\n                        [legend]=\"chartLegend\"\n                        [chartType]=\"chartType\"\n                        (chartHover)=\"chartHovered($event)\"\n                        (chartClick)=\"chartClicked($event)\"></panel-body-charts-js>\n\n                <div class=\"error\" *ngIf=\"xhrStatusDisplayError\">\n                    <p class=\"text-danger text-center\"><strong>Donn\u00E9es temporairement indisponible</strong></p>\n                </div>\n\n\n                <ul class=\"atexoui-list center horizontal\">\n                    <li *ngFor=\"#serie of chartSeries; #i=index\"\n                        [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                        <a href=\"#\"\n                           (click)=\"updateChartData(i)\"\n                           [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                            <span [ngStyle]=\"{ 'color': chartSeriesColors[i] }\" class=\"fa fa-eye\"\n                                  [ngClass]=\"{ 'fa-eye': chartSeriesActive[i], 'fa-eye-slash': !chartSeriesActive[i] }\"></span>\n                            {{serie}}\n                        </a>\n                    </li>\n                </ul>\n\n            </div>\n            ",
+            template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n\n                <div class=\"clearfix sub-header\" *ngIf=\"xhrStatusDisplayResources\">\n                    <ul class=\"atexoui-list right horizontal\">\n                        <li *ngFor=\"#type of chartTypes; #i=index\"\n                            [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                            <a href=\"#\"\n                               [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                               (click)=\"updateChartType(i)\"\n                               title=\"{{type.name}}\"\n                               name=\"{{type.name}}\">\n                                <span class=\"{{type.icons}}\"></span>\n\n                            </a>\n                        </li>\n                    </ul>\n                </div>\n                <atexo-spinner *ngIf=\"xhrStatusDisplaySpinner\"></atexo-spinner>\n\n                <panel-body-charts-js\n                        *ngIf=\"xhrStatusDisplayResources\"\n                        [data]=\"chartData\"\n                        [labels]=\"chartLabels\"\n                        [options]=\"chartOptions\"\n                        [series]=\"chartSeries\"\n                        [colours]=\"chartColours\"\n                        [legend]=\"chartLegend\"\n                        [chartType]=\"chartType\"\n                        (chartHover)=\"chartHovered($event)\"\n                        (chartClick)=\"chartClicked($event)\"></panel-body-charts-js>\n\n                <div class=\"error\" *ngIf=\"xhrStatusDisplayError\">\n                    <p class=\"text-danger text-center\"><strong>Donn\u00E9es temporairement indisponible</strong></p>\n                </div>\n\n\n                <ul class=\"atexoui-list center horizontal\">\n                    <li *ngFor=\"#serie of chartSeries; #i=index\"\n                        [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                        <a href=\"#\"\n                           (click)=\"updateChartData(i)\"\n                           [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                            <span [ngStyle]=\"{ 'color': chartSeriesColors[i] }\" class=\"fa fa-eye\"\n                                  [ngClass]=\"{ 'fa-eye': chartSeriesActive[i], 'fa-eye-slash': !chartSeriesActive[i] }\"></span>\n                            {{serie}}\n                        </a>\n                    </li>\n                </ul>\n\n            </div>\n            ",
             pipes: [atexo_pipe_1.ToClassPipe],
             directives: [atexo_charts_component_1.AtexoChartsJs, atexo_spinner_component_1.AtexoSpinner]
         }), 

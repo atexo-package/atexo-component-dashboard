@@ -25,7 +25,6 @@ export class PanelBodyChartProvider {
             search: Util.getInstance().RequestOptions().setSearchParams(_search)
         });
 
-        console.log(options);
         var req = new Request(options);
         return this.http.request(req);
     }

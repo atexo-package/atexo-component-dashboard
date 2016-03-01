@@ -24,9 +24,11 @@ import {PanelBodyListProvider} from './providers/panel-body-list.provider';
                             [ngClass]="{ available: displayTypes[i].active, disabled: !displayTypes[i].active }">
                             <a href="#"
                                [ngClass]="{ available: displayTypes[i].active, disabled: !displayTypes[i].active }"
-                               (click)="updateDisplayType(i)">
+                               (click)="updateDisplayType(i)"
+                               title="{{displayType.type}}"
+                               name="{{displayType.type}}">
                                 <span class="{{displayType.icons}}"></span>
-                                {{displayType.type}}
+
                             </a>
                         </li>
                     </ul>
@@ -125,9 +127,13 @@ export class PanelBodyList {
                 let i:number = 0;
 
                 this.items.forEach((obj) => {
+                    obj['active'] = (obj.status.toUpperCase() === 'CLOS') ? 0 : 1;
                     this.chartData.push(obj.count);
                     this.chartLabels.push(obj.status.replace('En cours - ', ''));
                     this.chartOptions = {responsive: true, animateRotate: true};
+                    if (AtexoColorChartConstant[i] === undefined) {
+                        i = 0;
+                    }
                     this.chartColors.push(AtexoColorChartConstant[i].color);
                     i++;
                 });

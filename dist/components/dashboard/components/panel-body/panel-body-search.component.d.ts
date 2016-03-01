@@ -8,6 +8,7 @@ export declare class PanelBodySearch {
     q: string;
     display: boolean;
     focusClass: boolean;
+    displayQuickSearchSpinner: boolean;
     constructor(panelBodySearchProvider: PanelBodySearchProvider);
     ngOnInit(): boolean;
     quickSearch(): void;

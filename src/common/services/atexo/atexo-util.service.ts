@@ -185,15 +185,12 @@ class RequestHeader {
     }
 
     setHeaderParams(data?:Object):Headers {
-        console.log(data);
         if (!isPresent(data)) {
             return;
         } else {
             if (isJsObject(data)) {
                 for (var item in data) {
                     if (data.hasOwnProperty(item)) {
-                        console.log(item);
-                        console.log(data[item]);
                         this.header.append(item, data[item]);
                     }
                 }
@@ -235,8 +232,11 @@ class Json {
     public arrayResult:Array<any>;
     public easting:Array<any>;
     public eastingArray:Array<any>;
+    public abscissa:Array<any>;
+    public abscissaArray:Array<any>;
     public ordered:Array<any>;
     public orderedArray:Array<any>;
+
 
     constructor() {
         return this;
@@ -317,6 +317,7 @@ class Json {
 
         this.arrayResult = arrReturn;
         this.ordered = arrOrdered;
+
         return arrReturn;
     }
 
@@ -347,6 +348,10 @@ class Json {
         return this.result;
     }
 
+    public getOrdered() {
+        return this.ordered;
+    }
+
     public getArrayResult():Array<number> {
         return this.arrayResult;
     }
@@ -360,10 +365,6 @@ class Json {
         this.setEastingArray();
     }
 
-    public getOrdered() {
-        return this.ordered;
-    }
-
     public setEastingArray() {
         /*this.easting.map(function (row) {
          this.setEastingArray[row] = 0;
@@ -371,6 +372,18 @@ class Json {
         return true;
     }
 
+    public getAbscissa():Array<string> {
+        return this.abscissa;
+    }
+
+    public setAbscissa(abscissa:Array<any>) {
+        this.abscissa = abscissa;
+        this.setAbscissaArray();
+    }
+
+    public setAbscissaArray() {
+        return true;
+    }
 
     private checkPropertyValue(arrayJson:Object, property:Array<any>, value:Array<any>) {
         let i:number = 0,

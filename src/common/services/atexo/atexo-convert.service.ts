@@ -6,6 +6,7 @@
  */
 
 import {Injectable} from 'angular2/core';
+import {isPresent, isBlank} from 'angular2/src/facade/lang';
 
 @Injectable()
 export class Convert {
@@ -16,7 +17,7 @@ export class Convert {
     private strDelimiter:string = ';';
     private arrData:Array<any>;
     private jsonData:String;
-    private arrProperty:Array<string> = [];
+    private arrProperty:Array<any> = [];
 
     constructor() {
         if (!Convert.isCreating) {
@@ -34,16 +35,21 @@ export class Convert {
     }
 
     public cvsToJson(csv:string, strDelimiter?:string) {
-        var lines = csv.split('\n');
+        let lines = csv.split('\n'),
+            linesLength = (lines[lines.length - 1] === '') ? lines.length - 1 : lines.length;
+
+        if (isPresent(strDelimiter)) {
+            this.strDelimiter = strDelimiter;
+        }
 
         this.arrData = [];
 
-        this.arrProperty = lines[0].split(';');
+        this.arrProperty = this.getArrProperty(lines[0]);
 
-        for (var i = 1; i < lines.length; i++) {
+        for (let i = 1; i < linesLength; i++) {
 
-            var obj = {};
-            var currentline = lines[i].split(';');
+            let obj = {},
+                currentline = lines[i].split(this.strDelimiter);
 
             for (var j = 0; j < this.arrProperty.length; j++) {
                 obj[this.arrProperty[j]] = currentline[j];
@@ -62,8 +68,13 @@ export class Convert {
         return this.arrData;
     }
 
-    public getArrProperty() {
-        return this.arrProperty;
+    public getArrProperty(lineProperty:String) {
+        let arrProperty:Array<String> = [];
+        arrProperty = lineProperty.split(this.strDelimiter);
+        if (arrProperty[arrProperty.length - 1] === '') {
+            arrProperty.pop();
+        }
+        return this.arrProperty = arrProperty;
     }
 
 }

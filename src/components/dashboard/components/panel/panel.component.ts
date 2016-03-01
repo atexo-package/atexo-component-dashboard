@@ -13,7 +13,8 @@ import {ToClassPipe} from '../../../../common/pipe/atexo.pipe';
 @View({
     template: `
             <div class="panel panel-default bloc-toggle"
-                 [ngClass]="{close: closeClass}">
+                 [ngClass]="{close: closeClass}"
+                 *ngIf="panelObj.active">
                 <!-- Header -->
                 <header class="panel-header header panel-heading ui-sortable-handle">
                     <div class="row">
@@ -66,10 +67,25 @@ import {ToClassPipe} from '../../../../common/pipe/atexo.pipe';
                             <div class="pull-left">
                             </div>
                             <div class="pull-right">
-                                <a href="" *ngIf="panelObj.footer.list[0].type === 'LINK'">
-                                    {{panelObj.footer.list[0].title}}
-                                    <i class="glyphicon glyphicon-chevron-right" aria-hidden="true"></i>
-                                </a>
+                                <div class="footer-item" *ngFor="#item of panelObj.footer.list; #i=index">
+                                    <a [href]="item.link"
+                                    title="{{item.title}}"
+                                    name="{{item.title}}"
+                                    *ngIf="(item.type === 'LINK') && item.link">
+                                        {{item.title}}
+                                        <i class="glyphicon glyphicon-chevron-right" aria-hidden="true"></i>
+                                    </a>
+
+                                    <a [href]="item.link"
+                                    class="btn btn-sm"
+                                    title="{{item.title}}"
+                                    name="{{item.title}}"
+                                    *ngIf="item.type === 'BUTTON'">
+                                        {{item.title}}
+                                        <i class="glyphicon glyphicon-chevron-right" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+
                             </div>
                         </div>
                     </div>

@@ -331,6 +331,20 @@ export class AtexoChartsJs {
 
     }
 
+    getChartLabel(series:any, labels:any) {
+        if (this.chartType === 'Line'
+            || this.chartType === 'Bar'
+            || this.chartType === 'Radar') {
+            return series;
+        }
+        if (this.chartType === 'Pie'
+            || this.chartType === 'Doughnut'
+            || this.chartType === 'PolarArea') {
+            return labels;
+        }
+
+    }
+
     private refresh() {
 
         this.ngOnDestroy();
@@ -342,10 +356,12 @@ export class AtexoChartsJs {
             let colour = i < this.colours.length ? this.colours[i] : this.defaultsColours[i] || this.getColour(colourDesc);
 
             let data:any = (<any>Object).assign(colour,
-                this.getDataObject(this.series[i] || this.labels[i], this.data[i]));
+                this.getDataObject(
+                    this.getChartLabel(this.series[i], this.labels[i]),
+                    this.data[i]
+                ));
 
             dataset.push(data);
-
         }
         let data:any = this.getChartData(this.labels, dataset);
 

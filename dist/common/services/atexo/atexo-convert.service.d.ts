@@ -9,5 +9,5 @@ export declare class Convert {
     static getInstance(): Convert;
     cvsToJson(csv: string, strDelimiter?: string): String;
     getArrayData(): any[];
-    getArrProperty(): string[];
+    getArrProperty(lineProperty: String): String[];
 }

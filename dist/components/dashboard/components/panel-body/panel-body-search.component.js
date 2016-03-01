@@ -12,6 +12,7 @@ var core_1 = require('angular2/core');
 var lang_1 = require('angular2/src/facade/lang');
 var atexo_pipe_1 = require('../../../../common/pipe/atexo.pipe');
 var panel_body_search_provider_1 = require('./providers/panel-body-search.provider');
+var atexo_spinner_component_1 = require('../../../../common/components/atexo-spinner.component');
 var PanelBodySearch = (function () {
     function PanelBodySearch(panelBodySearchProvider) {
         this.items = [];
@@ -19,6 +20,7 @@ var PanelBodySearch = (function () {
         this.panelBodySearchProvider = panelBodySearchProvider;
         this.q = '';
         this.display = false;
+        this.displayQuickSearchSpinner = false;
     }
     PanelBodySearch.prototype.ngOnInit = function () {
         return true;
@@ -53,12 +55,14 @@ var PanelBodySearch = (function () {
         var _this = this;
         if (this.q) {
             var arraySearch = {
-                motsClefs: this.q
+                motClef: this.q
             };
+            this.displayQuickSearchSpinner = true;
             this.panelBodySearchProvider.all(this.panelBodyObj.urlData, arraySearch).subscribe(function (res) {
                 if (res.status === 200) {
                     _this.items = res.json();
                     _this.quickSearchDisplay();
+                    _this.displayQuickSearchSpinner = false;
                 }
             });
         }
@@ -78,8 +82,9 @@ var PanelBodySearch = (function () {
             providers: [panel_body_search_provider_1.PanelBodySearchProvider]
         }),
         core_1.View({
-            template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n                <form role=\"form\" class=\"form-horizontal\">\n                    <div class=\"form-group form-group-sm\">\n                        <div class=\"col-sm-12\">\n                            <div class=\"input-group quick-search\" [ngClass]=\"{focus: focusClass}\">\n                                <input type=\"text\"\n                                       placeholder=\"Mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                       class=\"form-control input-sm quick-search-input\"\n                                       autocomplete=\"off\"\n                                       id=\"quickSearch\"\n                                       [(ngModel)]=\"q\"\n                                       (keyup)=\"quickSearch()\"\n                                       (keyup.escape)=\"quickSearchClear()\"\n                                       (blur)=\"quickSearchDisplay(false)\"\n                                       (focus)=\"quickSearchDisplay(true)\"\n                                       title=\"Recherche rapide par mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                >\n                                <span class=\"input-group-btn\">\n                                    <button type=\"button\"\n                                            class=\"btn btn-default btn-sm quick-search-btn\"\n                                            id=\"quickSearchBtn\">\n                                        <i class=\"fa fa-search fa-flip-horizontal\"></i>\n                                        <span class=\"sr-only\">Lancer la recherche</span>\n                                    </button>\n                                </span>\n                                <a href=\"\"\n                                   title=\"Annuler\"\n                                   name=\"Annuler\"\n                                   class=\"fa fa-close quick-search-clear\"\n                                   *ngIf=\"items.length\"\n                                   (click)=\"quickSearchClear()\"></a>\n\n                                <div class=\"quick-search-result\" *ngIf=\"display\">\n                                    <div class=\"list-group\">\n                                        <a *ngFor=\"#item of items; #i=index\"\n                                           href=\"{{item.url}}\"\n                                           class=\"list-group-item\">\n                                            {{item.title}}\n                                        </a>\n                                    </div>\n                                </div>\n                            </div>\n\n                        </div>\n                    </div>\n                </form>\n            </div>\n            ",
-            pipes: [atexo_pipe_1.ToClassPipe]
+            template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n                <form role=\"form\" class=\"form-horizontal\">\n                    <div class=\"form-group form-group-sm\">\n                        <div class=\"col-sm-12\">\n                            <div class=\"input-group quick-search\" [ngClass]=\"{focus: focusClass}\">\n                                <input type=\"text\"\n                                       placeholder=\"Mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                       class=\"form-control input-sm quick-search-input\"\n                                       autocomplete=\"off\"\n                                       id=\"quickSearch\"\n                                       [(ngModel)]=\"q\"\n                                       (keyup)=\"quickSearch()\"\n                                       (keyup.escape)=\"quickSearchClear()\"\n                                       (blur)=\"quickSearchDisplay(false)\"\n                                       (focus)=\"quickSearchDisplay(true)\"\n                                       title=\"Recherche rapide par mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                >\n\n                                <span class=\"input-group-btn\">\n                                    <button type=\"button\"\n                                            class=\"btn btn-default btn-sm quick-search-btn\"\n                                            id=\"quickSearchBtn\">\n                                        <i class=\"fa fa-search fa-flip-horizontal\"></i>\n                                        <span class=\"sr-only\">Lancer la recherche</span>\n                                    </button>\n                                </span>\n                                <a href=\"\"\n                                   title=\"Annuler\"\n                                   name=\"Annuler\"\n                                   class=\"fa fa-close quick-search-clear\"\n                                   *ngIf=\"items.length\"\n                                   (click)=\"quickSearchClear()\"></a>\n\n                                   <atexo-spinner class=\"quick-search-spinner\" *ngIf=\"displayQuickSearchSpinner\"></atexo-spinner>\n\n                                <div class=\"quick-search-result\" *ngIf=\"display\">\n                                    <div class=\"list-group\">\n                                        <a *ngFor=\"#item of items; #i=index\"\n                                           href=\"{{item.url}}\"\n                                           class=\"list-group-item\">\n                                           {{item.title}}\n                                        </a>\n                                    </div>\n                                </div>\n                            </div>\n\n                        </div>\n                    </div>\n                </form>\n            </div>\n            ",
+            pipes: [atexo_pipe_1.ToClassPipe],
+            directives: [atexo_spinner_component_1.AtexoSpinner]
         }), 
         __metadata('design:paramtypes', [panel_body_search_provider_1.PanelBodySearchProvider])
     ], PanelBodySearch);

@@ -11,7 +11,6 @@ import {Alert} from './components/alert/alert.component';
 import {Panel} from './components/panel/panel.component';
 
 
-
 @Component({
     selector: 'dashboard',
     providers: [PanelProvider]
@@ -109,6 +108,7 @@ export class Dashboard {
     }
 
     private initConfig() {
+        AtexoRestConstant.baseUrl = this.config.json.baseUrl;
         AtexoRestConstant.request.panel.all.url = this.config.json.panel;
         AtexoRestConstant.request.alert.all.url = this.config.json.alert;
     }

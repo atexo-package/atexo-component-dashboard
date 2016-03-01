@@ -138,6 +138,15 @@ define("common/constants/atexo/atexo-colors-chart.constant", ["require", "export
             color: 'rgba(142, 68, 173,1)',
             highlight: 'rgba(142, 68, 173,0.8)'
         }, {
+            fillColor: 'rgba(88, 214, 141,0.2)',
+            strokeColor: 'rgba(88, 214, 141,1)',
+            pointColor: 'rgba(88, 214, 141,1)',
+            pointStrokeColor: '#fff',
+            pointHighlightFill: '#fff',
+            pointHighlightStroke: 'rgba(88, 214, 141,0.8)',
+            color: 'rgba(88, 214, 141,1)',
+            highlight: 'rgba(88, 214, 141,0.8)'
+        }, {
             fillColor: 'rgba(255, 193, 7,0.2)',
             strokeColor: 'rgba(255, 193, 7,1)',
             pointColor: 'rgba(255, 193, 7,1)',
@@ -155,6 +164,51 @@ define("common/constants/atexo/atexo-colors-chart.constant", ["require", "export
             pointHighlightStroke: 'rgba(13, 71, 161,0.8)',
             color: 'rgba(13, 71, 161,1)',
             highlight: 'rgba(13, 71, 161,0.8)'
+        }, {
+            fillColor: 'rgba(165, 105, 189,0.2)',
+            strokeColor: 'rgba(165, 105, 189,1)',
+            pointColor: 'rgba(165, 105, 189,1)',
+            pointStrokeColor: '#fff',
+            pointHighlightFill: '#fff',
+            pointHighlightStroke: 'rgba(165, 105, 189,0.8)',
+            color: 'rgba(165, 105, 189,1)',
+            highlight: 'rgba(165, 105, 189,0.8)'
+        }, {
+            fillColor: 'rgba(142, 68, 173,0.2)',
+            strokeColor: 'rgba(142, 68, 173,1)',
+            pointColor: 'rgba(142, 68, 173,1)',
+            pointStrokeColor: '#fff',
+            pointHighlightFill: '#fff',
+            pointHighlightStroke: 'rgba(142, 68, 173,0.8)',
+            color: 'rgba(142, 68, 173,1)',
+            highlight: 'rgba(142, 68, 173,0.8)'
+        }, {
+            fillColor: 'rgba(171, 178, 185,0.2)',
+            strokeColor: 'rgba(171, 178, 185,1)',
+            pointColor: 'rgba(171, 178, 185,1)',
+            pointStrokeColor: '#fff',
+            pointHighlightFill: '#fff',
+            pointHighlightStroke: 'rgba(171, 178, 185,0.8)',
+            color: 'rgba(171, 178, 185,1)',
+            highlight: 'rgba(171, 178, 185,0.8)'
+        }, {
+            fillColor: 'rgba(255, 160, 122,0.2)',
+            strokeColor: 'rgba(255, 160, 122,1)',
+            pointColor: 'rgba(255, 160, 122,1)',
+            pointStrokeColor: '#fff',
+            pointHighlightFill: '#fff',
+            pointHighlightStroke: 'rgba(255, 160, 122,0.8)',
+            color: 'rgba(255, 160, 122,1)',
+            highlight: 'rgba(255, 160, 122,0.8)'
+        }, {
+            fillColor: 'rgba(250, 128, 114,0.2)',
+            strokeColor: 'rgba(250, 128, 114,1)',
+            pointColor: 'rgba(250, 128, 114,1)',
+            pointStrokeColor: '#fff',
+            pointHighlightFill: '#fff',
+            pointHighlightStroke: 'rgba(250, 128, 114,0.8)',
+            color: 'rgba(250, 128, 114,1)',
+            highlight: 'rgba(250, 128, 114,0.8)'
         }];
 });
 define("common/constants/atexo/atexo-chart.constant", ["require", "exports"], function (require, exports) {
@@ -325,7 +379,6 @@ define("common/services/atexo/atexo-util.service", ["require", "exports", 'angul
             this.header = new http_2.Headers();
         }
         RequestHeader.prototype.setHeaderParams = function (data) {
-            console.log(data);
             if (!lang_1.isPresent(data)) {
                 return;
             }
@@ -333,8 +386,6 @@ define("common/services/atexo/atexo-util.service", ["require", "exports", 'angul
                 if (lang_1.isJsObject(data)) {
                     for (var item in data) {
                         if (data.hasOwnProperty(item)) {
-                            console.log(item);
-                            console.log(data[item]);
                             this.header.append(item, data[item]);
                         }
                     }
@@ -439,6 +490,9 @@ define("common/services/atexo/atexo-util.service", ["require", "exports", 'angul
         Json.prototype.getResult = function () {
             return this.result;
         };
+        Json.prototype.getOrdered = function () {
+            return this.ordered;
+        };
         Json.prototype.getArrayResult = function () {
             return this.arrayResult;
         };
@@ -449,10 +503,17 @@ define("common/services/atexo/atexo-util.service", ["require", "exports", 'angul
             this.easting = easting;
             this.setEastingArray();
         };
-        Json.prototype.getOrdered = function () {
-            return this.ordered;
-        };
         Json.prototype.setEastingArray = function () {
+            return true;
+        };
+        Json.prototype.getAbscissa = function () {
+            return this.abscissa;
+        };
+        Json.prototype.setAbscissa = function (abscissa) {
+            this.abscissa = abscissa;
+            this.setAbscissaArray();
+        };
+        Json.prototype.setAbscissaArray = function () {
             return true;
         };
         Json.prototype.checkPropertyValue = function (arrayJson, property, value) {
@@ -508,7 +569,7 @@ define("common/services/atexo/atexo-progress.service", ["require", "exports", 'a
     }());
     exports.Progress = Progress;
 });
-define("common/services/atexo/atexo-convert.service", ["require", "exports", 'angular2/core'], function (require, exports, core_3) {
+define("common/services/atexo/atexo-convert.service", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang'], function (require, exports, core_3, lang_2) {
     "use strict";
     var Convert = (function () {
         function Convert() {
@@ -527,12 +588,14 @@ define("common/services/atexo/atexo-convert.service", ["require", "exports", 'an
             return Convert.instance;
         };
         Convert.prototype.cvsToJson = function (csv, strDelimiter) {
-            var lines = csv.split('\n');
+            var lines = csv.split('\n'), linesLength = (lines[lines.length - 1] === '') ? lines.length - 1 : lines.length;
+            if (lang_2.isPresent(strDelimiter)) {
+                this.strDelimiter = strDelimiter;
+            }
             this.arrData = [];
-            this.arrProperty = lines[0].split(';');
-            for (var i = 1; i < lines.length; i++) {
-                var obj = {};
-                var currentline = lines[i].split(';');
+            this.arrProperty = this.getArrProperty(lines[0]);
+            for (var i = 1; i < linesLength; i++) {
+                var obj = {}, currentline = lines[i].split(this.strDelimiter);
                 for (var j = 0; j < this.arrProperty.length; j++) {
                     obj[this.arrProperty[j]] = currentline[j];
                 }
@@ -544,8 +607,13 @@ define("common/services/atexo/atexo-convert.service", ["require", "exports", 'an
         Convert.prototype.getArrayData = function () {
             return this.arrData;
         };
-        Convert.prototype.getArrProperty = function () {
-            return this.arrProperty;
+        Convert.prototype.getArrProperty = function (lineProperty) {
+            var arrProperty = [];
+            arrProperty = lineProperty.split(this.strDelimiter);
+            if (arrProperty[arrProperty.length - 1] === '') {
+                arrProperty.pop();
+            }
+            return this.arrProperty = arrProperty;
         };
         Convert.isCreating = false;
         Convert = __decorate([
@@ -590,13 +658,13 @@ define("components/dashboard/providers/panel.provider", ["require", "exports", '
     }());
     exports.PanelProvider = PanelProvider;
 });
-define("common/pipe/atexo/atexo-class.pipe", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang'], function (require, exports, core_5, lang_2) {
+define("common/pipe/atexo/atexo-class.pipe", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang'], function (require, exports, core_5, lang_3) {
     "use strict";
     var ToClassPipe = (function () {
         function ToClassPipe() {
         }
         ToClassPipe.prototype.transform = function (value, args) {
-            this.postClass = lang_2.isPresent(args[0]) ? args[0] : 'panel-body-type-';
+            this.postClass = lang_3.isPresent(args[0]) ? args[0] : 'panel-body-type-';
             return this.postClass.concat(value.toLowerCase());
         };
         ToClassPipe = __decorate([
@@ -607,17 +675,17 @@ define("common/pipe/atexo/atexo-class.pipe", ["require", "exports", 'angular2/co
     }());
     exports.ToClassPipe = ToClassPipe;
 });
-define("common/pipe/atexo/atexo-timestamp-to-date.pipe", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang'], function (require, exports, core_6, lang_3) {
+define("common/pipe/atexo/atexo-timestamp-to-date.pipe", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang'], function (require, exports, core_6, lang_4) {
     "use strict";
     var ToDatePipe = (function () {
         function ToDatePipe() {
         }
         ToDatePipe.prototype.transform = function (value) {
-            if (lang_3.isNumber(value)) {
+            if (lang_4.isNumber(value)) {
                 return new Date(value * 1000);
             }
             else {
-                if (lang_3.isString(value)) {
+                if (lang_4.isString(value)) {
                     return new Date(value);
                 }
             }
@@ -630,14 +698,14 @@ define("common/pipe/atexo/atexo-timestamp-to-date.pipe", ["require", "exports", 
     }());
     exports.ToDatePipe = ToDatePipe;
 });
-define("common/pipe/atexo/atexo-trancate.pipe", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang'], function (require, exports, core_7, lang_4) {
+define("common/pipe/atexo/atexo-trancate.pipe", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang'], function (require, exports, core_7, lang_5) {
     "use strict";
     var TrancatePipe = (function () {
         function TrancatePipe() {
         }
         TrancatePipe.prototype.transform = function (value, args) {
-            this.length = lang_4.isPresent(args[0]) ? args[0] : 100;
-            this.placeholderEnd = lang_4.isPresent(args[1]) ? args[1] : ' ...';
+            this.length = lang_5.isPresent(args[0]) ? args[0] : 100;
+            this.placeholderEnd = lang_5.isPresent(args[1]) ? args[1] : ' ...';
             return value.substring(0, this.length).concat(this.placeholderEnd);
         };
         TrancatePipe = __decorate([
@@ -1013,13 +1081,25 @@ define("common/components/atexo-charts.component", ["require", "exports", 'angul
                 return dataObject;
             }
         };
+        AtexoChartsJs.prototype.getChartLabel = function (series, labels) {
+            if (this.chartType === 'Line'
+                || this.chartType === 'Bar'
+                || this.chartType === 'Radar') {
+                return series;
+            }
+            if (this.chartType === 'Pie'
+                || this.chartType === 'Doughnut'
+                || this.chartType === 'PolarArea') {
+                return labels;
+            }
+        };
         AtexoChartsJs.prototype.refresh = function () {
             this.ngOnDestroy();
             var dataset = [];
             for (var i = 0; i < this.data.length; i++) {
                 var colourDesc = [this.getRandomInt(0, 255), this.getRandomInt(0, 255), this.getRandomInt(0, 255)];
                 var colour = i < this.colours.length ? this.colours[i] : this.defaultsColours[i] || this.getColour(colourDesc);
-                var data_1 = Object.assign(colour, this.getDataObject(this.series[i] || this.labels[i], this.data[i]));
+                var data_1 = Object.assign(colour, this.getDataObject(this.getChartLabel(this.series[i], this.labels[i]), this.data[i]));
                 dataset.push(data_1);
             }
             var data = this.getChartData(this.labels, dataset);
@@ -1123,9 +1203,13 @@ define("components/dashboard/components/panel-body/panel-body-list.component", [
                     _this.items = res.json();
                     var i_1 = 0;
                     _this.items.forEach(function (obj) {
+                        obj['active'] = (obj.status.toUpperCase() === 'CLOS') ? 0 : 1;
                         _this.chartData.push(obj.count);
                         _this.chartLabels.push(obj.status.replace('En cours - ', ''));
                         _this.chartOptions = { responsive: true, animateRotate: true };
+                        if (atexo_constant_4.AtexoColorChartConstant[i_1] === undefined) {
+                            i_1 = 0;
+                        }
                         _this.chartColors.push(atexo_constant_4.AtexoColorChartConstant[i_1].color);
                         i_1++;
                     });
@@ -1142,7 +1226,7 @@ define("components/dashboard/components/panel-body/panel-body-list.component", [
                 providers: [panel_body_list_provider_1.PanelBodyListProvider]
             }),
             core_13.View({
-                template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass }}\">\n\n                <div class=\"clearfix sub-header\">\n                    <ul class=\"atexoui-list right horizontal\">\n                        <li *ngFor=\"#displayType of displayTypes; #i=index\"\n                            [ngClass]=\"{ available: displayTypes[i].active, disabled: !displayTypes[i].active }\">\n                            <a href=\"#\"\n                               [ngClass]=\"{ available: displayTypes[i].active, disabled: !displayTypes[i].active }\"\n                               (click)=\"updateDisplayType(i)\">\n                                <span class=\"{{displayType.icons}}\"></span>\n                                {{displayType.type}}\n                            </a>\n                        </li>\n                    </ul>\n                </div>\n\n                <div class=\"display-table list-group\" role=\"list\" *ngIf=\"displayTypes[0].active\">\n                    <a class=\"list-group-item\" href=\"{{item.url}}\" role=\"listitem\"\n                       *ngFor=\"#item of items; #i=index\">\n                        {{item.status}}\n                        <span class=\"badge\" [ngClass]=\"{ 'badge-success': item.active }\">{{item.count}}</span>\n                    </a>\n                </div>\n\n                <div class=\"display-chart chart chart-pie\" *ngIf=\"displayTypes[1].active\">\n                    <panel-body-charts-js\n                            [data]=\"chartData\"\n                            [labels]=\"chartLabels\"\n                            [chartType]=\"chartType\"\n                            [options]=\"chartOptions\"\n                            (chartHover)=\"chartHovered($event)\"\n                            (chartClick)=\"chartClicked($event)\"></panel-body-charts-js>\n\n                    <ul class=\"atexoui-list list-unstyled\">\n                        <li *ngFor=\"#label of chartLabels; #i=index\">\n                            <span [ngStyle]=\"{ 'color': chartColors[i] }\" class=\"fa fa-tag\"></span>\n                            <strong class=\"count\">{{chartData[i]}}</strong> : {{label}}\n                        </li>\n                    </ul>\n                </div>\n\n            </div>\n            ",
+                template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass }}\">\n\n                <div class=\"clearfix sub-header\">\n                    <ul class=\"atexoui-list right horizontal\">\n                        <li *ngFor=\"#displayType of displayTypes; #i=index\"\n                            [ngClass]=\"{ available: displayTypes[i].active, disabled: !displayTypes[i].active }\">\n                            <a href=\"#\"\n                               [ngClass]=\"{ available: displayTypes[i].active, disabled: !displayTypes[i].active }\"\n                               (click)=\"updateDisplayType(i)\"\n                               title=\"{{displayType.type}}\"\n                               name=\"{{displayType.type}}\">\n                                <span class=\"{{displayType.icons}}\"></span>\n\n                            </a>\n                        </li>\n                    </ul>\n                </div>\n\n                <div class=\"display-table list-group\" role=\"list\" *ngIf=\"displayTypes[0].active\">\n                    <a class=\"list-group-item\" href=\"{{item.url}}\" role=\"listitem\"\n                       *ngFor=\"#item of items; #i=index\">\n                        {{item.status}}\n                        <span class=\"badge\" [ngClass]=\"{ 'badge-success': item.active }\">{{item.count}}</span>\n                    </a>\n                </div>\n\n                <div class=\"display-chart chart chart-pie\" *ngIf=\"displayTypes[1].active\">\n                    <panel-body-charts-js\n                            [data]=\"chartData\"\n                            [labels]=\"chartLabels\"\n                            [chartType]=\"chartType\"\n                            [options]=\"chartOptions\"\n                            (chartHover)=\"chartHovered($event)\"\n                            (chartClick)=\"chartClicked($event)\"></panel-body-charts-js>\n\n                    <ul class=\"atexoui-list list-unstyled\">\n                        <li *ngFor=\"#label of chartLabels; #i=index\">\n                            <span [ngStyle]=\"{ 'color': chartColors[i] }\" class=\"fa fa-tag\"></span>\n                            <strong class=\"count\">{{chartData[i]}}</strong> : {{label}}\n                        </li>\n                    </ul>\n                </div>\n\n            </div>\n            ",
                 pipes: [atexo_pipe_2.ToClassPipe],
                 directives: [atexo_charts_component_1.AtexoChartsJs]
             }), 
@@ -1152,22 +1236,21 @@ define("components/dashboard/components/panel-body/panel-body-list.component", [
     }());
     exports.PanelBodyList = PanelBodyList;
 });
-define("components/dashboard/components/panel-body/providers/panel-body-chart.provider", ["require", "exports", 'angular2/core', 'angular2/http', "common/services/atexo.service", "common/constants/atexo.constant", 'angular2/src/facade/lang'], function (require, exports, core_14, http_6, atexo_service_3, atexo_constant_5, lang_5) {
+define("components/dashboard/components/panel-body/providers/panel-body-chart.provider", ["require", "exports", 'angular2/core', 'angular2/http', "common/services/atexo.service", "common/constants/atexo.constant", 'angular2/src/facade/lang'], function (require, exports, core_14, http_6, atexo_service_3, atexo_constant_5, lang_6) {
     "use strict";
     var PanelBodyChartProvider = (function () {
         function PanelBodyChartProvider(http) {
             this.http = http;
         }
         PanelBodyChartProvider.prototype.get = function (panelBodyObj) {
-            var _search = (!lang_5.isBlank(panelBodyObj['search'])) ? panelBodyObj['search'] : atexo_constant_5.AtexoRestConstant.request.panel.all.parameter;
-            var _header = (!lang_5.isBlank(panelBodyObj['header'])) ? panelBodyObj['header'] : atexo_constant_5.AtexoRestConstant.request.panel.all.header;
+            var _search = (!lang_6.isBlank(panelBodyObj['search'])) ? panelBodyObj['search'] : atexo_constant_5.AtexoRestConstant.request.panel.all.parameter;
+            var _header = (!lang_6.isBlank(panelBodyObj['header'])) ? panelBodyObj['header'] : atexo_constant_5.AtexoRestConstant.request.panel.all.header;
             var options = new http_6.RequestOptions({
                 method: atexo_constant_5.AtexoRestConstant.request.alert.all.method,
                 headers: atexo_service_3.Util.getInstance().RequestHeader().setHeaderParams(_header),
                 url: panelBodyObj['urlData'],
                 search: atexo_service_3.Util.getInstance().RequestOptions().setSearchParams(_search)
             });
-            console.log(options);
             var req = new http_6.Request(options);
             return this.http.request(req);
         };
@@ -1180,7 +1263,7 @@ define("components/dashboard/components/panel-body/providers/panel-body-chart.pr
     }());
     exports.PanelBodyChartProvider = PanelBodyChartProvider;
 });
-define("components/dashboard/components/panel-body/panel-body-chart.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/constants/atexo.constant", "common/pipe/atexo.pipe", "common/services/atexo.service", "common/components/atexo-charts.component", "components/dashboard/components/panel-body/providers/panel-body-chart.provider", "common/components/atexo-spinner.component"], function (require, exports, core_15, lang_6, atexo_constant_6, atexo_pipe_3, atexo_service_4, atexo_charts_component_2, panel_body_chart_provider_1, atexo_spinner_component_2) {
+define("components/dashboard/components/panel-body/panel-body-chart.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/constants/atexo.constant", "common/pipe/atexo.pipe", "common/services/atexo.service", "common/components/atexo-charts.component", "components/dashboard/components/panel-body/providers/panel-body-chart.provider", "common/components/atexo-spinner.component"], function (require, exports, core_15, lang_7, atexo_constant_6, atexo_pipe_3, atexo_service_4, atexo_charts_component_2, panel_body_chart_provider_1, atexo_spinner_component_2) {
     "use strict";
     var PanelBodyChart = (function () {
         function PanelBodyChart(panelBodyChartProvider) {
@@ -1199,19 +1282,7 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
             this.chartLegend = false;
             this.chartType = 'Line';
             this.chartTypes = [];
-            this.easting = [
-                'janvier',
-                'février',
-                'mars',
-                'avril',
-                'mai',
-                'juin',
-                'juillet',
-                'août',
-                'septembre',
-                'octobre',
-                'novembre',
-                'décembre'];
+            this.easting = [];
             this.panelBodyChartProvider = panelBodyChartProvider;
             for (var i = 0; i < this.chartSeries.length; i++) {
                 this.chartSeriesColors.push(this.chartColoursOld[i].strokeColor);
@@ -1228,10 +1299,10 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
         };
         PanelBodyChart.prototype.panelBodyChartServiceGetOptions = function (chart) {
             var _this = this;
-            if (lang_6.isPresent(chart.type) && chart.type !== '') {
+            if (lang_7.isPresent(chart.type) && chart.type !== '') {
                 this.chartType = chart.type;
             }
-            if (lang_6.isPresent(chart.types) && !lang_6.isBlank(chart.types)) {
+            if (lang_7.isPresent(chart.types) && !lang_7.isBlank(chart.types)) {
                 this.chartTypes = chart.types;
                 var i = atexo_service_4.Util.getInstance().arrayObjectFindIndex(this.chartTypes, function (e) {
                     return e.type === _this.chartType;
@@ -1242,8 +1313,8 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
                 }
                 this.updateChartType(i);
             }
-            if (lang_6.isPresent(chart.easting) && !lang_6.isBlank(chart.easting)) {
-                this.easting = chart.easting;
+            if (lang_7.isPresent(chart.eastingArray) && !lang_7.isBlank(chart.eastingArray)) {
+                this.easting = chart.eastingArray;
             }
         };
         PanelBodyChart.prototype.panelBodyChartServiceGetData = function (panelBodyObj) {
@@ -1256,7 +1327,7 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
                     var jsonInstance = atexo_service_4.Util.getInstance().Json();
                     jsonInstance.setEasting(_this.easting);
                     jsonInstance.getByProperty(_this.chartDataArray);
-                    jsonInstance.groupByProperty(['annee', 'mois', 'count']);
+                    jsonInstance.groupByProperty([panelBodyObj.chart.axes.groupBy, panelBodyObj.chart.axes.easting, panelBodyObj.chart.axes.abscissa]);
                     _this.chartData = jsonInstance.getArrayResult();
                     _this.chartDataOld = _this.chartData;
                     _this.chartLabels = jsonInstance.getEasting();
@@ -1314,7 +1385,7 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
         };
         PanelBodyChart.prototype.activeChartSerie = function (i) {
             var index = 0;
-            if (lang_6.isPresent(i)) {
+            if (lang_7.isPresent(i)) {
                 index = i;
             }
             for (var j = 0; j < this.chartSeriesActive.length; j++) {
@@ -1349,7 +1420,7 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
         };
         PanelBodyChart.prototype.getChartDataSingle = function (i) {
             var index = 0, arr;
-            if (lang_6.isPresent(i)) {
+            if (lang_7.isPresent(i)) {
                 index = i;
             }
             this.activeChartSerie(index);
@@ -1370,7 +1441,7 @@ define("components/dashboard/components/panel-body/panel-body-chart.component", 
                 providers: [panel_body_chart_provider_1.PanelBodyChartProvider]
             }),
             core_15.View({
-                template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n\n                <div class=\"clearfix sub-header\" *ngIf=\"xhrLoadResouce\">\n                    <ul class=\"atexoui-list right horizontal\">\n                        <li *ngFor=\"#type of chartTypes; #i=index\"\n                            [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                            <a href=\"#\"\n                               [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                               (click)=\"updateChartType(i)\">\n                                <span class=\"{{type.icons}}\"></span>\n                                {{type.type}}\n                            </a>\n                        </li>\n                    </ul>\n                </div>\n                <atexo-spinner *ngIf=\"xhrStatusDisplaySpinner\"></atexo-spinner>\n\n                <panel-body-charts-js\n                        *ngIf=\"xhrStatusDisplayResources\"\n                        [data]=\"chartData\"\n                        [labels]=\"chartLabels\"\n                        [options]=\"chartOptions\"\n                        [series]=\"chartSeries\"\n                        [colours]=\"chartColours\"\n                        [legend]=\"chartLegend\"\n                        [chartType]=\"chartType\"\n                        (chartHover)=\"chartHovered($event)\"\n                        (chartClick)=\"chartClicked($event)\"></panel-body-charts-js>\n\n                <div class=\"error\" *ngIf=\"xhrStatusDisplayError\">\n                    <p class=\"text-danger text-center\"><strong>Donn\u00E9es temporairement indisponible</strong></p>\n                </div>\n\n\n                <ul class=\"atexoui-list center horizontal\">\n                    <li *ngFor=\"#serie of chartSeries; #i=index\"\n                        [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                        <a href=\"#\"\n                           (click)=\"updateChartData(i)\"\n                           [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                            <span [ngStyle]=\"{ 'color': chartSeriesColors[i] }\" class=\"fa fa-eye\"\n                                  [ngClass]=\"{ 'fa-eye': chartSeriesActive[i], 'fa-eye-slash': !chartSeriesActive[i] }\"></span>\n                            {{serie}}\n                        </a>\n                    </li>\n                </ul>\n\n            </div>\n            ",
+                template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n\n                <div class=\"clearfix sub-header\" *ngIf=\"xhrStatusDisplayResources\">\n                    <ul class=\"atexoui-list right horizontal\">\n                        <li *ngFor=\"#type of chartTypes; #i=index\"\n                            [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                            <a href=\"#\"\n                               [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                               (click)=\"updateChartType(i)\"\n                               title=\"{{type.name}}\"\n                               name=\"{{type.name}}\">\n                                <span class=\"{{type.icons}}\"></span>\n\n                            </a>\n                        </li>\n                    </ul>\n                </div>\n                <atexo-spinner *ngIf=\"xhrStatusDisplaySpinner\"></atexo-spinner>\n\n                <panel-body-charts-js\n                        *ngIf=\"xhrStatusDisplayResources\"\n                        [data]=\"chartData\"\n                        [labels]=\"chartLabels\"\n                        [options]=\"chartOptions\"\n                        [series]=\"chartSeries\"\n                        [colours]=\"chartColours\"\n                        [legend]=\"chartLegend\"\n                        [chartType]=\"chartType\"\n                        (chartHover)=\"chartHovered($event)\"\n                        (chartClick)=\"chartClicked($event)\"></panel-body-charts-js>\n\n                <div class=\"error\" *ngIf=\"xhrStatusDisplayError\">\n                    <p class=\"text-danger text-center\"><strong>Donn\u00E9es temporairement indisponible</strong></p>\n                </div>\n\n\n                <ul class=\"atexoui-list center horizontal\">\n                    <li *ngFor=\"#serie of chartSeries; #i=index\"\n                        [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                        <a href=\"#\"\n                           (click)=\"updateChartData(i)\"\n                           [ngClass]=\"{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }\">\n                            <span [ngStyle]=\"{ 'color': chartSeriesColors[i] }\" class=\"fa fa-eye\"\n                                  [ngClass]=\"{ 'fa-eye': chartSeriesActive[i], 'fa-eye-slash': !chartSeriesActive[i] }\"></span>\n                            {{serie}}\n                        </a>\n                    </li>\n                </ul>\n\n            </div>\n            ",
                 pipes: [atexo_pipe_3.ToClassPipe],
                 directives: [atexo_charts_component_2.AtexoChartsJs, atexo_spinner_component_2.AtexoSpinner]
             }), 
@@ -1404,7 +1475,7 @@ define("components/dashboard/components/panel-body/providers/panel-body-search.p
     }());
     exports.PanelBodySearchProvider = PanelBodySearchProvider;
 });
-define("components/dashboard/components/panel-body/panel-body-search.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/pipe/atexo.pipe", "components/dashboard/components/panel-body/providers/panel-body-search.provider"], function (require, exports, core_17, lang_7, atexo_pipe_4, panel_body_search_provider_1) {
+define("components/dashboard/components/panel-body/panel-body-search.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/pipe/atexo.pipe", "components/dashboard/components/panel-body/providers/panel-body-search.provider", "common/components/atexo-spinner.component"], function (require, exports, core_17, lang_8, atexo_pipe_4, panel_body_search_provider_1, atexo_spinner_component_3) {
     "use strict";
     var PanelBodySearch = (function () {
         function PanelBodySearch(panelBodySearchProvider) {
@@ -1413,6 +1484,7 @@ define("components/dashboard/components/panel-body/panel-body-search.component",
             this.panelBodySearchProvider = panelBodySearchProvider;
             this.q = '';
             this.display = false;
+            this.displayQuickSearchSpinner = false;
         }
         PanelBodySearch.prototype.ngOnInit = function () {
             return true;
@@ -1434,7 +1506,7 @@ define("components/dashboard/components/panel-body/panel-body-search.component",
             var _timeOut, _milliseconds = 100;
             clearTimeout(_timeOut);
             _timeOut = setTimeout(function () {
-                if (lang_7.isPresent(display)) {
+                if (lang_8.isPresent(display)) {
                     _this.display = display;
                     _this.focusClass = display;
                 }
@@ -1447,12 +1519,14 @@ define("components/dashboard/components/panel-body/panel-body-search.component",
             var _this = this;
             if (this.q) {
                 var arraySearch = {
-                    motsClefs: this.q
+                    motClef: this.q
                 };
+                this.displayQuickSearchSpinner = true;
                 this.panelBodySearchProvider.all(this.panelBodyObj.urlData, arraySearch).subscribe(function (res) {
                     if (res.status === 200) {
                         _this.items = res.json();
                         _this.quickSearchDisplay();
+                        _this.displayQuickSearchSpinner = false;
                     }
                 });
             }
@@ -1472,8 +1546,9 @@ define("components/dashboard/components/panel-body/panel-body-search.component",
                 providers: [panel_body_search_provider_1.PanelBodySearchProvider]
             }),
             core_17.View({
-                template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n                <form role=\"form\" class=\"form-horizontal\">\n                    <div class=\"form-group form-group-sm\">\n                        <div class=\"col-sm-12\">\n                            <div class=\"input-group quick-search\" [ngClass]=\"{focus: focusClass}\">\n                                <input type=\"text\"\n                                       placeholder=\"Mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                       class=\"form-control input-sm quick-search-input\"\n                                       autocomplete=\"off\"\n                                       id=\"quickSearch\"\n                                       [(ngModel)]=\"q\"\n                                       (keyup)=\"quickSearch()\"\n                                       (keyup.escape)=\"quickSearchClear()\"\n                                       (blur)=\"quickSearchDisplay(false)\"\n                                       (focus)=\"quickSearchDisplay(true)\"\n                                       title=\"Recherche rapide par mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                >\n                                <span class=\"input-group-btn\">\n                                    <button type=\"button\"\n                                            class=\"btn btn-default btn-sm quick-search-btn\"\n                                            id=\"quickSearchBtn\">\n                                        <i class=\"fa fa-search fa-flip-horizontal\"></i>\n                                        <span class=\"sr-only\">Lancer la recherche</span>\n                                    </button>\n                                </span>\n                                <a href=\"\"\n                                   title=\"Annuler\"\n                                   name=\"Annuler\"\n                                   class=\"fa fa-close quick-search-clear\"\n                                   *ngIf=\"items.length\"\n                                   (click)=\"quickSearchClear()\"></a>\n\n                                <div class=\"quick-search-result\" *ngIf=\"display\">\n                                    <div class=\"list-group\">\n                                        <a *ngFor=\"#item of items; #i=index\"\n                                           href=\"{{item.url}}\"\n                                           class=\"list-group-item\">\n                                            {{item.title}}\n                                        </a>\n                                    </div>\n                                </div>\n                            </div>\n\n                        </div>\n                    </div>\n                </form>\n            </div>\n            ",
-                pipes: [atexo_pipe_4.ToClassPipe]
+                template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n                <form role=\"form\" class=\"form-horizontal\">\n                    <div class=\"form-group form-group-sm\">\n                        <div class=\"col-sm-12\">\n                            <div class=\"input-group quick-search\" [ngClass]=\"{focus: focusClass}\">\n                                <input type=\"text\"\n                                       placeholder=\"Mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                       class=\"form-control input-sm quick-search-input\"\n                                       autocomplete=\"off\"\n                                       id=\"quickSearch\"\n                                       [(ngModel)]=\"q\"\n                                       (keyup)=\"quickSearch()\"\n                                       (keyup.escape)=\"quickSearchClear()\"\n                                       (blur)=\"quickSearchDisplay(false)\"\n                                       (focus)=\"quickSearchDisplay(true)\"\n                                       title=\"Recherche rapide par mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                >\n\n                                <span class=\"input-group-btn\">\n                                    <button type=\"button\"\n                                            class=\"btn btn-default btn-sm quick-search-btn\"\n                                            id=\"quickSearchBtn\">\n                                        <i class=\"fa fa-search fa-flip-horizontal\"></i>\n                                        <span class=\"sr-only\">Lancer la recherche</span>\n                                    </button>\n                                </span>\n                                <a href=\"\"\n                                   title=\"Annuler\"\n                                   name=\"Annuler\"\n                                   class=\"fa fa-close quick-search-clear\"\n                                   *ngIf=\"items.length\"\n                                   (click)=\"quickSearchClear()\"></a>\n\n                                   <atexo-spinner class=\"quick-search-spinner\" *ngIf=\"displayQuickSearchSpinner\"></atexo-spinner>\n\n                                <div class=\"quick-search-result\" *ngIf=\"display\">\n                                    <div class=\"list-group\">\n                                        <a *ngFor=\"#item of items; #i=index\"\n                                           href=\"{{item.url}}\"\n                                           class=\"list-group-item\">\n                                           {{item.title}}\n                                        </a>\n                                    </div>\n                                </div>\n                            </div>\n\n                        </div>\n                    </div>\n                </form>\n            </div>\n            ",
+                pipes: [atexo_pipe_4.ToClassPipe],
+                directives: [atexo_spinner_component_3.AtexoSpinner]
             }), 
             __metadata('design:paramtypes', [panel_body_search_provider_1.PanelBodySearchProvider])
         ], PanelBodySearch);
@@ -1616,7 +1691,7 @@ define("components/dashboard/components/panel-body/providers/panel-body-article.
     }());
     exports.PanelBodyArticleProvider = PanelBodyArticleProvider;
 });
-define("components/dashboard/components/panel-body/panel-body-article.component", ["require", "exports", 'angular2/core', "common/pipe/atexo.pipe", "components/dashboard/components/panel-body/providers/panel-body-article.provider", "common/services/atexo.service", "common/components/atexo-spinner.component"], function (require, exports, core_21, atexo_pipe_6, panel_body_article_provider_1, atexo_service_6, atexo_spinner_component_3) {
+define("components/dashboard/components/panel-body/panel-body-article.component", ["require", "exports", 'angular2/core', "common/pipe/atexo.pipe", "components/dashboard/components/panel-body/providers/panel-body-article.provider", "common/services/atexo.service", "common/components/atexo-spinner.component"], function (require, exports, core_21, atexo_pipe_6, panel_body_article_provider_1, atexo_service_6, atexo_spinner_component_4) {
     "use strict";
     var PanelBodyArticle = (function () {
         function PanelBodyArticle(el, panelBodyArticleProvider) {
@@ -1672,9 +1747,9 @@ define("components/dashboard/components/panel-body/panel-body-article.component"
                 providers: [panel_body_article_provider_1.PanelBodyArticleProvider]
             }),
             core_21.View({
-                template: "\n            <div class=\"panel-body-article-wrap {{ panelBodyObj.type.category | toClass}}\">\n\n                <ul class=\"list-unstyled articles article-list\">\n                    <li *ngFor=\"#article of articles; #i=index\">\n\n                        <article class=\"article article-item\"\n                                 *ngIf=\"i < offset\">\n                            <header class=\"header\">\n\n                                <h4 class=\"title\">\n                                    <a href=\"#\"\n                                       title=\"{{article.title}}\">{{article.title}}</a>\n                                    <span class=\"date\">{{article.date | toDate | date}}</span>\n                                </h4>\n\n                            </header>\n\n                            <div class=\"body\">\n\n                                <div class=\"content\">\n                                    <p>{{article.content | trancate:120}}</p>\n                                </div>\n\n                                <footer class=\"footer\">\n                                    <div class=\"links\">\n                                        <a href=\"\"\n                                           (click)=\"selectArticle(article.id)\"\n                                           title=\"lire la suite\">lire la suite</a>\n                                    </div>\n                                </footer>\n\n                            </div>\n\n\n                        </article>\n\n                    </li>\n                    <li *ngIf=\" offset < articles.length \">\n                        <a href=\"\" class=\"atexoui-link center more\"\n                           (click)=\"moreArticles()\">Plus d'actualit\u00E9s</a>\n                    </li>\n                    <li *ngIf=\" offset === articles.length \">\n                        <a href=\"\" class=\"atexoui-link center less\"\n                           (click)=\"lessArticles()\">Moins d'actualit\u00E9s</a>\n                    </li>\n                </ul>\n                <div class=\"article-full-screen\" *ngIf=\"articleSelected\">\n                    <article class=\"article article-selected\">\n                        <header class=\"header\">\n\n                            <div class=\"options row\">\n                                <div class=\"col-md-12\">\n                                    <div class=\"pull-left\">\n                                        <h4 class=\"title\">\n                                            <a href=\"\"\n                                               title=\"{{articleSelected.title}}\">{{articleSelected.title}}</a>\n                                        </h4>\n                                        <span class=\"date\">{{articleSelected.date | toDate | date}}</span>\n                                    </div>\n                                    <div class=\"pull-right\">\n                                        <a href=\"\"\n                                           title=\"Close Article\"\n                                           data-widgster=\"close\" (click)=\"closeSelectArticle()\"\n                                        class=\"btn btn-sm\">\n                                            <i class=\"fa fa-chevron-left\"></i> Retour\n                                        </a>\n                                    </div>\n                                </div>\n                            </div>\n\n                        </header>\n\n                        <div class=\"body\">\n\n                            <div class=\"content\">\n                                <p>{{articleSelected.content}}</p>\n                            </div>\n\n                            <footer class=\"footer\">\n                                <div class=\"links\"\n                                     *ngIf=\"articleSelected.links.length\">\n                                    <a href=\"{{link.url}}\"\n                                       target=\"{{link.target}}\"\n                                       title=\"{{link.title}}\"\n                                       *ngFor=\"#link of articleSelected.links; #i=index\">{{link.title}}</a>\n                                </div>\n                            </footer>\n\n                        </div>\n\n                    </article>\n                </div>\n            </div>\n    ",
+                template: "\n            <div class=\"panel-body-article-wrap {{ panelBodyObj.type.category | toClass}}\">\n\n                <ul class=\"list-unstyled articles article-list\">\n                    <li *ngFor=\"#article of articles; #i=index\">\n\n                        <article class=\"article article-item\"\n                                 *ngIf=\"i < offset\">\n                            <header class=\"header\">\n\n                                <h4 class=\"title\">\n                                    <a href=\"#\"\n                                       title=\"{{article.title}}\">{{article.title}}</a>\n                                    <span class=\"date\">{{article.date | toDate | date}}</span>\n                                </h4>\n\n                            </header>\n\n                            <div class=\"body\">\n\n                                <div class=\"content\">\n                                    <p>{{article.content_text | trancate:120}}</p>\n                                </div>\n\n                                <footer class=\"footer\">\n                                    <div class=\"links\">\n                                        <a href=\"\"\n                                           (click)=\"selectArticle(article.id)\"\n                                           title=\"lire la suite\">lire la suite</a>\n                                    </div>\n                                </footer>\n\n                            </div>\n\n\n                        </article>\n\n                    </li>\n                    <li *ngIf=\" offset < articles.length \">\n                        <a href=\"\" class=\"atexoui-link center more\"\n                           (click)=\"moreArticles()\">Plus d'actualit\u00E9s</a>\n                    </li>\n                    <li *ngIf=\" offset === articles.length \">\n                        <a href=\"\" class=\"atexoui-link center less\"\n                           (click)=\"lessArticles()\">Moins d'actualit\u00E9s</a>\n                    </li>\n                </ul>\n                <div class=\"article-full-screen\" *ngIf=\"articleSelected\">\n                    <article class=\"article article-selected\">\n                        <header class=\"header\">\n\n                            <div class=\"options row\">\n                                <div class=\"col-md-12\">\n                                    <div class=\"pull-left\">\n                                        <h4 class=\"title\">\n                                            <a href=\"\"\n                                               title=\"{{articleSelected.title}}\">{{articleSelected.title}}</a>\n                                        </h4>\n                                        <span class=\"date\">{{articleSelected.date | toDate | date}}</span>\n                                    </div>\n                                    <div class=\"pull-right\">\n                                        <a href=\"\"\n                                           title=\"Close Article\"\n                                           data-widgster=\"close\" (click)=\"closeSelectArticle()\"\n                                        class=\"btn btn-sm\">\n                                            <i class=\"fa fa-chevron-left\"></i> Retour\n                                        </a>\n                                    </div>\n                                </div>\n                            </div>\n\n                        </header>\n\n                        <div class=\"body\">\n\n                            <div class=\"content\">\n                                <div [innerHTML]=\"articleSelected.content\"></div>\n                            </div>\n\n                            <footer class=\"footer\" *ngIf=\"\">\n                                <div class=\"links\"\n                                     *ngIf=\"articleSelected.links.length\">\n                                    <a href=\"{{link.url}}\"\n                                       target=\"{{link.target}}\"\n                                       title=\"{{link.title}}\"\n                                       *ngFor=\"#link of articleSelected.links; #i=index\">{{link.title}}</a>\n                                </div>\n                            </footer>\n\n                        </div>\n\n                    </article>\n                </div>\n            </div>\n    ",
                 pipes: [atexo_pipe_6.ToClassPipe, atexo_pipe_6.ToDatePipe, atexo_pipe_6.TrancatePipe],
-                directives: [atexo_spinner_component_3.AtexoSpinner]
+                directives: [atexo_spinner_component_4.AtexoSpinner]
             }), 
             __metadata('design:paramtypes', [(typeof (_a = typeof core_21.ElementRef !== 'undefined' && core_21.ElementRef) === 'function' && _a) || Object, panel_body_article_provider_1.PanelBodyArticleProvider])
         ], PanelBodyArticle);
@@ -1742,7 +1817,7 @@ define("components/dashboard/components/panel/panel.component", ["require", "exp
                 selector: 'panel'
             }),
             core_23.View({
-                template: "\n            <div class=\"panel panel-default bloc-toggle\"\n                 [ngClass]=\"{close: closeClass}\">\n                <!-- Header -->\n                <header class=\"panel-header header panel-heading ui-sortable-handle\">\n                    <div class=\"row\">\n                        <div class=\"col-md-12\">\n                            <div class=\"pull-left\">\n                                <h3 class=\"panel-title\">\n                                    <i class=\"{{panelObj.icons}}\"></i>\n                                    {{panelObj.title}}\n                                </h3>\n                            </div>\n                            <div class=\"pull-right\">\n                                <div class=\"widget-controls\">\n                                    <a href=\"\"\n                                       data-widgster=\"Collapse\"\n                                       title=\"{{ (panelObj.options.collapse.title !== '')? panelObj.options.collapse.title : 'R\u00E9duire le panneau' }}\"\n                                       (click)=\"collapse()\"\n                                       *ngIf=\"panelObj.options.collapse.active\">\n                                        <i class=\"{{ (panelObj.options.collapse.icons !== '')? panelObj.options.collapse.icons : 'fa fa-minus' }}\"></i>\n                                    </a>\n                                    <a href=\"\"\n                                       data-widgster=\"close\"\n                                       title=\"{{ (panelObj.options.close.title !== '')? panelObj.options.close.title : 'Fermer le panneau' }}\"\n                                       (click)=\"close()\"\n                                       *ngIf=\"panelObj.options.close.active\">\n                                        <i class=\"{{ (panelObj.options.close.icons !== '')? panelObj.options.close.icons : 'fa fa-close' }}\"></i>\n                                    </a>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </header>\n                <!-- End Header -->\n\n                <!-- Body -->\n                <div class=\"panel-body body collapse\"\n                     aria-expanded=\"true\"\n                     [ngClass]=\"{collapse: collapseClass}\">\n                    <panel-body [panelBodyObj]=\"panelObj\"></panel-body>\n                </div>\n                <!-- End Body -->\n\n\n                <!-- Footer -->\n                <footer class=\"panel-footer footer text-right collapse\"\n                        aria-expanded=\"true\"\n                        [ngClass]=\"{collapse: collapseClass}\"\n                        *ngIf=\"panelObj.footer.list.length\">\n                    <div class=\"row\">\n                        <div class=\"col-md-12\">\n                            <div class=\"pull-left\">\n                            </div>\n                            <div class=\"pull-right\">\n                                <a href=\"\" *ngIf=\"panelObj.footer.list[0].type === 'LINK'\">\n                                    {{panelObj.footer.list[0].title}}\n                                    <i class=\"glyphicon glyphicon-chevron-right\" aria-hidden=\"true\"></i>\n                                </a>\n                            </div>\n                        </div>\n                    </div>\n\n                </footer>\n                <!-- End Footer -->\n            </div>\n            ",
+                template: "\n            <div class=\"panel panel-default bloc-toggle\"\n                 [ngClass]=\"{close: closeClass}\"\n                 *ngIf=\"panelObj.active\">\n                <!-- Header -->\n                <header class=\"panel-header header panel-heading ui-sortable-handle\">\n                    <div class=\"row\">\n                        <div class=\"col-md-12\">\n                            <div class=\"pull-left\">\n                                <h3 class=\"panel-title\">\n                                    <i class=\"{{panelObj.icons}}\"></i>\n                                    {{panelObj.title}}\n                                </h3>\n                            </div>\n                            <div class=\"pull-right\">\n                                <div class=\"widget-controls\">\n                                    <a href=\"\"\n                                       data-widgster=\"Collapse\"\n                                       title=\"{{ (panelObj.options.collapse.title !== '')? panelObj.options.collapse.title : 'R\u00E9duire le panneau' }}\"\n                                       (click)=\"collapse()\"\n                                       *ngIf=\"panelObj.options.collapse.active\">\n                                        <i class=\"{{ (panelObj.options.collapse.icons !== '')? panelObj.options.collapse.icons : 'fa fa-minus' }}\"></i>\n                                    </a>\n                                    <a href=\"\"\n                                       data-widgster=\"close\"\n                                       title=\"{{ (panelObj.options.close.title !== '')? panelObj.options.close.title : 'Fermer le panneau' }}\"\n                                       (click)=\"close()\"\n                                       *ngIf=\"panelObj.options.close.active\">\n                                        <i class=\"{{ (panelObj.options.close.icons !== '')? panelObj.options.close.icons : 'fa fa-close' }}\"></i>\n                                    </a>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </header>\n                <!-- End Header -->\n\n                <!-- Body -->\n                <div class=\"panel-body body collapse\"\n                     aria-expanded=\"true\"\n                     [ngClass]=\"{collapse: collapseClass}\">\n                    <panel-body [panelBodyObj]=\"panelObj\"></panel-body>\n                </div>\n                <!-- End Body -->\n\n\n                <!-- Footer -->\n                <footer class=\"panel-footer footer text-right collapse\"\n                        aria-expanded=\"true\"\n                        [ngClass]=\"{collapse: collapseClass}\"\n                        *ngIf=\"panelObj.footer.list.length\">\n                    <div class=\"row\">\n                        <div class=\"col-md-12\">\n                            <div class=\"pull-left\">\n                            </div>\n                            <div class=\"pull-right\">\n                                <div class=\"footer-item\" *ngFor=\"#item of panelObj.footer.list; #i=index\">\n                                    <a [href]=\"item.link\"\n                                    title=\"{{item.title}}\"\n                                    name=\"{{item.title}}\"\n                                    *ngIf=\"(item.type === 'LINK') && item.link\">\n                                        {{item.title}}\n                                        <i class=\"glyphicon glyphicon-chevron-right\" aria-hidden=\"true\"></i>\n                                    </a>\n\n                                    <a [href]=\"item.link\"\n                                    class=\"btn btn-sm\"\n                                    title=\"{{item.title}}\"\n                                    name=\"{{item.title}}\"\n                                    *ngIf=\"item.type === 'BUTTON'\">\n                                        {{item.title}}\n                                        <i class=\"glyphicon glyphicon-chevron-right\" aria-hidden=\"true\"></i>\n                                    </a>\n                                </div>\n\n                            </div>\n                        </div>\n                    </div>\n\n                </footer>\n                <!-- End Footer -->\n            </div>\n            ",
                 directives: [panel_body_component_1.PanelBody],
                 pipes: [atexo_pipe_8.ToClassPipe],
                 encapsulation: core_23.ViewEncapsulation.Emulated
@@ -1754,7 +1829,7 @@ define("components/dashboard/components/panel/panel.component", ["require", "exp
     }());
     exports.Panel = Panel;
 });
-define("components/dashboard/dashboard.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/constants/atexo.constant", "common/services/atexo.service", "components/dashboard/providers/panel.provider", "components/dashboard/components/alert/alert.component", "components/dashboard/components/panel/panel.component"], function (require, exports, core_24, lang_8, atexo_constant_7, atexo_service_7, panel_provider_1, alert_component_1, panel_component_1) {
+define("components/dashboard/dashboard.component", ["require", "exports", 'angular2/core', 'angular2/src/facade/lang', "common/constants/atexo.constant", "common/services/atexo.service", "components/dashboard/providers/panel.provider", "components/dashboard/components/alert/alert.component", "components/dashboard/components/panel/panel.component"], function (require, exports, core_24, lang_9, atexo_constant_7, atexo_service_7, panel_provider_1, alert_component_1, panel_component_1) {
     "use strict";
     var Dashboard = (function () {
         function Dashboard(panelProvider) {
@@ -1776,7 +1851,7 @@ define("components/dashboard/dashboard.component", ["require", "exports", 'angul
             this.panelProvider = panelProvider;
         }
         Dashboard.prototype.ngOnInit = function () {
-            if (!lang_8.isPresent(this.config)) {
+            if (!lang_9.isPresent(this.config)) {
                 console.error('ViewError:  Missing identifier "config"');
             }
             else {
@@ -1814,6 +1889,7 @@ define("components/dashboard/dashboard.component", ["require", "exports", 'angul
             return true;
         };
         Dashboard.prototype.initConfig = function () {
+            atexo_constant_7.AtexoRestConstant.baseUrl = this.config.json.baseUrl;
             atexo_constant_7.AtexoRestConstant.request.panel.all.url = this.config.json.panel;
             atexo_constant_7.AtexoRestConstant.request.alert.all.url = this.config.json.alert;
         };

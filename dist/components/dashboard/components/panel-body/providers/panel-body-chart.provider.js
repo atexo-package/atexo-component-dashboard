@@ -26,7 +26,6 @@ var PanelBodyChartProvider = (function () {
             url: panelBodyObj['urlData'],
             search: atexo_service_1.Util.getInstance().RequestOptions().setSearchParams(_search)
         });
-        console.log(options);
         var req = new http_1.Request(options);
         return this.http.request(req);
     };
