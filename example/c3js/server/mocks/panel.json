@@ -1,0 +1,715 @@
+[
+  {
+    "zone": {
+      "name": "zone-a",
+      "id": "location-zone-a",
+      "location": "zone-a",
+      "custom_class": "location-zone-a col-md-12 col-sm-12 col-xs-12"
+    },
+    "panels": []
+  },
+  {
+    "zone": {
+      "name": "zone-b",
+      "id": "location-zone-b",
+      "location": "zone-b",
+      "custom_class": "location-zone-b col-md-6 col-sm-6 col-xs-6"
+    },
+    "panels": [
+      {
+        "id": 21,
+        "type": {
+          "category": "EDITOR",
+          "subcategory": ""
+        },
+        "active": false,
+        "name": "note",
+        "title": "Bloc Notes",
+        "icons": "fa fa-clipboard",
+        "options": {
+          "toggle": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "close": {
+            "active": true,
+            "icons": "fa fa-close",
+            "title": "Fermer le panneau"
+          },
+          "collapse": {
+            "active": true,
+            "icons": "fa fa-minus",
+            "title": "Réduire le panneau"
+          },
+          "actions": {
+            "active": false,
+            "icons": "",
+            "title": "actions",
+            "list": [
+              {
+                "type": "ITEM",
+                "title": "Action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Another action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Something else here",
+                "fn": ""
+              },
+              {
+                "type": "divider",
+                "title": "",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Separated link",
+                "fn": ""
+              }
+            ]
+          }
+        },
+        "footer": {
+          "list": []
+        },
+        "data": "",
+        "urlData": "http://localhost:5600/server/mocks/blocnotes.json",
+        "location": {
+          "zone": 2,
+          "order": 2
+        }
+      },
+      {
+        "id": 22,
+        "type": {
+          "category": "LIST",
+          "subcategory": ""
+        },
+        "active": true,
+        "name": "consultations",
+        "title": "Mes consultations",
+        "icons": "fa fa-folder",
+        "options": {
+          "toggle": {
+            "active": false,
+            "icons": "",
+            "title": ""
+          },
+          "close": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "collapse": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "actions": {
+            "active": false,
+            "icons": "",
+            "title": "actions",
+            "list": [
+              {
+                "type": "ITEM",
+                "title": "Action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Another action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Something else here",
+                "fn": ""
+              },
+              {
+                "type": "divider",
+                "title": "",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Separated link",
+                "fn": ""
+              }
+            ]
+          }
+        },
+        "footer": {
+          "list": [
+            {
+              "type": "LINK",
+              "title": "Toutes mes consultations",
+              "link": "http://rsem-pic/dashboard/toutes_mes_consultations"
+            }
+          ]
+        },
+        "data": "",
+        "urlData": "http://localhost:5600/server/mocks/consultations.json",
+        "location": {
+          "zone": 2,
+          "order": 1
+        }
+      },
+      {
+        "id": 23,
+        "type": {
+          "category": "LIST",
+          "subcategory": ""
+        },
+        "active": false,
+        "name": "publication",
+        "title": "Dernières publications",
+        "icons": "fa fa-file",
+        "options": {
+          "toggle": {
+            "active": false,
+            "icons": "",
+            "title": ""
+          },
+          "close": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "collapse": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "actions": {
+            "active": false,
+            "icons": "",
+            "title": "actions",
+            "list": [
+              {
+                "type": "ITEM",
+                "title": "Action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Another action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Something else here",
+                "fn": ""
+              },
+              {
+                "type": "divider",
+                "title": "",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Separated link",
+                "fn": ""
+              }
+            ]
+          }
+        },
+        "footer": {
+          "list": [
+            {
+              "type": "LINK",
+              "title": "Voir toutes les publications",
+              "link": ""
+            }
+          ]
+        },
+        "data": "",
+        "urlData": "http://localhost:5600/server/mocks/publications.json",
+        "location": {
+          "zone": 2,
+          "order": 2
+        }
+      },
+      {
+        "id": 33,
+        "type": {
+          "category": "CHART",
+          "subcategory": ""
+        },
+        "active": true,
+        "name": "evolution-procedure",
+        "title": "Mesure de l'activité annuelle",
+        "icons": "fa fa-line-chart",
+        "options": {
+          "toggle": {
+            "active": false,
+            "icons": "",
+            "title": ""
+          },
+          "close": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "collapse": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "actions": {
+            "active": false,
+            "icons": "",
+            "title": "actions",
+            "list": [
+              {
+                "type": "ITEM",
+                "title": "Action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Another action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Something else here",
+                "fn": ""
+              },
+              {
+                "type": "divider",
+                "title": "",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Separated link",
+                "fn": ""
+              }
+            ]
+          }
+        },
+        "footer": {
+          "list": []
+        },
+        "data": "",
+        "urlData": "jasperserver/rest_v2/reports/reports/RSEM___Rapports_module_stats/RSEM_Nb_Cons_Mois.csv",
+        "header": {
+          "Authorization": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4="
+        },
+        "location": {
+          "zone": 3,
+          "order": 1
+        },
+        "chart": {
+          "type": "Line",
+          "types": [
+            {
+              "active": true,
+              "type": "Line",
+              "name": "LineName",
+              "icons": "fa fa-line-chart"
+            },
+            {
+              "active": false,
+              "type": "Bar",
+              "name": "BarName",
+              "icons": "fa fa-bar-chart"
+            }
+          ],
+          "axes": {
+            "easting": "easting",
+            "abscissa":"count",
+            "groupBy":"annee"
+          },
+          "eastingArray": [
+            "janvier",
+            "février",
+            "mars",
+            "avril",
+            "mai",
+            "juin",
+            "juillet",
+            "août",
+            "septembre",
+            "octobre",
+            "novembre",
+            "décembre"
+          ]
+        }
+      },
+      {
+        "id": 34,
+        "type": {
+          "category": "CHART",
+          "subcategory": ""
+        },
+        "active": true,
+        "name": "mesure-allotissement",
+        "title": "Mesure de l'allotissement par type de procédure",
+        "icons": "fa fa-bar-chart",
+        "options": {
+          "toggle": {
+            "active": false,
+            "icons": "",
+            "title": ""
+          },
+          "close": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "collapse": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "actions": {
+            "active": false,
+            "icons": "",
+            "title": "actions",
+            "list": [
+              {
+                "type": "ITEM",
+                "title": "Action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Another action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Something else here",
+                "fn": ""
+              },
+              {
+                "type": "divider",
+                "title": "",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Separated link",
+                "fn": ""
+              }
+            ]
+          }
+        },
+        "footer": {
+          "list": []
+        },
+        "data": "",
+        "urlData": "jasperserver/rest_v2/reports/reports/RSEM___Rapports_module_stats/RSEM_Nb_cons_Allotissement.csv",
+        "header": {
+          "Authorization": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4="
+        },
+        "location": {
+          "zone": 3,
+          "order": 1
+        },
+        "chart": {
+          "type": "Bar",
+          "types": [
+            {
+              "active": false,
+              "type": "Bar",
+              "name": "BarName",
+              "icons": "fa fa-bar-chart"
+            }
+          ],
+          "axes": {
+            "easting": "easting",
+            "abscissa":"count",
+            "groupBy":"annee"
+          },
+          "eastingArray": [
+            "Allotie",
+            "Non Allotie"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "zone": {
+      "name": "zone-c",
+      "id": "location-zone-c",
+      "location": "zone-c",
+      "custom_class": "location-zone-c col-md-6 col-sm-6 col-xs-6"
+    },
+    "panels": [
+      {
+        "id": 31,
+        "type": {
+          "category": "SEARCH",
+          "subcategory": ""
+        },
+        "active": true,
+        "name": "search",
+        "title": "Recherche rapide",
+        "icons": "fa fa-search fa-flip-horizontal",
+        "options": {
+          "toggle": {
+            "active": false,
+            "icons": "",
+            "title": ""
+          },
+          "close": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "collapse": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "actions": {
+            "active": false,
+            "icons": "",
+            "title": "actions",
+            "list": [
+              {
+                "type": "ITEM",
+                "title": "Action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Another action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Something else here",
+                "fn": ""
+              },
+              {
+                "type": "divider",
+                "title": "",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Separated link",
+                "fn": ""
+              }
+            ]
+          }
+        },
+        "footer": {
+          "list": [
+            {
+              "type": "LINK",
+              "title": "Recherche avancée",
+              "link": "tets"
+            }
+          ]
+        },
+        "data": "",
+        "urlData": "api/consultationsByMotClef",
+        "location": {
+          "zone": 3,
+          "order": 1
+        }
+      },
+      {
+        "id": 32,
+        "type": {
+          "category": "ARTICLE",
+          "subcategory": ""
+        },
+        "active": true,
+        "name": "news",
+        "title": "Actualités",
+        "icons": "fa fa-newspaper-o",
+        "options": {
+          "toggle": {
+            "active": false,
+            "icons": "",
+            "title": ""
+          },
+          "close": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "collapse": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "actions": {
+            "active": false,
+            "icons": "",
+            "title": "actions",
+            "list": [
+              {
+                "type": "ITEM",
+                "title": "Action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Another action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Something else here",
+                "fn": ""
+              },
+              {
+                "type": "divider",
+                "title": "",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Separated link",
+                "fn": ""
+              }
+            ]
+          }
+        },
+        "footer": {
+          "list": []
+        },
+        "data": "",
+        "urlData": "http://localhost:5600/server/mocks/news.json",
+        "location": {
+          "zone": 3,
+          "order": 2
+        }
+      },
+      {
+        "id": 34,
+        "type": {
+          "category": "CHARTC3",
+          "subcategory": ""
+        },
+        "active": true,
+        "name": "type-de-procedures",
+        "title": "Typologie des procédures de consulations lancées",
+        "icons": "fa fa-pie-chart",
+        "options": {
+          "toggle": {
+            "active": false,
+            "icons": "",
+            "title": ""
+          },
+          "close": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "collapse": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "actions": {
+            "active": false,
+            "icons": "",
+            "title": "actions",
+            "list": [
+              {
+                "type": "ITEM",
+                "title": "Action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Another action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Something else here",
+                "fn": ""
+              },
+              {
+                "type": "divider",
+                "title": "",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Separated link",
+                "fn": ""
+              }
+            ]
+          }
+        },
+        "footer": {
+          "list": []
+        },
+        "data": "",
+        "urlData": "jasperserver/rest_v2/reports/reports/RSEM___Rapports_module_stats/RSEM_Nb_Type_Proc.csv",
+        "header": {
+          "Authorization": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4="
+        },
+        "location": {
+          "zone": 3,
+          "order": 1
+        },
+        "chart": {
+          "type": "Doughnut",
+          "types": [
+            {
+              "active": true,
+              "type": "Doughnut",
+              "name": "DoughnutName",
+              "icons": "fa fa-circle-o"
+            },
+            {
+              "active": true,
+              "type": "Pie",
+              "name": "PieName",
+              "icons": "fa fa-pie-chart"
+            }
+          ],
+          "axes": {
+            "easting": "easting",
+            "abscissa":"count",
+            "groupBy":"annee"
+          },
+          "eastingArray": [
+            "ACCORD_CADRE",
+            "APPEL_OFFRES_OUVERT",
+            "APPEL_OFFRES_RESTREINT",
+            "APPEL_OFFRES_RESTREINT_MAITRISE_OEUVRE",
+            "CONCOURS_RESTREINT",
+            "PROCEDURE_ADAPTEE",
+            "PROCEDURE_NEGOCIEE"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "zone": {
+      "name": "zone-d",
+      "id": "location-zone-d",
+      "location": "zone-d",
+      "custom_class": "location-zone-d col-md-12 col-sm-12 col-xs-12"
+    },
+    "panels": []
+  },
+  {
+    "zone": {
+      "name": "zone-z",
+      "id": "location-zone-z",
+      "location": "zone-z",
+      "custom_class": "location-zone-z col-md-12 col-sm-12 col-xs-12"
+    },
+    "panels": []
+  }
+]
