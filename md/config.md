@@ -8,7 +8,7 @@ Config
 
 ```json
 exports.panel = [
-    ... ,
+    ,
         {
             /**
              * @type number
