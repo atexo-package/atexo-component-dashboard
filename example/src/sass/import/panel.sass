@@ -1,3 +1,6 @@
+panel
+  display: block
+
 .panel
   &.close
     display: none
@@ -6,6 +9,22 @@
       text-decoration: none
   .sub-header
     margin-bottom: 10px
+
+    .filter-item
+      .control-label
+        margin-bottom: 0
+      .input-select
+        border: 0
+        outline: 0
+        &:focus
+          border: 0
+          outline: 0
+
+
+
+      border: 1px solid #ccc
+      padding: 2px 0 2px 4px
+      margin-top: -2px
 
   .btn-more
     display: block

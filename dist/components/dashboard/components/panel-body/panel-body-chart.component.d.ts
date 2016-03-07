@@ -1,0 +1,35 @@
+import { PanelBodyChartProvider } from './providers/panel-body-chart.provider';
+export declare class PanelBodyChart {
+    panelBodyObj: any;
+    panelBodyChartProvider: PanelBodyChartProvider;
+    xhrStatusDisplaySpinner: boolean;
+    xhrStatusDisplayResources: boolean;
+    xhrStatusDisplayError: boolean;
+    currentYear: string;
+    filterYear: Array<Object>;
+    private convert;
+    private chartData;
+    private chartArrayData;
+    private chartArrayObject;
+    private chartType;
+    private chartConfigData;
+    private chartConfigOption;
+    private chartTypes;
+    private arrayOrdered;
+    private xhrResponse;
+    constructor(panelBodyChartProvider: PanelBodyChartProvider);
+    private ngOnInit();
+    private ngAfterViewInit();
+    chartClicked(e: any): void;
+    chartMouseOvered(e: any): void;
+    chartMouseOuted(e: any): void;
+    preventDefault(event: Event): void;
+    panelBodyChartServiceGetData(): void;
+    private getChartArrayObject();
+    private getChartArrayData();
+    filterChartArrayObject(property: any, value: any): void;
+    private getChartArray(arrayObject);
+    private panelBodyChartServiceGetOptions();
+    panelBodyChartUpdateType(i: any): boolean;
+    panelBodyChartUpdateFilerYear(event: Event, currentYear: string): void;
+}

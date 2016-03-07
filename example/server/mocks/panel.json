@@ -17,11 +17,12 @@
     },
     "panels": [
       {
-        "id": 1,
+        "id": 21,
         "type": {
           "category": "EDITOR",
           "subcategory": ""
         },
+        "active": false,
         "name": "note",
         "title": "Bloc Notes",
         "icons": "fa fa-clipboard",
@@ -85,11 +86,12 @@
         }
       },
       {
-        "id": 2,
+        "id": 22,
         "type": {
           "category": "LIST",
           "subcategory": ""
         },
+        "active": true,
         "name": "consultations",
         "title": "Mes consultations",
         "icons": "fa fa-folder",
@@ -147,7 +149,7 @@
             {
               "type": "LINK",
               "title": "Toutes mes consultations",
-              "link": ""
+              "link": "http://rsem-pic/dashboard/toutes_mes_consultations"
             }
           ]
         },
@@ -159,11 +161,12 @@
         }
       },
       {
-        "id": 5,
+        "id": 23,
         "type": {
           "category": "LIST",
           "subcategory": ""
         },
+        "active": false,
         "name": "publication",
         "title": "Dernières publications",
         "icons": "fa fa-file",
@@ -231,6 +234,321 @@
           "zone": 2,
           "order": 2
         }
+      },
+      {
+        "id": 33,
+        "type": {
+          "category": "CHART",
+          "subcategory": ""
+        },
+        "active": true,
+        "name": "evolution-procedure",
+        "title": "Mesure de l'activité annuelle",
+        "icons": "fa fa-line-chart",
+        "options": {
+          "toggle": {
+            "active": false,
+            "icons": "",
+            "title": ""
+          },
+          "close": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "collapse": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "actions": {
+            "active": false,
+            "icons": "",
+            "title": "actions",
+            "list": [
+              {
+                "type": "ITEM",
+                "title": "Action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Another action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Something else here",
+                "fn": ""
+              },
+              {
+                "type": "divider",
+                "title": "",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Separated link",
+                "fn": ""
+              }
+            ]
+          }
+        },
+        "footer": {
+          "list": []
+        },
+        "data": "",
+        "urlData": "jasperserver/rest_v2/reports/reports/RSEM___Rapports_module_stats/RSEM_Nb_Cons_Mois.csv",
+        "header": {
+          "Authorization": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4="
+        },
+        "location": {
+          "zone": 3,
+          "order": 1
+        },
+        "chart": {
+          "type": "spline",
+          "types": [
+            {
+              "active": true,
+              "type": "spline",
+              "name": "Courbe",
+              "icons": "fa fa-line-chart"
+            },
+            {
+              "active": false,
+              "type": "bar",
+              "name": "Diagramme",
+              "icons": "fa fa-bar-chart"
+            }
+          ],
+          "config": {
+            "data": {
+              "x": "x"
+            },
+            "options": {
+              "grid": {
+                "x": {
+                  "show": true
+                },
+                "y": {
+                  "show": true
+                }
+              },
+              "axis": {
+                "x": {
+                  "type": "category",
+                  "tick": {
+                    "rotate": 0,
+                    "multiline": false
+                  }
+                }
+              }
+            }
+          },
+          "axes": {
+            "easting": {
+              "name": "easting",
+              "array": [
+                "janvier",
+                "février",
+                "mars",
+                "avril",
+                "mai",
+                "juin",
+                "juillet",
+                "août",
+                "septembre",
+                "octobre",
+                "novembre",
+                "décembre"
+              ],
+              "labels": [
+                "janvier",
+                "février",
+                "mars",
+                "avril",
+                "mai",
+                "juin",
+                "juillet",
+                "août",
+                "septembre",
+                "octobre",
+                "novembre",
+                "décembre"
+              ]
+            },
+            "abscissa": {
+              "name": "count"
+            },
+            "ordered": {
+              "name": "annee"
+            },
+            "groupBy": {
+              "name": "annee"
+            },
+            "groups": [],
+            "filter": {
+              "active": false,
+              "name": [],
+              "labels":[],
+              "default": null
+            }
+          }
+        }
+      },
+      {
+        "id": 34,
+        "type": {
+          "category": "CHART",
+          "subcategory": ""
+        },
+        "active": true,
+        "name": "mesure-allotissement",
+        "title": "Mesure de l'allotissement par type de procédure",
+        "icons": "fa fa-bar-chart",
+        "options": {
+          "toggle": {
+            "active": false,
+            "icons": "",
+            "title": ""
+          },
+          "close": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "collapse": {
+            "active": true,
+            "icons": "",
+            "title": ""
+          },
+          "actions": {
+            "active": false,
+            "icons": "",
+            "title": "actions",
+            "list": [
+              {
+                "type": "ITEM",
+                "title": "Action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Another action",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Something else here",
+                "fn": ""
+              },
+              {
+                "type": "divider",
+                "title": "",
+                "fn": ""
+              },
+              {
+                "type": "ITEM",
+                "title": "Separated link",
+                "fn": ""
+              }
+            ]
+          }
+        },
+        "footer": {
+          "list": []
+        },
+        "data": "",
+        "urlData": "jasperserver/rest_v2/reports/reports/RSEM___Rapports_module_stats/RSEM_Nb_cons_Allotissement.csv",
+        "header": {
+          "Authorization": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4="
+        },
+        "location": {
+          "zone": 3,
+          "order": 1
+        },
+        "chart": {
+          "type": "bar",
+          "types": [
+            {
+              "active": true,
+              "type": "bar",
+              "name": "Diagramme",
+              "icons": "fa fa-bar-chart"
+            },
+            {
+              "active": true,
+              "type": "step",
+              "name": "Line",
+              "icons": "fa fa-line-chart"
+            }
+          ],
+          "config": {
+            "data": {
+              "x": "x",
+              "labels": false,
+              "groups": [
+                [
+                  "Allotie",
+                  "Non Allotie",
+                  "Non Définie"
+                ]
+              ]
+            },
+            "options": {
+              "axis": {
+                "x": {
+                  "type": "category",
+                  "tick": {
+                    "rotate": 0,
+                    "multiline": true
+                  },
+                  "height": 40
+                }
+              }
+            }
+          },
+          "axes": {
+            "easting": {
+              "name": "type_procedure",
+              "array": [
+                "ACCORD_CADRE",
+                "APPEL_OFFRES_OUVERT",
+                "APPEL_OFFRES_RESTREINT",
+                "APPEL_OFFRES_RESTREINT_MAITRISE_OEUVRE",
+                "CONCOURS_RESTREINT",
+                "PROCEDURE_ADAPTEE",
+                "PROCEDURE_NEGOCIEE"
+              ],
+              "labels": [
+                "ACC. CADRE",
+                "AO. OUVERT",
+                "AO. RESTREINT",
+                "AO. RESTREINT MAITRISE OEUVRE",
+                "CONCOURS RESTREINT",
+                "Pro. ADAPTEE",
+                "Pro. NEGOCIEE"
+              ]
+            },
+            "abscissa": {
+              "name": "count"
+            },
+            "ordered": {
+              "name": "easting"
+            },
+            "groupBy": {
+              "name": "annee"
+            },
+            "groups": [],
+            "filter": {
+              "active": true,
+              "name": ["annee"],
+              "labels":["année"],
+              "default": "2016"
+            }
+          }
+        }
       }
     ]
   },
@@ -243,11 +561,12 @@
     },
     "panels": [
       {
-        "id": 3,
+        "id": 31,
         "type": {
           "category": "SEARCH",
           "subcategory": ""
         },
+        "active": true,
         "name": "search",
         "title": "Recherche rapide",
         "icons": "fa fa-search fa-flip-horizontal",
@@ -305,23 +624,24 @@
             {
               "type": "LINK",
               "title": "Recherche avancée",
-              "link": ""
+              "link": "tets"
             }
           ]
         },
         "data": "",
-        "urlData": "http://localhost:5600/server/mocks/search.json",
+        "urlData": "api/consultationsByMotClef",
         "location": {
           "zone": 3,
           "order": 1
         }
       },
       {
-        "id": 4,
+        "id": 32,
         "type": {
           "category": "ARTICLE",
           "subcategory": ""
         },
+        "active": true,
         "name": "news",
         "title": "Actualités",
         "icons": "fa fa-newspaper-o",
@@ -385,14 +705,15 @@
         }
       },
       {
-        "id": 6,
+        "id": 34,
         "type": {
           "category": "CHART",
           "subcategory": ""
         },
-        "name": "evolution-procedure",
-        "title": "Evolution nombre de consultations",
-        "icons": "fa fa-bar-chart",
+        "active": true,
+        "name": "type-de-procedures",
+        "title": "Typologie des procédures de consulations lancées",
+        "icons": "fa fa-pie-chart",
         "options": {
           "toggle": {
             "active": false,
@@ -446,216 +767,86 @@
           "list": []
         },
         "data": "",
-        "urlData": "http://localhost:5600/server/mocks/chart.csv",
+        "urlData": "jasperserver/rest_v2/reports/reports/RSEM___Rapports_module_stats/RSEM_Nb_Type_Proc.csv",
+        "header": {
+          "Authorization": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4="
+        },
         "location": {
           "zone": 3,
           "order": 1
         },
         "chart": {
-          "type": "Bar",
+          "type": "donut",
           "types": [
             {
               "active": true,
-              "type": "Line",
-              "icons": "fa fa-line-chart"
-            },
-            {
-              "active": false,
-              "type": "Bar",
-              "icons": "fa fa-bar-chart"
-            }
-          ],
-          "easting": [
-            "janvier",
-            "février",
-            "mars",
-            "avril",
-            "mai",
-            "juin",
-            "juillet",
-            "août",
-            "septembre",
-            "octobre",
-            "novembre",
-            "décembre"
-          ]
-        }
-      },
-      {
-        "id": 6,
-        "type": {
-          "category": "CHART",
-          "subcategory": ""
-        },
-        "name": "evolution-procedure",
-        "title": "Evolution nombre de consultations",
-        "icons": "fa fa-bar-chart",
-        "options": {
-          "toggle": {
-            "active": false,
-            "icons": "",
-            "title": ""
-          },
-          "close": {
-            "active": true,
-            "icons": "",
-            "title": ""
-          },
-          "collapse": {
-            "active": true,
-            "icons": "",
-            "title": ""
-          },
-          "actions": {
-            "active": false,
-            "icons": "",
-            "title": "actions",
-            "list": [
-              {
-                "type": "ITEM",
-                "title": "Action",
-                "fn": ""
-              },
-              {
-                "type": "ITEM",
-                "title": "Another action",
-                "fn": ""
-              },
-              {
-                "type": "ITEM",
-                "title": "Something else here",
-                "fn": ""
-              },
-              {
-                "type": "divider",
-                "title": "",
-                "fn": ""
-              },
-              {
-                "type": "ITEM",
-                "title": "Separated link",
-                "fn": ""
-              }
-            ]
-          }
-        },
-        "footer": {
-          "list": []
-        },
-        "data": "",
-        "urlData": "http://localhost:5600/server/mocks/chart.csv",
-        "location": {
-          "zone": 3,
-          "order": 1
-        },
-        "chart": {
-          "type": "Line",
-          "types": [
-            {
-              "active": true,
-              "type": "Line",
-              "icons": "fa fa-line-chart"
-            },
-            {
-              "active": false,
-              "type": "Bar",
-              "icons": "fa fa-bar-chart"
-            }
-          ],
-          "easting": [
-            "janvier",
-            "février",
-            "mars",
-            "avril",
-            "mai",
-            "juin",
-            "juillet",
-            "août",
-            "septembre"
-          ]
-        }
-      },
-      {
-        "id": 7,
-        "type": {
-          "category": "CHART",
-          "subcategory": ""
-        },
-        "name": "evolution-procedure",
-        "title": "Type de procédures",
-        "icons": "fa fa-bar-chart",
-        "options": {
-          "toggle": {
-            "active": false,
-            "icons": "",
-            "title": ""
-          },
-          "close": {
-            "active": true,
-            "icons": "",
-            "title": ""
-          },
-          "collapse": {
-            "active": true,
-            "icons": "",
-            "title": ""
-          },
-          "actions": {
-            "active": false,
-            "icons": "",
-            "title": "actions",
-            "list": [
-              {
-                "type": "ITEM",
-                "title": "Action",
-                "fn": ""
-              },
-              {
-                "type": "ITEM",
-                "title": "Another action",
-                "fn": ""
-              },
-              {
-                "type": "ITEM",
-                "title": "Something else here",
-                "fn": ""
-              },
-              {
-                "type": "divider",
-                "title": "",
-                "fn": ""
-              },
-              {
-                "type": "ITEM",
-                "title": "Separated link",
-                "fn": ""
-              }
-            ]
-          }
-        },
-        "footer": {
-          "list": []
-        },
-        "data": "",
-        "urlData": "http://localhost:5600/server/mocks/chart.csv",
-        "location": {
-          "zone": 3,
-          "order": 1
-        },
-        "chart": {
-          "type": "Line",
-          "types": [
-            {
-              "active": true,
-              "type": "Doughnut",
+              "type": "donut",
+              "name": "Donut",
               "icons": "fa fa-circle-o"
             },
             {
-              "active": true,
-              "type": "Pie",
+              "active": false,
+              "type": "pie",
+              "name": "Camembert",
               "icons": "fa fa-pie-chart"
             }
-          ]
+          ],
+          "config": {
+            "data": {
+              "x": "x"
+            },
+            "options": {
+              "axis": {
+                "x": {
+                  "type": "category",
+                  "tick": {
+                    "rotate": 75,
+                    "multiline": false
+                  },
+                  "height": 130
+                }
+              }
+            }
+          },
+          "axes": {
+            "easting": {
+              "name": "easting",
+              "array": [
+                "ACCORD_CADRE",
+                "APPEL_OFFRES_OUVERT",
+                "APPEL_OFFRES_RESTREINT",
+                "APPEL_OFFRES_RESTREINT_MAITRISE_OEUVRE",
+                "CONCOURS_RESTREINT",
+                "PROCEDURE_ADAPTEE",
+                "PROCEDURE_NEGOCIEE"
+              ],
+              "labels": [
+                "ACC. CADRE",
+                "AO OUVERT",
+                "AO RESTREINT",
+                "AO RESTREINT MAITRISE OEUVRE",
+                "CON. RESTREINT",
+                "PRO. ADAPTEE",
+                "PRO. NEGOCIEE"
+              ]
+            },
+            "abscissa": {
+              "name": "count"
+            },
+            "ordered": {
+              "name": "easting"
+            },
+            "groupBy": {
+              "name": "annee"
+            },
+            "groups": [],
+            "filter": {
+              "active": true,
+              "name": ["annee"],
+              "labels":["année"],
+              "default": "2016"
+            }
+          }
         }
       }
     ]

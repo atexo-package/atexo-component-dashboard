@@ -1,14 +1,16 @@
-var gulp = require('gulp');
-var sourcemaps = require('gulp-sourcemaps');
-var tsc = require('gulp-typescript');
-var tslint = require('gulp-tslint');
-var rename = require('gulp-rename');
-var concat = require('gulp-concat');
-var tsProject = tsc.createProject('tsconfig.json');
-var config = require('./gulp.config')();
+var gulp =              require('gulp');
+var sourcemaps =        require('gulp-sourcemaps');
+var tsc =               require('gulp-typescript');
+var tslint =            require('gulp-tslint');
+var rename =            require('gulp-rename');
+var concat =            require('gulp-concat');
 
-var browserSync = require('browser-sync');
-var superstatic = require('superstatic');
+var browserSync =       require('browser-sync');
+var superstatic =       require('superstatic');
+var proxyMiddleware =   require('http-proxy-middleware');
+
+var tsProject =         tsc.createProject('tsconfig.json');
+var config =            require('./gulp.config')();
 
 
 gulp.task('libs', function () {
@@ -59,6 +61,9 @@ gulp.task('serve', ['ts-lint', 'compile-ts', 'compile-sass'], function () {
     gulp.watch([config.allTs], ['ts-lint', 'compile-ts']);
     gulp.watch([config.allSass], ['compile-sass']);
 
+    var proxy_jasperserver = proxyMiddleware('/jasperserver', {target: 'http://bi-integ.local-trust.com:8080', logLevel: "debug"});
+    var proxy_rsem = proxyMiddleware('/api', {target: 'http://rsem-pic/epm.passation', logLevel: "debug"});
+
     browserSync({
         port: 5600,
         files: ['./app/**/*.html', './app/**/*.js', './src/**/*.css'],
@@ -69,7 +74,7 @@ gulp.task('serve', ['ts-lint', 'compile-ts', 'compile-sass'], function () {
         reloadDelay: 0,
         server: {
             baseDir: ['./'],
-            middleware: superstatic({debug: false})
+            middleware: [proxy_jasperserver, proxy_rsem]
         }
     });
 });
@@ -104,8 +109,8 @@ gulp.task('build-prod', function () {
     });
 
     gulp
-     .src(['index.html'])
-     .pipe(gulp.dest(PATHS.dist.build));
+        .src(['index.html'])
+        .pipe(gulp.dest(PATHS.dist.build));
 
 });
 
@@ -158,6 +163,9 @@ var PATHS = {
         }, {
             src: 'node_modules/bootstrap/dist/**/*',
             dist: 'bootstrap'
+        }, {
+            src: 'node_modules/d3/d3.min.js',
+            dist: 'd3'
         }
     ]
 };

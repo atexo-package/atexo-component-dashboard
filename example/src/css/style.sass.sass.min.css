@@ -50,6 +50,10 @@
 .atexoui-list.horizontal li a:hover {
   color: #999; }
 
+.atexoui-list.vertical {
+  display: table-row;
+  padding: 0 2px; }
+
 .panel .list-group {
   margin-bottom: 0; }
 
@@ -95,6 +99,9 @@
   width: 40px;
   text-align: center; }
 
+panel {
+  display: block; }
+
 .panel.close {
   display: none; }
 
@@ -103,6 +110,22 @@
 
 .panel .sub-header {
   margin-bottom: 10px; }
+
+.panel .sub-header .filter-item {
+  border: 1px solid #ccc;
+  padding: 2px 0 2px 4px;
+  margin-top: -2px; }
+
+.panel .sub-header .filter-item .control-label {
+  margin-bottom: 0; }
+
+.panel .sub-header .filter-item .input-select {
+  border: 0;
+  outline: 0; }
+
+.panel .sub-header .filter-item .input-select:focus {
+  border: 0;
+  outline: 0; }
 
 .panel .btn-more {
   display: block;
@@ -184,7 +207,8 @@
   top: 47px;
   left: 0;
   right: 0;
-  bottom: 0; }
+  bottom: 0;
+  overflow: auto; }
 
 .article-full-screen .article .title {
   margin-bottom: 5px; }
@@ -216,6 +240,16 @@
 
 .panel-body-type-chart .chart-js-series li {
   display: inline-block; }
+
+.c3-responsive {
+  min-height: 320px;
+  display: block; }
+
+.c3-responsive svg {
+  width: 100%; }
+
+.c3-responsive .c3-grid line {
+  stroke: #efefef; }
 
 .quick-search.focus .quick-search-input,
 .quick-search.focus .quick-search-btn {
@@ -258,12 +292,19 @@
   text-decoration: none;
   color: inherit; }
 
+.quick-search .quick-search-spinner {
+  display: block;
+  position: absolute;
+  top: 5px;
+  right: 33px;
+  z-index: 20; }
+
 .quick-search .quick-search-result {
   position: absolute;
   left: 0;
   top: 100%;
   width: 100%;
-  z-index: 10; }
+  z-index: 100; }
 
 .quick-search .quick-search-result .list-group {
   max-height: 199px;
@@ -281,10 +322,6 @@ body {
   font: 11px Arial, Helvetica, sans-serif;
   color: #3D6BA6; }
 
-panel {
-  display: block;
-  overflow: hidden; }
-
 .portlet-placeholder {
   margin-bottom: 20px;
   height: 50px; }
@@ -299,3 +336,7 @@ panel {
   position: relative;
   text-align: center;
   padding: 0 20px 20px; }
+
+panel-body,
+panel-body-chart {
+  display: block; }
