@@ -10,16 +10,15 @@ import {PanelProvider} from './providers/panel.provider';
 import {Alert} from './components/alert/alert.component';
 import {Panel} from './components/panel/panel.component';
 
-
 @Component({
     selector: 'dashboard',
     providers: [PanelProvider]
 })
 @View({
     template: `
-            <div class="dashboard parent">
+            <div class="dashboard parent container-fluid">
                 <alert></alert>
-                <div class="row wrapper" id="sortable" [ngClass]="{'sortable-start': startsortable}">
+                <div class="wrapper" id="sortable" [ngClass]="{'sortable-start': startsortable}">
                     <div localtion="zone-a"
                          class="column container"
                          [ngClass]="zone.zone.custom_class"

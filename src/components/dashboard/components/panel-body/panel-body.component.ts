@@ -10,7 +10,6 @@ import {PanelBodySearch} from '../panel-body/panel-body-search.component';
 import {PanelBodyEditor} from '../panel-body/panel-body-editor.component';
 import {PanelBodyArticle} from '../panel-body/panel-body-article.component';
 
-
 @Component({
     selector: 'panel-body'
 })

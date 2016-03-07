@@ -73,6 +73,29 @@ export class Util {
         return index;
     }
 
+    /**
+     *
+     * @private newArray
+     * @name newArray
+     * @description Create New Table with many lendth items and value equal to default Value
+     * @param length<number>
+     * @param defaltValue<any>
+     * @returns {Array<any>}
+     */
+    newArray(length:number, defaultValue?:any) {
+        let i:number = 0,
+            _defaultValue:any = 0,
+            arr:Array<any> = new Array(length);
+
+        if (isPresent(defaultValue)) {
+            _defaultValue = defaultValue;
+        }
+        for (i; i < length; i++) {
+            arr[i] = _defaultValue;
+        }
+        return arr;
+    }
+
     Grep(arr:Array<any>, callback:any) {
         let newArr:Array<any> = [],
             len:number = arr.length,
@@ -305,7 +328,7 @@ class Json {
             if (arrOrdered.indexOf(obj[arrayProperty[0]]) === -1) {
                 arrOrdered
                     .push(obj[arrayProperty[0]]);
-                arrReturn[arrOrdered.indexOf(obj[arrayProperty[0]])] = this.newArray(this.easting.length);
+                arrReturn[arrOrdered.indexOf(obj[arrayProperty[0]])] = Util.getInstance().newArray(this.easting.length);
             }
 
 
@@ -319,21 +342,6 @@ class Json {
         this.ordered = arrOrdered;
 
         return arrReturn;
-    }
-
-    private newArray(length:number, defaltValue?:any) {
-        let i:number = 0,
-            _defaultValue:any = 0,
-            arr:Array<any> = new Array(length);
-
-        if (isPresent(defaltValue)) {
-            _defaultValue = defaltValue;
-        }
-        for (i; i < length; i++) {
-            arr[i] = _defaultValue;
-        }
-        return arr;
-
     }
 
     public setArrayJson(arrayJson:Array<Object>) {

@@ -9,5 +9,6 @@ export const AtexoChartConstant = {
     typeCategory: {
         single: ['Pie', 'Doughnut', 'PolarArea'],
         multiple: ['Line', 'Bar', 'Radar']
-    }
+    },
+    colors: ['#']
 };

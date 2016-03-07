@@ -15,24 +15,11 @@ export class Convert {
     static isCreating:Boolean = false;
 
     private strDelimiter:string = ';';
-    private arrData:Array<any>;
+    private arrayObject:Array<any> = [];
     private jsonData:String;
-    private arrProperty:Array<any> = [];
+    private arrayProperty:Array<any> = [];
+    private arrayPropertyValue:Object = {};
 
-    constructor() {
-        if (!Convert.isCreating) {
-            throw new Error('[Convert] You can\'t call new in Singleton instances!');
-        }
-    }
-
-    static getInstance() {
-        if (Convert.instance == null) {
-            Convert.isCreating = true;
-            Convert.instance = new Convert();
-            Convert.isCreating = false;
-        }
-        return Convert.instance;
-    }
 
     public cvsToJson(csv:string, strDelimiter?:string) {
         let lines = csv.split('\n'),
@@ -42,39 +29,95 @@ export class Convert {
             this.strDelimiter = strDelimiter;
         }
 
-        this.arrData = [];
-
-        this.arrProperty = this.getArrProperty(lines[0]);
+        this.getArrayProperty(lines[0]);
 
         for (let i = 1; i < linesLength; i++) {
 
             let obj = {},
                 currentline = lines[i].split(this.strDelimiter);
 
-            for (var j = 0; j < this.arrProperty.length; j++) {
-                obj[this.arrProperty[j]] = currentline[j];
+            for (var j = 0; j < this.arrayProperty.length; j++) {
+                obj[this.arrayProperty[j]] = currentline[j];
+
+                if (isBlank(this.arrayPropertyValue[this.arrayProperty[j]])) {
+                    this.arrayPropertyValue[this.arrayProperty[j]] = new Array();
+                    this.arrayPropertyValue[this.arrayProperty[j]].push(currentline[j]);
+                } else {
+                    if (this.arrayPropertyValue[this.arrayProperty[j]].indexOf(currentline[j]) === -1) {
+                        this.arrayPropertyValue[this.arrayProperty[j]].push(currentline[j]);
+                    }
+                }
+
             }
 
-            this.arrData.push(obj);
-
+            this.arrayObject.push(obj);
         }
 
-        //return this.arrData; //JavaScript object
-        this.jsonData = JSON.stringify(this.arrData);
+        //console.log(this.arrayPropertyValue);
+
+        //return this.arrayObject; //JavaScript object
+        this.jsonData = JSON.stringify(this.arrayObject);
         return this.jsonData; //JSON
     }
 
-    public getArrayData() {
-        return this.arrData;
+    /**
+     * @public
+     * @name getData
+     * @description
+     * @returns {Array<Object>}
+     */
+    public getData() {
+        return this.arrayObject;
     }
 
-    public getArrProperty(lineProperty:String) {
-        let arrProperty:Array<String> = [];
-        arrProperty = lineProperty.split(this.strDelimiter);
-        if (arrProperty[arrProperty.length - 1] === '') {
-            arrProperty.pop();
-        }
-        return this.arrProperty = arrProperty;
+    /**
+     * @public
+     * @name getJson
+     * @description
+     * @returns {Object}
+     */
+    public getJson() {
+        return this.jsonData;
     }
+
+    /**
+     * @public
+     * @name getProperty
+     * @description
+     * @returns {Array<string>}
+     */
+    public getProperty() {
+        return this.arrayProperty;
+    }
+
+    /**
+     * @public
+     * @name getAllPropertyValue
+     * @description
+     * @returns {Array<Object>}
+     */
+    public getAllPropertyValue() {
+        return this.arrayPropertyValue;
+    }
+
+    /**
+     * @public
+     * @name getAllPropertyValue
+     * @description
+     * @returns {Array<Object>}
+     */
+    public getAllPropertyValueByName(name:string) {
+        return this.getAllPropertyValue()[name];
+    }
+
+    public getArrayProperty(lineProperty:String) {
+        let arrayProperty:Array<String> = [];
+        arrayProperty = lineProperty.split(this.strDelimiter);
+        if (arrayProperty[arrayProperty.length - 1] === '') {
+            arrayProperty.pop();
+        }
+        return this.arrayProperty = arrayProperty;
+    }
+
 
 }

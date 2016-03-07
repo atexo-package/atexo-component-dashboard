@@ -8,12 +8,14 @@ import {isPresent, isBlank } from 'angular2/src/facade/lang';
 import {AtexoColorChartConstant, AtexoChartConstant} from '../../../../common/constants/atexo.constant';
 import {ToClassPipe} from '../../../../common/pipe/atexo.pipe';
 import {Util, Convert} from '../../../../common/services/atexo.service';
-import {AtexoChartsJs} from '../../../../common/components/atexo-charts.component';
+import {AtexoChart} from '../../../../common/components/atexo-chart.component';
 
 import {PanelBodyChartProvider} from './providers/panel-body-chart.provider';
 import {AtexoSpinner} from '../../../../common/components/atexo-spinner.component';
 
 //PanelBodyEditorProvider
+
+declare var c3:any;
 
 @Component({
     selector: 'panel-body-chart',
@@ -23,59 +25,58 @@ import {AtexoSpinner} from '../../../../common/components/atexo-spinner.componen
 
 @View({
     template: `
-            <div class="{{ panelBodyObj.type.category | toClass}}">
-
-                <div class="clearfix sub-header" *ngIf="xhrStatusDisplayResources">
-                    <ul class="atexoui-list right horizontal">
-                        <li *ngFor="#type of chartTypes; #i=index"
-                            [ngClass]="{ available: chartTypes[i].active, disabled: !chartTypes[i].active }">
-                            <a href="#"
-                               [ngClass]="{ available: chartTypes[i].active, disabled: !chartTypes[i].active }"
-                               (click)="updateChartType(i)"
-                               title="{{type.name}}"
-                               name="{{type.name}}">
-                                <span class="{{type.icons}}"></span>
-
-                            </a>
-                        </li>
-                    </ul>
+            <div class="clearfix sub-header" *ngIf="xhrStatusDisplayResources">
+                <div class="pull-left">
+                    <form class="sub-header-form-horizontal" action="">
+                        <div *ngIf="panelBodyObj.chart.axes.filter.active" class="filter-item">
+                            <label class="control-label" for="">Année</label>
+                            <select
+                                [(ngModel)]="currentYear"
+                                class="input-select"
+                                (change)="panelBodyChartUpdateFilerYear($event, $event.target.value)">
+                                <option *ngFor="#year of filterYear" [value]="year" (click)="preventDefault($event)">{{year}}</option>
+                            </select>
+                        </div>
+                    </form>
                 </div>
-                <atexo-spinner *ngIf="xhrStatusDisplaySpinner"></atexo-spinner>
+                <ul class="atexoui-list right horizontal">
+                    <li *ngFor="#type of chartTypes; #i=index"
+                        [ngClass]="{ available: chartTypes[i].active, disabled: !chartTypes[i].active }">
+                        <a
+                           href=""
+                           [ngClass]="{ available: chartTypes[i].active, disabled: !chartTypes[i].active }"
+                           (click)="panelBodyChartUpdateType(i);"
+                           title="{{type.name}}"
+                           name="{{type.name}}">
+                            <span class="{{type.icons}}"></span>
 
-                <panel-body-charts-js
-                        *ngIf="xhrStatusDisplayResources"
-                        [data]="chartData"
-                        [labels]="chartLabels"
-                        [options]="chartOptions"
-                        [series]="chartSeries"
-                        [colours]="chartColours"
-                        [legend]="chartLegend"
-                        [chartType]="chartType"
-                        (chartHover)="chartHovered($event)"
-                        (chartClick)="chartClicked($event)"></panel-body-charts-js>
-
-                <div class="error" *ngIf="xhrStatusDisplayError">
-                    <p class="text-danger text-center"><strong>Données temporairement indisponible</strong></p>
-                </div>
-
-
-                <ul class="atexoui-list center horizontal">
-                    <li *ngFor="#serie of chartSeries; #i=index"
-                        [ngClass]="{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }">
-                        <a href="#"
-                           (click)="updateChartData(i)"
-                           [ngClass]="{ available: chartSeriesActive[i], disabled: !chartSeriesActive[i] }">
-                            <span [ngStyle]="{ 'color': chartSeriesColors[i] }" class="fa fa-eye"
-                                  [ngClass]="{ 'fa-eye': chartSeriesActive[i], 'fa-eye-slash': !chartSeriesActive[i] }"></span>
-                            {{serie}}
                         </a>
                     </li>
                 </ul>
-
             </div>
+            <atexo-spinner *ngIf="xhrStatusDisplaySpinner"></atexo-spinner>
+
+            <div class="">
+                <chart
+                    *ngIf="xhrStatusDisplayResources"
+                    class="c3-responsive"
+                    [data]="chartData"
+                    [type]="chartType"
+                    [configOption]="chartConfigOption"
+                    [configData]="chartConfigData"
+                    (chartClick)="chartClicked($event)"
+                    (chartMouseOver)="chartMouseOvered($event)"
+                    (chartMouseOut)="chartMouseOuted($event)">
+                </chart>
+            </div>
+
+            <div class="error" *ngIf="xhrStatusDisplayError">
+                <p class="text-danger text-center"><strong>Données temporairement indisponible</strong></p>
+            </div>
+
             `,
     pipes: [ToClassPipe],
-    directives: [AtexoChartsJs, AtexoSpinner]
+    directives: [AtexoChart, AtexoSpinner]
 })
 
 export class PanelBodyChart {
@@ -83,38 +84,40 @@ export class PanelBodyChart {
     @Input() panelBodyObj;
     panelBodyChartProvider:PanelBodyChartProvider;
 
-
     public xhrStatusDisplaySpinner:boolean = true;
     public xhrStatusDisplayResources:boolean = false;
     public xhrStatusDisplayError:boolean = false;
-    // chart
-    private chartData:Array<any> = [[]];
-    private chartDataOld:Array<any> = this.chartData;
-    private chartDataArray:Array<any>;
-    private chartLabels:Array<any> = [];
-    private chartSeries:Array<any> = [];
-    private chartSeriesColors:Array<any> = [];
-    private chartSeriesActive:Array < boolean > = [];
-    private chartOptions:any = this.getChartOptions();
-    private chartColours:Array<any> = AtexoColorChartConstant;
 
-    private chartColoursOld:Array<any> = this.chartColours;
-    private chartLegend:boolean = false;
-    private chartType:string = 'Line';
+    public currentYear:string;
+    public filterYear:Array<Object>;
+
+    private convert:Convert = new Convert();
+    private chartData:Array<any>;
+    private chartArrayData:Array<any>;
+    private chartArrayObject:Array<Object>;
+    private chartType:String;
+    private chartConfigData:Object;
+    private chartConfigOption:Object;
+
     private chartTypes:Array<any> = [];
-    private easting:Array<any> = [];
+
+
+    private arrayOrdered:Array<string> = new Array();
+    private xhrResponse:any;
+
 
     constructor(panelBodyChartProvider:PanelBodyChartProvider) {
         this.panelBodyChartProvider = panelBodyChartProvider;
-        for (let i = 0; i < this.chartSeries.length; i++) {
-            this.chartSeriesColors.push(this.chartColoursOld[i].strokeColor);
-            this.chartSeriesActive.push(true);
-        }
+        this.chartData = [];
+        this.currentYear = new Date().getFullYear().toString();
     }
 
     private ngOnInit() {
-        this.panelBodyChartServiceGetData(this.panelBodyObj);
-        this.panelBodyChartServiceGetOptions(this.panelBodyObj.chart);
+        this.chartType = this.panelBodyObj.chart.type;
+        this.chartConfigData = this.panelBodyObj.chart.config.data;
+        this.chartConfigOption = this.panelBodyObj.chart.config.options;
+        this.panelBodyChartServiceGetOptions();
+        this.panelBodyChartServiceGetData();
         return true;
     }
 
@@ -122,77 +125,37 @@ export class PanelBodyChart {
         return true;
     }
 
-    panelBodyChartServiceGetOptions(chart:any) {
-        // Set Chart default display Type
-        if (isPresent(chart.type) && chart.type !== '') {
-            this.chartType = chart.type;
-        }
-        // Set Chart Types
-        if (isPresent(chart.types) && !isBlank(chart.types)) {
-            this.chartTypes = chart.types;
-            // Find index active type
-            let i = Util.getInstance().arrayObjectFindIndex(this.chartTypes, (e) => {
-                return e.type === this.chartType;
-            });
-            // Test if chart.type not exist in chart.types
-            // All so Chart.Types[0].type affected to Chart.types
-            if (i === -1) {
-                i = 0;
-                this.chartType = this.chartTypes[0].type;
-            }
-            // Active chart type
-            this.updateChartType(i);
-        }
-
-        // Set Chart Easting
-        if (isPresent(chart.eastingArray) && !isBlank(chart.eastingArray)) {
-            this.easting = chart.eastingArray;
-        }
+    // events
+    public chartClicked(e:any) {
+        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.name + '  ' + (Math.round(e.data.ratio * 1000) / 10) + '%';
 
     }
 
-    panelBodyChartServiceGetData(panelBodyObj) {
+    public chartMouseOvered(e:any) {
+        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.value;
+    }
 
-        this.panelBodyChartProvider.get(panelBodyObj).subscribe(
+    public chartMouseOuted(e:any) {
+        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = '';
+    }
+
+    public preventDefault(event:Event){
+        event.preventDefault();
+    }
+
+    panelBodyChartServiceGetData() {
+
+        this.panelBodyChartProvider.get(this.panelBodyObj).subscribe(
             // Http Success
             (res:Response) => {
 
                 this.xhrStatusDisplaySpinner = false;
 
-
                 if (res.status === 200) {
-
+                    this.xhrResponse = res;
                     this.xhrStatusDisplayResources = true;
-
-                    this.getChartDataArray(res);
-
-                    var jsonInstance:any = Util.getInstance().Json();
-                    jsonInstance.setEasting(this.easting);
-
-                    jsonInstance.getByProperty(
-                        this.chartDataArray
-                    );
-
-                    jsonInstance.groupByProperty([panelBodyObj.chart.axes.groupBy, panelBodyObj.chart.axes.easting, panelBodyObj.chart.axes.abscissa]);
-
-                    this.chartData = jsonInstance.getArrayResult();
-                    this.chartDataOld = this.chartData;
-
-                    this.chartLabels = jsonInstance.getEasting();
-
-                    this.chartSeries = jsonInstance.getOrdered();
-
-                    this.chartSeriesColors = [];
-                    this.chartSeriesActive = [];
-
-                    for (let i = 0; i < this.chartSeries.length; i++) {
-                        this.chartSeriesColors.push(this.chartColoursOld[i].strokeColor);
-                        this.chartSeriesActive.push(true);
-                    }
-
-                    if (AtexoChartConstant.typeCategory.single.indexOf(this.chartType) !== -1) {
-                        this.getChartDataSingle(0);
-                    }
+                    this.getChartArrayData();
+                    this.chartData = this.chartArrayData;
                 }
 
             },
@@ -208,83 +171,129 @@ export class PanelBodyChart {
         );
     }
 
-    // Check display Series
-    // use for update display Data Chart
-    private checkUpdateChart() {
-        let i:number = 0,
-            count:number = 0;
-        for (; i < this.chartSeriesActive.length; i++) {
-            if (this.chartSeriesActive[i]) {
-                count++;
-            }
-        }
-        return (count > 0);
+    /**
+     *
+     * @private getChartArrayObject
+     * @name getChartArrayObject
+     * @description Get Array Object of ChartData after convert SVS to JSON
+     * @param res:any
+     * @returns {Array<Object>}
+     */
+    private getChartArrayObject() {
+        this.convert.cvsToJson(this.xhrResponse.text());
+        this.chartArrayObject = this.convert.getData();
+        return this.chartArrayObject;
     }
 
     /**
      *
-     * @public updateChartData
-     * @name updateChartData
-     * @description change chart display data
-     * @param i:number
-     * @returns {boolean}
+     * @private getChartArrayData
+     * @name getChartArrayData
+     * @description Get Array of ChartData
+     * @param res:any
+     * @returns {Array<Array>}
      */
-    public updateChartData(i ?:number) {
+    private getChartArrayData() {
+        let _filterName = this.panelBodyObj.chart.axes.filter.name,
+            _filterLabels = this.panelBodyObj.chart.axes.filter.labels,
+            _filterDefault = this.panelBodyObj.chart.axes.filter.default;
 
-        // If is multiple type
-        if (AtexoChartConstant.typeCategory.multiple.indexOf(this.chartType) !== -1) {
+        this.getChartArrayObject();
 
-            // toggle ChartSeries
-            this.chartSeriesActive[i] = !this.chartSeriesActive[i];
+        this.filterYear = this.convert.getAllPropertyValueByName('annee');
 
-            // Test if last Series
-            // you can't hide all series
-            if (this.checkUpdateChart()) {
-
-                let _chartData = [];
-                let _chartColours = [];
-                for (let j = 0; j < this.chartSeriesActive.length; j++) {
-                    if (this.chartSeriesActive[j]) {
-                        _chartColours.push(this.chartColoursOld[j]);
-                        _chartData.push(this.chartDataOld[j]);
-                    }
-                }
-                this.chartData = _chartData;
-                this.chartColours = _chartColours;
-
-            } else {
-                // toggle ChartSeries
-                this.chartSeriesActive[i] = !this.chartSeriesActive[i];
-            }
+        if (!this.panelBodyObj.chart.axes.filter.active) {
+            this.chartArrayData = this.getChartArray(this.chartArrayObject);
         } else {
-            this.getChartDataSingle(i);
+            this.filterChartArrayObject(['annee'], [this.currentYear]);
         }
-        return false;
-    }
 
-
-    private activeChartSerie(i?:number) {
-        let index:number = 0;
-        if (isPresent(i)) {
-            index = i;
-        }
-        for (let j = 0; j < this.chartSeriesActive.length; j++) {
-            this.chartSeriesActive[j] = false;
-            if (j === index) {
-                this.chartSeriesActive[j] = true;
-            }
-        }
+        return {
+            'chartArrayData': this.chartArrayData,
+            'chartArrayObject': this.chartArrayObject
+        };
     }
 
     /**
      *
-     * @public updateChartType
-     * @name updateChartType
-     * @description change chart display type
-     * @param i:number
-     * @returns {boolean}
+     * @private getChartArrayData
+     * @name getChartArrayData
+     * @description Get Array of ChartData
+     * @param res:any
+     * @returns {Array<Array>}
      */
-    public updateChartType(i ?:number) {
+
+    public filterChartArrayObject(property:any, value:any) {
+        this.chartArrayData = this.getChartArray(Util.getInstance().Json().getByProperty(this.chartArrayObject, property, value));
+        console.log(this.chartArrayData);
+        this.chartData = this.chartArrayData;
+
+    }
+
+    /**
+     *
+     * @private getChartArray
+     * @name getChartArray
+     * @param arrayObject
+     * @returns {Array[]}
+     */
+    private getChartArray(arrayObject:Array<Object>) {
+
+        let _orderedName = this.panelBodyObj.chart.axes.ordered.name,
+            _abscissaName = this.panelBodyObj.chart.axes.abscissa.name,
+            _eastingName = this.panelBodyObj.chart.axes.easting.name,
+            _eastingArray = this.panelBodyObj.chart.axes.easting.array,
+            _eastingLabels = this.panelBodyObj.chart.axes.easting.labels,
+            _chartArrayData = [[]];
+
+        this.arrayOrdered = new Array();
+
+        arrayObject.forEach((obj) => {
+            if (this.arrayOrdered.indexOf(obj[_orderedName]) === -1) {
+
+                this.arrayOrdered.push(obj[_orderedName]);
+
+                _chartArrayData[this.arrayOrdered.indexOf(obj[_orderedName])]
+                    = Util.getInstance().newArray(_eastingArray.length + 1);
+
+                _chartArrayData[this.arrayOrdered.indexOf(obj[_orderedName])][0]
+                    = obj[_orderedName];
+            }
+
+            _chartArrayData
+                [this.arrayOrdered.indexOf(obj[_orderedName])]
+                [_eastingArray.indexOf(obj[_eastingName]) + 1]
+                += Number(obj[_abscissaName]);
+        });
+        _chartArrayData.push(new Array(this.panelBodyObj.chart.config.data.x).concat(_eastingLabels));
+        return _chartArrayData;
+    }
+
+    private panelBodyChartServiceGetOptions() {
+        // Set Chart default display Type
+        if (isPresent(this.panelBodyObj.chart.type) && this.panelBodyObj.chart.type !== '') {
+            this.chartType = this.panelBodyObj.chart.type;
+        }
+        // Set Chart Types
+        if (isPresent(this.panelBodyObj.chart.types) && !isBlank(this.panelBodyObj.chart.types)) {
+            this.chartTypes = this.panelBodyObj.chart.types;
+            // Find index active type
+            let i = Util.getInstance().arrayObjectFindIndex(this.chartTypes, (e) => {
+                return e.type === this.chartType;
+            });
+            // Test if this.panelBodyObj.chart.type not exist in this.panelBodyObj.chart.types
+            // All so Chart.Types[0].type affected to Chart.types
+            if (i === -1) {
+                i = 0;
+                this.chartType = this.chartTypes[0].type;
+            }
+            // Active chart type
+            this.panelBodyChartUpdateType(i);
+        }
+
+    }
+
+    public panelBodyChartUpdateType(i) {
         this.chartType = this.chartTypes[i].type;
         for (let j = 0; j < this.chartTypes.length; j++) {
             this.chartTypes[j].active = false;
@@ -292,57 +301,15 @@ export class PanelBodyChart {
                 this.chartTypes[j].active = true;
             }
         }
+        this.chartType = this.chartTypes[i].type;
         return false;
     }
 
-    /**
-     *
-     * @private getChartOptions
-     * @name getChartOptions
-     * @description Get chart Options
-     * @returns {{animation: boolean, responsive: boolean, multiTooltipTemplate: string, legendTemplate: string}}
-     */
-    private getChartOptions() {
-        return {
-            animation: true,
-            responsive: true,
-            multiTooltipTemplate: '<%if (datasetLabel){%><%=datasetLabel %>: <%}%><%= value %>',
-            legendTemplate: ''
-        };
+    public panelBodyChartUpdateFilerYear(event:Event, currentYear:string) {
+        this.currentYear = currentYear;
+        this.filterChartArrayObject(['annee'], [this.currentYear]);
+        event.preventDefault();
     }
 
-    /**
-     *
-     * @private getChartDataArray
-     * @name getChartDataArray
-     * @description Get Array of ChartData after convert SVS to JSON
-     * @param res:any
-     * @returns {Array<any>}
-     */
-    private getChartDataArray(res) {
-        Convert.getInstance().cvsToJson(res.text());
-        this.chartDataArray = Convert.getInstance().getArrayData();
-        return this.chartDataArray;
-    }
-
-    private getChartDataSingle(i?:number) {
-        let index:number = 0,
-            arr:Array<any>;
-        if (isPresent(i)) {
-            index = i;
-        }
-        this.activeChartSerie(index);
-        this.chartData = this.chartDataOld[index];
-        return this.chartData;
-    }
-
-    // events
-    public chartClicked(e:any) {
-        //console.log(e);
-    }
-
-    public chartHovered(e:any) {
-        //console.log(e);
-    }
 
 }

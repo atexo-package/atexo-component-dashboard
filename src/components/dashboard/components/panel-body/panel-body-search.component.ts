@@ -56,7 +56,7 @@ import {AtexoSpinner} from '../../../../common/components/atexo-spinner.componen
                                         <a *ngFor="#item of items; #i=index"
                                            href="{{item.url}}"
                                            class="list-group-item">
-                                           {{item.title}}
+                                           <span [innerHtml]="item.reference"></span> - <span [innerHtml]="item.title"></span>
                                         </a>
                                     </div>
                                 </div>
