@@ -122,6 +122,8 @@ export class AtexoChart {
         this.chartConfig['data'] = Object.assign(this.chartConfig['data'], this.configData);
 
         this.chartConfig = Object.assign(this.chartConfig, this.configOption);
+
+        //console.log(this.chartConfig);
     }
 
     init() {

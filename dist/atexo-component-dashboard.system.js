@@ -346,6 +346,16 @@ System.register("common/services/atexo/atexo-util.service", ['angular2/core', 'a
                 Util.prototype.URLParams = function () {
                     return new URLParams();
                 };
+                Util.prototype.filterYear = function (offset) {
+                    var _year = new Date().getFullYear(), _offset = 5, arrayYear = [], i;
+                    if (lang_1.isPresent(offset)) {
+                        _offset = offset;
+                    }
+                    for (i = 0; i < _offset; i++) {
+                        arrayYear.push(_year--);
+                    }
+                    return arrayYear;
+                };
                 Util.prototype.arrayObjectFindIndex = function (arr, callback) {
                     var len = arr.length, index, i;
                     for (i = 0; i < len; i++) {
@@ -600,7 +610,7 @@ System.register("common/services/atexo/atexo-util.service", ['angular2/core', 'a
                 Json.prototype.checkPropertyValue = function (arrayJson, property, value) {
                     var i = 0, length = property.length, result = true;
                     for (; i < length; i++) {
-                        if (arrayJson[property[i]] !== value[i]) {
+                        if (arrayJson[property[i]].toString() !== value[i].toString()) {
                             result = false;
                             return result;
                         }
@@ -900,7 +910,7 @@ System.register("common/pipe/atexo/atexo-trancate.pipe", ['angular2/core', 'angu
                 }
                 TrancatePipe.prototype.transform = function (value, args) {
                     this.length = lang_5.isPresent(args[0]) ? args[0] : 100;
-                    this.placeholderEnd = lang_5.isPresent(args[1]) ? args[1] : ' ...';
+                    this.placeholderEnd = (value.length < this.length) ? '' : lang_5.isPresent(args[1]) ? args[1] : ' ...';
                     return value.substring(0, this.length).concat(this.placeholderEnd);
                 };
                 TrancatePipe = __decorate([
@@ -1295,6 +1305,9 @@ System.register("components/dashboard/components/panel-body/panel-body-list.comp
         execute: function() {
             PanelBodyList = (function () {
                 function PanelBodyList(panelBodyListProvider) {
+                    this.xhrStatusDisplaySpinner = true;
+                    this.xhrStatusDisplayResources = false;
+                    this.xhrStatusDisplayError = false;
                     this.chartData = [[]];
                     this.chartLabels = [];
                     this.chartType = 'donut';
@@ -1347,7 +1360,13 @@ System.register("components/dashboard/components/panel-body/panel-body-list.comp
                                 i_1++;
                             });
                         }
-                    });
+                    }, (function (err) {
+                        if (err.status === 404 || err.status === 401) {
+                            _this.xhrStatusDisplayError = true;
+                            _this.xhrStatusDisplaySpinner = false;
+                            console.log(err);
+                        }
+                    }));
                 };
                 __decorate([
                     core_13.Input(), 
@@ -1474,10 +1493,18 @@ System.register("components/dashboard/components/panel-body/panel-body-chart.com
                     return true;
                 };
                 PanelBodyChart.prototype.chartClicked = function (e) {
-                    e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.name + '  ' + (Math.round(e.data.ratio * 1000) / 10) + '%';
+                    if (this.chartType === 'donut') {
+                        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).style = 'font-size: 3em; text-align: center; baseline-shift: -24%; fill:' + e.element.style.fill + ';';
+                        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).setAttribute('text-anchor', 'middle');
+                        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.value;
+                    }
                 };
                 PanelBodyChart.prototype.chartMouseOvered = function (e) {
-                    e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.value;
+                    if (this.chartType === 'donut') {
+                        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).style = 'font-size: 3em; text-align: center; baseline-shift: -24%; fill:' + e.element.style.fill + ';';
+                        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).setAttribute('text-anchor', 'middle');
+                        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.value;
+                    }
                 };
                 PanelBodyChart.prototype.chartMouseOuted = function (e) {
                     e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = '';
@@ -1496,7 +1523,7 @@ System.register("components/dashboard/components/panel-body/panel-body-chart.com
                             _this.chartData = _this.chartArrayData;
                         }
                     }, (function (err) {
-                        if (err.status === 404) {
+                        if (err.status === 404 || err.status === 401) {
                             _this.xhrStatusDisplayError = true;
                             _this.xhrStatusDisplaySpinner = false;
                             console.log(err);
@@ -1504,14 +1531,20 @@ System.register("components/dashboard/components/panel-body/panel-body-chart.com
                     }));
                 };
                 PanelBodyChart.prototype.getChartArrayObject = function () {
-                    this.convert.cvsToJson(this.xhrResponse.text());
-                    this.chartArrayObject = this.convert.getData();
+                    if (this.panelBodyObj.dataType === 'JSON') {
+                        var _chartArrayObject = this.xhrResponse.json();
+                        this.chartArrayObject = _chartArrayObject;
+                    }
+                    else {
+                        this.convert.cvsToJson(this.xhrResponse.text());
+                        this.chartArrayObject = this.convert.getData();
+                    }
                     return this.chartArrayObject;
                 };
                 PanelBodyChart.prototype.getChartArrayData = function () {
                     var _filterName = this.panelBodyObj.chart.axes.filter.name, _filterLabels = this.panelBodyObj.chart.axes.filter.labels, _filterDefault = this.panelBodyObj.chart.axes.filter.default;
                     this.getChartArrayObject();
-                    this.filterYear = this.convert.getAllPropertyValueByName('annee');
+                    this.filterYear = atexo_service_4.Util.getInstance().filterYear();
                     if (!this.panelBodyObj.chart.axes.filter.active) {
                         this.chartArrayData = this.getChartArray(this.chartArrayObject);
                     }
@@ -1525,7 +1558,6 @@ System.register("components/dashboard/components/panel-body/panel-body-chart.com
                 };
                 PanelBodyChart.prototype.filterChartArrayObject = function (property, value) {
                     this.chartArrayData = this.getChartArray(atexo_service_4.Util.getInstance().Json().getByProperty(this.chartArrayObject, property, value));
-                    console.log(this.chartArrayData);
                     this.chartData = this.chartArrayData;
                 };
                 PanelBodyChart.prototype.getChartArray = function (arrayObject) {
@@ -1543,7 +1575,9 @@ System.register("components/dashboard/components/panel-body/panel-body-chart.com
                         _chartArrayData[_this.arrayOrdered.indexOf(obj[_orderedName])][_eastingArray.indexOf(obj[_eastingName]) + 1]
                             += Number(obj[_abscissaName]);
                     });
-                    _chartArrayData.push(new Array(this.panelBodyObj.chart.config.data.x).concat(_eastingLabels));
+                    if (lang_7.isPresent(this.panelBodyObj.chart.config.data.x)) {
+                        _chartArrayData.push(new Array(this.panelBodyObj.chart.config.data.x).concat(_eastingLabels));
+                    }
                     return _chartArrayData;
                 };
                 PanelBodyChart.prototype.panelBodyChartServiceGetOptions = function () {
@@ -1589,7 +1623,7 @@ System.register("components/dashboard/components/panel-body/panel-body-chart.com
                         providers: [panel_body_chart_provider_1.PanelBodyChartProvider]
                     }),
                     core_15.View({
-                        template: "\n            <div class=\"clearfix sub-header\" *ngIf=\"xhrStatusDisplayResources\">\n                <div class=\"pull-left\">\n                    <form class=\"sub-header-form-horizontal\" action=\"\">\n                        <div *ngIf=\"panelBodyObj.chart.axes.filter.active\" class=\"filter-item\">\n                            <label class=\"control-label\" for=\"\">Ann\u00E9e</label>\n                            <select\n                                [(ngModel)]=\"currentYear\"\n                                class=\"input-select\"\n                                (change)=\"panelBodyChartUpdateFilerYear($event, $event.target.value)\">\n                                <option *ngFor=\"#year of filterYear\" [value]=\"year\" (click)=\"preventDefault($event)\">{{year}}</option>\n                            </select>\n                        </div>\n                    </form>\n                </div>\n                <ul class=\"atexoui-list right horizontal\">\n                    <li *ngFor=\"#type of chartTypes; #i=index\"\n                        [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                        <a\n                           href=\"\"\n                           [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                           (click)=\"panelBodyChartUpdateType(i);\"\n                           title=\"{{type.name}}\"\n                           name=\"{{type.name}}\">\n                            <span class=\"{{type.icons}}\"></span>\n\n                        </a>\n                    </li>\n                </ul>\n            </div>\n            <atexo-spinner *ngIf=\"xhrStatusDisplaySpinner\"></atexo-spinner>\n\n            <div class=\"\">\n                <chart\n                    *ngIf=\"xhrStatusDisplayResources\"\n                    class=\"c3-responsive\"\n                    [data]=\"chartData\"\n                    [type]=\"chartType\"\n                    [configOption]=\"chartConfigOption\"\n                    [configData]=\"chartConfigData\"\n                    (chartClick)=\"chartClicked($event)\"\n                    (chartMouseOver)=\"chartMouseOvered($event)\"\n                    (chartMouseOut)=\"chartMouseOuted($event)\">\n                </chart>\n            </div>\n\n            <div class=\"error\" *ngIf=\"xhrStatusDisplayError\">\n                <p class=\"text-danger text-center\"><strong>Donn\u00E9es temporairement indisponible</strong></p>\n            </div>\n\n            ",
+                        template: "\n            <div class=\"clearfix sub-header\" *ngIf=\"xhrStatusDisplayResources\">\n                <div class=\"pull-left\">\n                    <form class=\"sub-header-form-horizontal\" action=\"\">\n                        <div *ngIf=\"panelBodyObj.chart.axes.filter.active\" class=\"filter-item\">\n                            <label class=\"control-label\" for=\"\">Ann\u00E9e</label>\n                            <select\n                                [(ngModel)]=\"currentYear\"\n                                class=\"input-select\"\n                                (change)=\"panelBodyChartUpdateFilerYear($event, $event.target.value)\">\n                                <option *ngFor=\"#year of filterYear\" [value]=\"year\" (click)=\"preventDefault($event)\">{{year}}</option>\n                            </select>\n                        </div>\n                    </form>\n                </div>\n                <ul class=\"atexoui-list right horizontal\">\n                    <li *ngFor=\"#type of chartTypes; #i=index\"\n                        [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                        <a\n                           href=\"\"\n                           [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                           (click)=\"panelBodyChartUpdateType(i);\"\n                           title=\"{{type.name}}\"\n                           name=\"{{type.name}}\">\n                            <span class=\"{{type.icons}}\"></span>\n\n                        </a>\n                    </li>\n                </ul>\n            </div>\n            <atexo-spinner *ngIf=\"xhrStatusDisplaySpinner\"></atexo-spinner>\n\n            <div class=\"\">\n                <chart\n                    *ngIf=\"xhrStatusDisplayResources\"\n                    class=\"c3-responsive\"\n                    [data]=\"chartData\"\n                    [type]=\"chartType\"\n                    [configOption]=\"chartConfigOption\"\n                    [configData]=\"chartConfigData\"\n                    (chartClick)=\"chartClicked($event)\"\n                    (chartMouseOver)=\"chartMouseOvered($event)\"\n                    (chartMouseOut)=\"chartMouseOuted($event)\">\n                </chart>\n            </div>\n\n            <div class=\"error\" *ngIf=\"xhrStatusDisplayError\">\n                <p class=\"text-danger text-center\"><strong>Donn\u00E9es temporairement indisponible</strong></p>\n            </div>\n            <div class=\"clearfix\">\n                <div class=\"signature-atexo pull-right\"></div>\n            </div>\n\n            ",
                         pipes: [atexo_pipe_3.ToClassPipe],
                         directives: [atexo_chart_component_2.AtexoChart, atexo_spinner_component_2.AtexoSpinner]
                     }), 
@@ -1734,7 +1768,7 @@ System.register("components/dashboard/components/panel-body/panel-body-search.co
                         providers: [panel_body_search_provider_1.PanelBodySearchProvider]
                     }),
                     core_17.View({
-                        template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n                <form role=\"form\" class=\"form-horizontal\">\n                    <div class=\"form-group form-group-sm\">\n                        <div class=\"col-sm-12\">\n                            <div class=\"input-group quick-search\" [ngClass]=\"{focus: focusClass}\">\n                                <input type=\"text\"\n                                       placeholder=\"Mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                       class=\"form-control input-sm quick-search-input\"\n                                       autocomplete=\"off\"\n                                       id=\"quickSearch\"\n                                       [(ngModel)]=\"q\"\n                                       (keyup)=\"quickSearch()\"\n                                       (keyup.escape)=\"quickSearchClear()\"\n                                       (blur)=\"quickSearchDisplay(false)\"\n                                       (focus)=\"quickSearchDisplay(true)\"\n                                       title=\"Recherche rapide par mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                >\n\n                                <span class=\"input-group-btn\">\n                                    <button type=\"button\"\n                                            class=\"btn btn-default btn-sm quick-search-btn\"\n                                            id=\"quickSearchBtn\">\n                                        <i class=\"fa fa-search fa-flip-horizontal\"></i>\n                                        <span class=\"sr-only\">Lancer la recherche</span>\n                                    </button>\n                                </span>\n                                <a href=\"\"\n                                   title=\"Annuler\"\n                                   name=\"Annuler\"\n                                   class=\"fa fa-close quick-search-clear\"\n                                   *ngIf=\"items.length\"\n                                   (click)=\"quickSearchClear()\"></a>\n\n                                   <atexo-spinner class=\"quick-search-spinner\" *ngIf=\"displayQuickSearchSpinner\"></atexo-spinner>\n\n                                <div class=\"quick-search-result\" *ngIf=\"display\">\n                                    <div class=\"list-group\">\n                                        <a *ngFor=\"#item of items; #i=index\"\n                                           href=\"{{item.url}}\"\n                                           class=\"list-group-item\">\n                                           <span [innerHtml]=\"item.reference\"></span> - <span [innerHtml]=\"item.title\"></span>\n                                        </a>\n                                    </div>\n                                </div>\n                            </div>\n\n                        </div>\n                    </div>\n                </form>\n            </div>\n            ",
+                        template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n                <form role=\"form\" class=\"form-horizontal\">\n                    <div class=\"form-group form-group-sm\">\n                        <div class=\"col-sm-12\">\n                            <div class=\"input-group quick-search\" [ngClass]=\"{focus: focusClass}\">\n                                <input type=\"text\"\n                                       placeholder=\"Mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                       class=\"form-control input-sm quick-search-input\"\n                                       autocomplete=\"off\"\n                                       id=\"quickSearch\"\n                                       [(ngModel)]=\"q\"\n                                       (keyup)=\"quickSearch()\"\n                                       (keyup.escape)=\"quickSearchClear()\"\n                                       (blur)=\"quickSearchDisplay(false)\"\n                                       (focus)=\"quickSearchDisplay(true)\"\n                                       title=\"Recherche rapide par mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                >\n\n                                <span class=\"input-group-btn\">\n                                    <button type=\"button\"\n                                            class=\"btn btn-primary btn-sm quick-search-btn\"\n                                            id=\"quickSearchBtn\">\n                                        <i class=\"fa fa-search fa-flip-horizontal\"></i>\n                                        <span class=\"sr-only\">Lancer la recherche</span>\n                                    </button>\n                                </span>\n                                <a href=\"\"\n                                   title=\"Annuler\"\n                                   name=\"Annuler\"\n                                   class=\"fa fa-close quick-search-clear\"\n                                   *ngIf=\"items.length\"\n                                   (click)=\"quickSearchClear()\"></a>\n\n                                   <atexo-spinner class=\"quick-search-spinner\" *ngIf=\"displayQuickSearchSpinner\"></atexo-spinner>\n\n                                <div class=\"quick-search-result\" *ngIf=\"display\">\n                                    <div class=\"list-group\">\n                                        <a *ngFor=\"#item of items; #i=index\"\n                                           href=\"{{item.url}}\"\n                                           class=\"list-group-item\">\n                                           <span [innerHtml]=\"item.reference\"></span> - <span [innerHtml]=\"item.title\"></span>\n                                        </a>\n                                    </div>\n                                </div>\n                            </div>\n\n                        </div>\n                    </div>\n                </form>\n            </div>\n            ",
                         pipes: [atexo_pipe_4.ToClassPipe],
                         directives: [atexo_spinner_component_3.AtexoSpinner]
                     }), 
@@ -2003,6 +2037,9 @@ System.register("components/dashboard/components/panel-body/panel-body-article.c
                     this.articleSelected = null;
                     return false;
                 };
+                PanelBodyArticle.prototype.preventDefault = function () {
+                    return false;
+                };
                 __decorate([
                     core_21.Input(), 
                     __metadata('design:type', Object)
@@ -2013,7 +2050,7 @@ System.register("components/dashboard/components/panel-body/panel-body-article.c
                         providers: [panel_body_article_provider_1.PanelBodyArticleProvider]
                     }),
                     core_21.View({
-                        template: "\n            <div class=\"panel-body-article-wrap {{ panelBodyObj.type.category | toClass}}\">\n\n                <ul class=\"list-unstyled articles article-list\">\n                    <li *ngFor=\"#article of articles; #i=index\">\n\n                        <article class=\"article article-item\"\n                                 *ngIf=\"i < offset\">\n                            <header class=\"header\">\n\n                                <h4 class=\"title\">\n                                    <a href=\"#\"\n                                       title=\"{{article.title}}\">{{article.title}}</a>\n                                    <span class=\"date\">{{article.date | toDate | date}}</span>\n                                </h4>\n\n                            </header>\n\n                            <div class=\"body\">\n\n                                <div class=\"content\">\n                                    <p>{{article.content_text | trancate:120}}</p>\n                                </div>\n\n                                <footer class=\"footer\">\n                                    <div class=\"links\">\n                                        <a href=\"\"\n                                           (click)=\"selectArticle(article.id)\"\n                                           title=\"lire la suite\">lire la suite</a>\n                                    </div>\n                                </footer>\n\n                            </div>\n\n\n                        </article>\n\n                    </li>\n                    <li *ngIf=\" offset < articles.length \">\n                        <a href=\"\" class=\"atexoui-link center more\"\n                           (click)=\"moreArticles()\">Plus d'actualit\u00E9s</a>\n                    </li>\n                    <li *ngIf=\" offset === articles.length \">\n                        <a href=\"\" class=\"atexoui-link center less\"\n                           (click)=\"lessArticles()\">Moins d'actualit\u00E9s</a>\n                    </li>\n                </ul>\n                <div class=\"article-full-screen\" *ngIf=\"articleSelected\">\n                    <article class=\"article article-selected\">\n                        <header class=\"header\">\n\n                            <div class=\"options row\">\n                                <div class=\"col-md-12\">\n                                    <div class=\"pull-left\">\n                                        <h4 class=\"title\">\n                                            <a href=\"\"\n                                               title=\"{{articleSelected.title}}\">{{articleSelected.title}}</a>\n                                        </h4>\n                                        <span class=\"date\">{{articleSelected.date | toDate | date}}</span>\n                                    </div>\n                                    <div class=\"pull-right\">\n                                        <a href=\"\"\n                                           title=\"Close Article\"\n                                           data-widgster=\"close\" (click)=\"closeSelectArticle()\"\n                                        class=\"btn btn-sm\">\n                                            <i class=\"fa fa-chevron-left\"></i> Retour\n                                        </a>\n                                    </div>\n                                </div>\n                            </div>\n\n                        </header>\n\n                        <div class=\"body\">\n\n                            <div class=\"content\">\n                                <div [innerHTML]=\"articleSelected.content\"></div>\n                            </div>\n\n                            <footer class=\"footer\" *ngIf=\"\">\n                                <div class=\"links\"\n                                     *ngIf=\"articleSelected.links.length\">\n                                    <a href=\"{{link.url}}\"\n                                       target=\"{{link.target}}\"\n                                       title=\"{{link.title}}\"\n                                       *ngFor=\"#link of articleSelected.links; #i=index\">{{link.title}}</a>\n                                </div>\n                            </footer>\n\n                        </div>\n\n                    </article>\n                </div>\n            </div>\n    ",
+                        template: "\n            <div class=\"panel-body-article-wrap {{ panelBodyObj.type.category | toClass}}\">\n\n                <ul class=\"list-unstyled articles article-list\">\n                    <li *ngFor=\"#article of articles; #i=index\">\n\n                        <article class=\"article article-item\"\n                                 *ngIf=\"i < offset\">\n                            <header class=\"header\">\n\n                                <h4 class=\"title\">\n                                    <a href=\"\"\n                                        (click)=\"selectArticle(article.id)\"\n                                       title=\"{{article.title}}\">&nbsp;{{article.title}}</a>\n                                    <span class=\"date\">{{article.date | toDate | date}}</span>\n                                </h4>\n\n                            </header>\n\n                            <div class=\"body\">\n\n                                <div class=\"content\">\n                                    <p>{{article.content_text | trancate:120}}</p>\n                                </div>\n\n                                <footer class=\"footer\">\n                                    <div class=\"links\">\n                                        <a href=\"\"\n                                           (click)=\"selectArticle(article.id)\"\n                                           title=\"lire la suite\">lire la suite</a>\n                                    </div>\n                                </footer>\n\n                            </div>\n\n\n                        </article>\n\n                    </li>\n                    <li *ngIf=\" offset < articles.length \">\n                        <a href=\"\" class=\"atexoui-link center more\"\n                           (click)=\"moreArticles()\">Plus d'actualit\u00E9s</a>\n                    </li>\n                    <li *ngIf=\" offset === articles.length \">\n                        <a href=\"\" class=\"atexoui-link center less\"\n                           (click)=\"lessArticles()\">Moins d'actualit\u00E9s</a>\n                    </li>\n                </ul>\n                <div class=\"article-full-screen\" *ngIf=\"articleSelected\">\n                    <article class=\"article article-selected\">\n                        <header class=\"header\">\n\n                            <div class=\"options row\">\n                                <div class=\"col-md-12\">\n                                    <div class=\"pull-right\">\n                                        <a href=\"\"\n                                           title=\"Close Article\"\n                                           data-widgster=\"close\" (click)=\"closeSelectArticle()\"\n                                        class=\"btn btn-sm\">\n                                            <i class=\"fa fa-chevron-left\"></i> Retour\n                                        </a>\n                                    </div>\n                                    <div class=\"pull-left\">\n                                        <h4 class=\"title\">\n                                            {{articleSelected.title}}\n                                        </h4>\n                                        <span class=\"date\">{{articleSelected.date | toDate | date}}</span>\n                                    </div>\n\n                                </div>\n                            </div>\n\n                        </header>\n\n                        <div class=\"body\">\n\n                            <div class=\"content\">\n                                <div [innerHTML]=\"articleSelected.content\"></div>\n                            </div>\n\n                            <footer class=\"footer\" *ngIf=\"\">\n                                <div class=\"links\"\n                                     *ngIf=\"articleSelected.links.length\">\n                                    <a href=\"{{link.url}}\"\n                                       target=\"{{link.target}}\"\n                                       title=\"{{link.title}}\"\n                                       *ngFor=\"#link of articleSelected.links; #i=index\">{{link.title}}</a>\n                                </div>\n                            </footer>\n\n                        </div>\n\n                    </article>\n                </div>\n            </div>\n    ",
                         pipes: [atexo_pipe_6.ToClassPipe, atexo_pipe_6.ToDatePipe, atexo_pipe_6.TrancatePipe],
                         directives: [atexo_spinner_component_4.AtexoSpinner]
                     }), 
@@ -2026,11 +2063,11 @@ System.register("components/dashboard/components/panel-body/panel-body-article.c
         }
     }
 });
-System.register("components/dashboard/components/panel-body/panel-body.component", ['angular2/core', "common/pipe/atexo.pipe", "components/dashboard/components/panel-body/panel-body-list.component", "components/dashboard/components/panel-body/panel-body-chart.component", "components/dashboard/components/panel-body/panel-body-search.component", "components/dashboard/components/panel-body/panel-body-editor.component", "components/dashboard/components/panel-body/panel-body-article.component"], function(exports_31, context_31) {
+System.register("components/dashboard/components/panel-body/panel-body-map.component", ['angular2/core', "common/pipe/atexo.pipe", "common/components/atexo-spinner.component"], function(exports_31, context_31) {
     "use strict";
     var __moduleName = context_31 && context_31.id;
-    var core_22, atexo_pipe_7, panel_body_list_component_1, panel_body_chart_component_1, panel_body_search_component_1, panel_body_editor_component_1, panel_body_article_component_1;
-    var PanelBody;
+    var core_22, atexo_pipe_7, atexo_spinner_component_5;
+    var PanelBodyMap;
     return {
         setters:[
             function (core_22_1) {
@@ -2038,6 +2075,177 @@ System.register("components/dashboard/components/panel-body/panel-body.component
             },
             function (atexo_pipe_7_1) {
                 atexo_pipe_7 = atexo_pipe_7_1;
+            },
+            function (atexo_spinner_component_5_1) {
+                atexo_spinner_component_5 = atexo_spinner_component_5_1;
+            }],
+        execute: function() {
+            PanelBodyMap = (function () {
+                function PanelBodyMap() {
+                    this.xhrStatusDisplaySpinner = true;
+                    this.xhrStatusDisplayResources = false;
+                    this.xhrStatusDisplayError = false;
+                    this.mapId = '#mapd3';
+                    this.mapScale = 1;
+                    this.mapWidth = 600;
+                    this.mapHeight = 550;
+                    this.centerX = 2.454071;
+                    this.centerY = 46.279229;
+                }
+                PanelBodyMap.prototype.ngOnInit = function () {
+                    return true;
+                };
+                PanelBodyMap.prototype.ngAfterViewInit = function () {
+                    var _this = this;
+                    var selectedData = 'Attribution';
+                    var width = this.mapWidth, height = this.mapHeight;
+                    var path = d3.geo.path();
+                    var projection = d3.geo.conicConformal()
+                        .center([this.centerX, this.centerY])
+                        .scale(3000)
+                        .translate([width / 2, height / 2]);
+                    path.projection(projection);
+                    var mapTag = d3.select(this.mapId);
+                    var svg = d3.select(this.mapId).append('svg')
+                        .attr('id', 'svg')
+                        .attr('width', '100%')
+                        .attr('height', height)
+                        .attr('class', 'Blues');
+                    var deps = svg.append('g')
+                        .attr('transform', 'translate(20, 0)');
+                    var div = d3.select('body').append('div')
+                        .attr('class', 'tooltip')
+                        .style('opacity', 0);
+                    d3.json('server/mocks/departments.json', function (req, geojson) {
+                        var features = deps
+                            .selectAll('path')
+                            .data(geojson.features)
+                            .enter()
+                            .append('path')
+                            .attr('id', function (d) {
+                            return 'd' + d.properties.CODE_DEPT;
+                        })
+                            .attr('d', path);
+                        d3.csv('server/mocks/data.csv', function (csv) {
+                            var quantile = d3.scale.quantile().domain([0, d3.max(csv, function (e) {
+                                    return +e[selectedData];
+                                })]).range(d3.range(9));
+                            var legend = svg.append('g')
+                                .attr('transform', 'translate(525, 150)')
+                                .attr('id', 'legend');
+                            legend.selectAll('.colorbar')
+                                .data(d3.range(9))
+                                .enter().append('svg:rect')
+                                .attr('y', function (d) {
+                                return d * 20 + 'px';
+                            })
+                                .attr('height', '20px')
+                                .attr('width', '20px')
+                                .attr('x', '0px')
+                                .attr('class', function (d) {
+                                return 'q' + d + '-9';
+                            });
+                            var legendScale = d3.scale.linear()
+                                .domain([0, d3.max(csv, function (e) {
+                                    return +e[selectedData];
+                                })])
+                                .range([0, 9 * 20]);
+                            var legendAxis = d3.svg.axis()
+                                .scale(legendScale)
+                                .orient('right')
+                                .tickSize(6)
+                                .ticks(9);
+                            var legendLabels = svg.append('g')
+                                .attr('transform', 'translate(550, 150)')
+                                .attr('class', 'y axis')
+                                .call(legendAxis);
+                            csv.forEach(function (e, i) {
+                                d3.select('#d' + e.CODE_DEPT)
+                                    .attr('class', function (d) {
+                                    return 'department q' + quantile(+e[selectedData]) + '-9';
+                                })
+                                    .on('mouseover', function (d) {
+                                    div.transition()
+                                        .duration(200)
+                                        .style('opacity', .9);
+                                    div.html('<b>Région : </b>' + e.NOM_REGION + '<br>'
+                                        + '<b>Département : </b>' + e.NOM_DEPT + '<br>'
+                                        + '<b>' + selectedData + ' : </b>' + e[selectedData] + '<br>')
+                                        .style('left', (d3.event.pageX + 30) + 'px')
+                                        .style('top', (d3.event.pageY - 30) + 'px');
+                                })
+                                    .on('mouseout', function (d) {
+                                    div.transition()
+                                        .duration(500)
+                                        .style('opacity', 0);
+                                    div.html('')
+                                        .style('left', '0px')
+                                        .style('top', '0px');
+                                })
+                                    .on('click', function (d) {
+                                    if (d.properties.CODE_REG === '11' && _this.mapScale === 1) {
+                                        _this.mapScale = 6;
+                                        var wt = -250;
+                                        var ht = -108;
+                                        deps.transition().duration(500).attr('transform', 'scale(' + _this.mapScale + ') translate(' + wt + ', ' + ht + ')');
+                                        csv.forEach(function (e, i) {
+                                            if (e.CODE_REG !== '11') {
+                                                d3.select('#d' + e.CODE_DEPT).transition()
+                                                    .duration(500)
+                                                    .style('opacity', 0.1);
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        _this.mapScale = 1;
+                                        deps.transition().duration(500).attr('transform', 'scale(' + _this.mapScale + ') translate(20, 0)');
+                                        csv.forEach(function (e, i) {
+                                            d3.select('#d' + e.CODE_DEPT).transition()
+                                                .duration(500)
+                                                .style('opacity', 1);
+                                        });
+                                    }
+                                });
+                            });
+                            _this.xhrStatusDisplayResources = true;
+                            _this.xhrStatusDisplaySpinner = false;
+                        });
+                    });
+                };
+                __decorate([
+                    core_22.Input(), 
+                    __metadata('design:type', Object)
+                ], PanelBodyMap.prototype, "panelBodyObj", void 0);
+                PanelBodyMap = __decorate([
+                    core_22.Component({
+                        selector: 'panel-body-map',
+                        providers: []
+                    }),
+                    core_22.View({
+                        template: "\n            <div class=\"clearfix sub-header\">\n                <atexo-spinner *ngIf=\"xhrStatusDisplaySpinner\"></atexo-spinner>\n                <div [ngClass]=\"{active: xhrStatusDisplayResources}\" id=\"mapd3\" class=\"mapd3\"></div>\n            </div>\n\n            ",
+                        pipes: [atexo_pipe_7.ToClassPipe],
+                        directives: [atexo_spinner_component_5.AtexoSpinner]
+                    }), 
+                    __metadata('design:paramtypes', [])
+                ], PanelBodyMap);
+                return PanelBodyMap;
+            }());
+            exports_31("PanelBodyMap", PanelBodyMap);
+        }
+    }
+});
+System.register("components/dashboard/components/panel-body/panel-body.component", ['angular2/core', "common/pipe/atexo.pipe", "components/dashboard/components/panel-body/panel-body-list.component", "components/dashboard/components/panel-body/panel-body-chart.component", "components/dashboard/components/panel-body/panel-body-search.component", "components/dashboard/components/panel-body/panel-body-editor.component", "components/dashboard/components/panel-body/panel-body-article.component", "components/dashboard/components/panel-body/panel-body-map.component"], function(exports_32, context_32) {
+    "use strict";
+    var __moduleName = context_32 && context_32.id;
+    var core_23, atexo_pipe_8, panel_body_list_component_1, panel_body_chart_component_1, panel_body_search_component_1, panel_body_editor_component_1, panel_body_article_component_1, panel_body_map_component_1;
+    var PanelBody;
+    return {
+        setters:[
+            function (core_23_1) {
+                core_23 = core_23_1;
+            },
+            function (atexo_pipe_8_1) {
+                atexo_pipe_8 = atexo_pipe_8_1;
             },
             function (panel_body_list_component_1_1) {
                 panel_body_list_component_1 = panel_body_list_component_1_1;
@@ -2053,6 +2261,9 @@ System.register("components/dashboard/components/panel-body/panel-body.component
             },
             function (panel_body_article_component_1_1) {
                 panel_body_article_component_1 = panel_body_article_component_1_1;
+            },
+            function (panel_body_map_component_1_1) {
+                panel_body_map_component_1 = panel_body_map_component_1_1;
             }],
         execute: function() {
             PanelBody = (function () {
@@ -2064,42 +2275,42 @@ System.register("components/dashboard/components/panel-body/panel-body.component
                     return true;
                 };
                 __decorate([
-                    core_22.Input(), 
+                    core_23.Input(), 
                     __metadata('design:type', Object)
                 ], PanelBody.prototype, "panelBodyObj", void 0);
                 PanelBody = __decorate([
-                    core_22.Component({
+                    core_23.Component({
                         selector: 'panel-body'
                     }),
-                    core_22.View({
-                        template: "\n            <panel-body-list  *ngIf=\"panelBodyObj.type.category === 'LIST'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-list>\n            <panel-body-chart  *ngIf=\"panelBodyObj.type.category === 'CHART'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-chart>\n            <panel-body-search  *ngIf=\"panelBodyObj.type.category === 'SEARCH'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-search>\n            <panel-body-editor  *ngIf=\"panelBodyObj.type.category === 'EDITOR'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-editor>\n            <panel-body-article  *ngIf=\"panelBodyObj.type.category === 'ARTICLE'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-article>\n            ",
-                        directives: [panel_body_list_component_1.PanelBodyList, panel_body_chart_component_1.PanelBodyChart, panel_body_search_component_1.PanelBodySearch, panel_body_article_component_1.PanelBodyArticle, panel_body_editor_component_1.PanelBodyEditor],
-                        pipes: [atexo_pipe_7.ToClassPipe]
+                    core_23.View({
+                        template: "\n            <panel-body-map  *ngIf=\"panelBodyObj.type.category === 'MAP'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-map>\n            <panel-body-list  *ngIf=\"panelBodyObj.type.category === 'LIST'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-list>\n            <panel-body-chart  *ngIf=\"panelBodyObj.type.category === 'CHART'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-chart>\n            <panel-body-search  *ngIf=\"panelBodyObj.type.category === 'SEARCH'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-search>\n            <panel-body-editor  *ngIf=\"panelBodyObj.type.category === 'EDITOR'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-editor>\n            <panel-body-article  *ngIf=\"panelBodyObj.type.category === 'ARTICLE'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-article>\n            ",
+                        directives: [panel_body_list_component_1.PanelBodyList, panel_body_chart_component_1.PanelBodyChart, panel_body_search_component_1.PanelBodySearch, panel_body_article_component_1.PanelBodyArticle, panel_body_editor_component_1.PanelBodyEditor, panel_body_map_component_1.PanelBodyMap],
+                        pipes: [atexo_pipe_8.ToClassPipe]
                     }), 
-                    __metadata('design:paramtypes', [(typeof (_a = typeof core_22.ElementRef !== 'undefined' && core_22.ElementRef) === 'function' && _a) || Object])
+                    __metadata('design:paramtypes', [(typeof (_a = typeof core_23.ElementRef !== 'undefined' && core_23.ElementRef) === 'function' && _a) || Object])
                 ], PanelBody);
                 return PanelBody;
                 var _a;
             }());
-            exports_31("PanelBody", PanelBody);
+            exports_32("PanelBody", PanelBody);
         }
     }
 });
-System.register("components/dashboard/components/panel/panel.component", ['angular2/core', "components/dashboard/components/panel-body/panel-body.component", "common/pipe/atexo.pipe"], function(exports_32, context_32) {
+System.register("components/dashboard/components/panel/panel.component", ['angular2/core', "components/dashboard/components/panel-body/panel-body.component", "common/pipe/atexo.pipe"], function(exports_33, context_33) {
     "use strict";
-    var __moduleName = context_32 && context_32.id;
-    var core_23, panel_body_component_1, atexo_pipe_8;
+    var __moduleName = context_33 && context_33.id;
+    var core_24, panel_body_component_1, atexo_pipe_9;
     var Panel;
     return {
         setters:[
-            function (core_23_1) {
-                core_23 = core_23_1;
+            function (core_24_1) {
+                core_24 = core_24_1;
             },
             function (panel_body_component_1_1) {
                 panel_body_component_1 = panel_body_component_1_1;
             },
-            function (atexo_pipe_8_1) {
-                atexo_pipe_8 = atexo_pipe_8_1;
+            function (atexo_pipe_9_1) {
+                atexo_pipe_9 = atexo_pipe_9_1;
             }],
         execute: function() {
             Panel = (function () {
@@ -2121,37 +2332,37 @@ System.register("components/dashboard/components/panel/panel.component", ['angul
                     return false;
                 };
                 __decorate([
-                    core_23.Input(), 
+                    core_24.Input(), 
                     __metadata('design:type', Object)
                 ], Panel.prototype, "panelObj", void 0);
                 Panel = __decorate([
-                    core_23.Component({
-                        selector: 'panel'
+                    core_24.Component({
+                        selector: 'div.panel-component'
                     }),
-                    core_23.View({
-                        template: "\n            <div class=\"panel panel-default bloc-toggle\"\n                 [ngClass]=\"{close: closeClass}\"\n                 *ngIf=\"panelObj.active\">\n                <!-- Header -->\n                <header class=\"panel-header header panel-heading ui-sortable-handle\">\n                    <div class=\"row\">\n                        <div class=\"col-md-12\">\n                            <div class=\"pull-left\">\n                                <h3 class=\"panel-title\">\n                                    <i class=\"{{panelObj.icons}}\"></i>\n                                    {{panelObj.title}}\n                                </h3>\n                            </div>\n                            <div class=\"pull-right\">\n                                <div class=\"widget-controls\">\n                                    <a href=\"\"\n                                       data-widgster=\"Collapse\"\n                                       title=\"{{ (panelObj.options.collapse.title !== '')? panelObj.options.collapse.title : 'R\u00E9duire le panneau' }}\"\n                                       (click)=\"collapse()\"\n                                       *ngIf=\"panelObj.options.collapse.active\">\n                                        <i class=\"{{ (panelObj.options.collapse.icons !== '')? panelObj.options.collapse.icons : 'fa fa-minus' }}\"></i>\n                                    </a>\n                                    <a href=\"\"\n                                       data-widgster=\"close\"\n                                       title=\"{{ (panelObj.options.close.title !== '')? panelObj.options.close.title : 'Fermer le panneau' }}\"\n                                       (click)=\"close()\"\n                                       *ngIf=\"panelObj.options.close.active\">\n                                        <i class=\"{{ (panelObj.options.close.icons !== '')? panelObj.options.close.icons : 'fa fa-close' }}\"></i>\n                                    </a>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </header>\n                <!-- End Header -->\n\n                <!-- Body -->\n                <div class=\"panel-body body collapse\"\n                     aria-expanded=\"true\"\n                     [ngClass]=\"{collapse: collapseClass}\">\n                    <panel-body [panelBodyObj]=\"panelObj\"></panel-body>\n                </div>\n                <!-- End Body -->\n\n\n                <!-- Footer -->\n                <footer class=\"panel-footer footer text-right collapse\"\n                        aria-expanded=\"true\"\n                        [ngClass]=\"{collapse: collapseClass}\"\n                        *ngIf=\"panelObj.footer.list.length\">\n                    <div class=\"row\">\n                        <div class=\"col-md-12\">\n                            <div class=\"pull-left\">\n                            </div>\n                            <div class=\"pull-right\">\n                                <div class=\"footer-item\" *ngFor=\"#item of panelObj.footer.list; #i=index\">\n                                    <a [href]=\"item.link\"\n                                    title=\"{{item.title}}\"\n                                    name=\"{{item.title}}\"\n                                    *ngIf=\"(item.type === 'LINK') && item.link\">\n                                        {{item.title}}\n                                        <i class=\"glyphicon glyphicon-chevron-right\" aria-hidden=\"true\"></i>\n                                    </a>\n\n                                    <a [href]=\"item.link\"\n                                    class=\"btn btn-sm\"\n                                    title=\"{{item.title}}\"\n                                    name=\"{{item.title}}\"\n                                    *ngIf=\"item.type === 'BUTTON'\">\n                                        {{item.title}}\n                                        <i class=\"glyphicon glyphicon-chevron-right\" aria-hidden=\"true\"></i>\n                                    </a>\n                                </div>\n\n                            </div>\n                        </div>\n                    </div>\n\n                </footer>\n                <!-- End Footer -->\n            </div>\n            ",
+                    core_24.View({
+                        template: "\n            <div class=\"panel panel-default bloc-toggle\"\n                 [ngClass]=\"{close: closeClass}\"\n                 *ngIf=\"panelObj.active\">\n                <!-- Header -->\n                <header class=\"header panel-heading ui-sortable-handle\">\n                    <div class=\"row\">\n                        <div class=\"col-md-12\">\n                            <div class=\"pull-left\">\n                                <h3 class=\"panel-title\">\n                                    <i class=\"{{panelObj.icons}}\"></i>\n                                    {{panelObj.title}}\n                                </h3>\n                            </div>\n                            <div class=\"pull-right\">\n                                <div class=\"widget-controls\">\n                                    <a href=\"\"\n                                       data-widgster=\"Collapse\"\n                                       title=\"{{ (panelObj.options.collapse.title !== '')? panelObj.options.collapse.title : 'R\u00E9duire le panneau' }}\"\n                                       (click)=\"collapse()\"\n                                       *ngIf=\"panelObj.options.collapse.active\">\n                                        <i class=\"{{ (panelObj.options.collapse.icons !== '')? panelObj.options.collapse.icons : 'fa fa-minus' }}\"></i>\n                                    </a>\n                                    <a href=\"\"\n                                       data-widgster=\"close\"\n                                       title=\"{{ (panelObj.options.close.title !== '')? panelObj.options.close.title : 'Fermer le panneau' }}\"\n                                       (click)=\"close()\"\n                                       *ngIf=\"panelObj.options.close.active\">\n                                        <i class=\"{{ (panelObj.options.close.icons !== '')? panelObj.options.close.icons : 'fa fa-close' }}\"></i>\n                                    </a>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </header>\n                <!-- End Header -->\n\n                <!-- Body -->\n                <div class=\"panel-body body collapse\"\n                     aria-expanded=\"true\"\n                     [ngClass]=\"{collapse: collapseClass}\">\n                    <panel-body [panelBodyObj]=\"panelObj\"></panel-body>\n                </div>\n                <!-- End Body -->\n\n\n                <!-- Footer -->\n                <footer class=\"panel-footer footer text-right collapse\"\n                        aria-expanded=\"true\"\n                        [ngClass]=\"{collapse: collapseClass}\"\n                        *ngIf=\"panelObj.footer.list.length\">\n                    <div class=\"row\">\n                        <div class=\"col-md-12\">\n                            <div class=\"pull-left\">\n                            </div>\n                            <div class=\"pull-right\">\n                                <div class=\"footer-item\" *ngFor=\"#item of panelObj.footer.list; #i=index\">\n                                    <a [href]=\"item.link\"\n                                    title=\"{{item.title}}\"\n                                    name=\"{{item.title}}\"\n                                    *ngIf=\"(item.type === 'LINK') && item.link\">\n                                        {{item.title}}\n                                        <i class=\"glyphicon glyphicon-chevron-right\" aria-hidden=\"true\"></i>\n                                    </a>\n\n                                    <a [href]=\"item.link\"\n                                    class=\"btn btn-sm\"\n                                    title=\"{{item.title}}\"\n                                    name=\"{{item.title}}\"\n                                    *ngIf=\"item.type === 'BUTTON'\">\n                                        {{item.title}}\n                                        <i class=\"glyphicon glyphicon-chevron-right\" aria-hidden=\"true\"></i>\n                                    </a>\n                                </div>\n\n                            </div>\n                        </div>\n                    </div>\n\n                </footer>\n                <!-- End Footer -->\n            </div>\n            ",
                         directives: [panel_body_component_1.PanelBody],
-                        pipes: [atexo_pipe_8.ToClassPipe],
-                        encapsulation: core_23.ViewEncapsulation.Emulated
+                        pipes: [atexo_pipe_9.ToClassPipe],
+                        encapsulation: core_24.ViewEncapsulation.Emulated
                     }), 
-                    __metadata('design:paramtypes', [(typeof (_a = typeof core_23.ElementRef !== 'undefined' && core_23.ElementRef) === 'function' && _a) || Object])
+                    __metadata('design:paramtypes', [(typeof (_a = typeof core_24.ElementRef !== 'undefined' && core_24.ElementRef) === 'function' && _a) || Object])
                 ], Panel);
                 return Panel;
                 var _a;
             }());
-            exports_32("Panel", Panel);
+            exports_33("Panel", Panel);
         }
     }
 });
-System.register("components/dashboard/dashboard.component", ['angular2/core', 'angular2/src/facade/lang', "common/constants/atexo.constant", "common/services/atexo.service", "components/dashboard/providers/panel.provider", "components/dashboard/components/alert/alert.component", "components/dashboard/components/panel/panel.component"], function(exports_33, context_33) {
+System.register("components/dashboard/dashboard.component", ['angular2/core', 'angular2/src/facade/lang', "common/constants/atexo.constant", "common/services/atexo.service", "components/dashboard/providers/panel.provider", "components/dashboard/components/alert/alert.component", "components/dashboard/components/panel/panel.component"], function(exports_34, context_34) {
     "use strict";
-    var __moduleName = context_33 && context_33.id;
-    var core_24, lang_9, atexo_constant_5, atexo_service_7, panel_provider_1, alert_component_1, panel_component_1;
+    var __moduleName = context_34 && context_34.id;
+    var core_25, lang_9, atexo_constant_5, atexo_service_7, panel_provider_1, alert_component_1, panel_component_1;
     var Dashboard;
     return {
         setters:[
-            function (core_24_1) {
-                core_24 = core_24_1;
+            function (core_25_1) {
+                core_25 = core_25_1;
             },
             function (lang_9_1) {
                 lang_9 = lang_9_1;
@@ -2202,31 +2413,6 @@ System.register("components/dashboard/dashboard.component", ['angular2/core', 'a
                     return true;
                 };
                 Dashboard.prototype.ngAfterViewChecked = function () {
-                    var _this = this;
-                    $('#sortable .column').sortable({
-                        connectWith: '.column',
-                        handle: '.panel-heading',
-                        placeholder: 'portlet-placeholder ui-corner-all',
-                        update: function (event, ui) {
-                            _this.startsortable = 'update';
-                            console.log('update');
-                        },
-                        start: function () {
-                            console.log('start');
-                        },
-                        stop: function () {
-                            console.log('stop');
-                        },
-                        sort: function () {
-                            console.log('sort');
-                        },
-                        beforeStop: function () {
-                            console.log('beforeStop');
-                        },
-                        change: function () {
-                            console.log('change');
-                        }
-                    });
                     return true;
                 };
                 Dashboard.prototype.initConfig = function () {
@@ -2253,35 +2439,35 @@ System.register("components/dashboard/dashboard.component", ['angular2/core', 'a
                     });
                 };
                 __decorate([
-                    core_24.Input('config'), 
+                    core_25.Input('config'), 
                     __metadata('design:type', Object)
                 ], Dashboard.prototype, "config", void 0);
                 Dashboard = __decorate([
-                    core_24.Component({
+                    core_25.Component({
                         selector: 'dashboard',
                         providers: [panel_provider_1.PanelProvider]
                     }),
-                    core_24.View({
-                        template: "\n            <div class=\"dashboard parent container-fluid\">\n                <alert></alert>\n                <div class=\"wrapper\" id=\"sortable\" [ngClass]=\"{'sortable-start': startsortable}\">\n                    <div localtion=\"zone-a\"\n                         class=\"column container\"\n                         [ngClass]=\"zone.zone.custom_class\"\n                         id=\"{{zone.zone.id}}\"\n                         *ngFor=\"#zone of panelsZonesArray; #i=index\">\n                        <!-- Panel -->\n                        <panel [panelObj]=\"panelObj\"\n                               class=\"panel-component\"\n                               *ngFor=\"#panelObj of zone.panels; #i=index\"></panel>\n                        <!-- End Panel -->\n                    </div>\n                </div>\n            </div>\n            <div class=\"modal-backdrop  in\" *ngIf=\"progress.showBackdrop()\"></div>\n            ",
+                    core_25.View({
+                        template: "\n            <div class=\"dashboard parent\">\n                <alert></alert>\n                <div class=\"row\" id=\"sortable\" [ngClass]=\"{'sortable-start': startsortable}\">\n                    <div localtion=\"zone-a\"\n                         class=\"column container\"\n                         [ngClass]=\"zone.zone.custom_class\"\n                         id=\"{{zone.zone.id}}\"\n                         *ngFor=\"#zone of panelsZonesArray; #i=index\">\n                        <!-- Panel -->\n                        <div [panelObj]=\"panelObj\"\n                               class=\"panel-component\"\n                               *ngFor=\"#panelObj of zone.panels; #i=index\"></div>\n                        <!-- End Panel -->\n                    </div>\n                </div>\n            </div>\n            <!--div class=\"modal-backdrop  in\" *ngIf=\"progress.showBackdrop()\"></div-->\n            ",
                         directives: [panel_component_1.Panel, alert_component_1.Alert]
                     }), 
                     __metadata('design:paramtypes', [panel_provider_1.PanelProvider])
                 ], Dashboard);
                 return Dashboard;
             }());
-            exports_33("Dashboard", Dashboard);
+            exports_34("Dashboard", Dashboard);
         }
     }
 });
-System.register("atexo-component-dashboard", ["components/dashboard/dashboard.component"], function(exports_34, context_34) {
+System.register("atexo-component-dashboard", ["components/dashboard/dashboard.component"], function(exports_35, context_35) {
     "use strict";
-    var __moduleName = context_34 && context_34.id;
+    var __moduleName = context_35 && context_35.id;
     function exportStar_4(m) {
         var exports = {};
         for(var n in m) {
             if (n !== "default") exports[n] = m[n];
         }
-        exports_34(exports);
+        exports_35(exports);
     }
     return {
         setters:[
@@ -2292,15 +2478,15 @@ System.register("atexo-component-dashboard", ["components/dashboard/dashboard.co
         }
     }
 });
-System.register("common/components/atexo-charts.component.old", ['angular2/core'], function(exports_35, context_35) {
+System.register("common/components/atexo-charts.component.old", ['angular2/core'], function(exports_36, context_36) {
     "use strict";
-    var __moduleName = context_35 && context_35.id;
-    var core_25;
+    var __moduleName = context_36 && context_36.id;
+    var core_26;
     var AtexoChartsJs;
     return {
         setters:[
-            function (core_25_1) {
-                core_25 = core_25_1;
+            function (core_26_1) {
+                core_26 = core_26_1;
             }],
         execute: function() {
             AtexoChartsJs = (function () {
@@ -2312,8 +2498,8 @@ System.register("common/components/atexo-charts.component.old", ['angular2/core'
                     this._series = [];
                     this._colours = [];
                     this.initFlag = false;
-                    this.chartClick = new core_25.EventEmitter();
-                    this.chartHover = new core_25.EventEmitter();
+                    this.chartClick = new core_26.EventEmitter();
+                    this.chartHover = new core_26.EventEmitter();
                     this.defaultsColours = [
                         {
                             fillColor: 'rgba(253, 216, 53,0.2)',
@@ -2594,7 +2780,7 @@ System.register("common/components/atexo-charts.component.old", ['angular2/core'
                     }
                 };
                 AtexoChartsJs = __decorate([
-                    core_25.Component({
+                    core_26.Component({
                         selector: 'panel-body-charts-js',
                         properties: [
                             'data',
@@ -2607,26 +2793,26 @@ System.register("common/components/atexo-charts.component.old", ['angular2/core'
                         ],
                         events: ['chartClick', 'chartHover']
                     }),
-                    core_25.View({
+                    core_26.View({
                         template: "<div class=\"canvas-wrap atexo-canvas-wrap\">\n                    <canvas\n                    class=\"canvas atexo-canvas-chart\"\n                    height=\"100%\"\n                    (click)=\"click($event)\"\n                    (mousemove)=\"hover($event)\"></canvas>\n                </div>"
                     }), 
-                    __metadata('design:paramtypes', [(typeof (_a = typeof core_25.ElementRef !== 'undefined' && core_25.ElementRef) === 'function' && _a) || Object])
+                    __metadata('design:paramtypes', [(typeof (_a = typeof core_26.ElementRef !== 'undefined' && core_26.ElementRef) === 'function' && _a) || Object])
                 ], AtexoChartsJs);
                 return AtexoChartsJs;
                 var _a;
             }());
-            exports_35("AtexoChartsJs", AtexoChartsJs);
+            exports_36("AtexoChartsJs", AtexoChartsJs);
         }
     }
 });
-System.register("common/config/atexo.config", [], function(exports_36, context_36) {
+System.register("common/config/atexo.config", [], function(exports_37, context_37) {
     "use strict";
-    var __moduleName = context_36 && context_36.id;
+    var __moduleName = context_37 && context_37.id;
     var AtexoConfig;
     return {
         setters:[],
         execute: function() {
-            exports_36("AtexoConfig", AtexoConfig = {
+            exports_37("AtexoConfig", AtexoConfig = {
                 application: {
                     name: 'Dashboard',
                     version: '1.0.0',
@@ -2636,15 +2822,15 @@ System.register("common/config/atexo.config", [], function(exports_36, context_3
         }
     }
 });
-System.register("components/about/about", ['angular2/core', 'angular2/router'], function(exports_37, context_37) {
+System.register("components/about/about", ['angular2/core', 'angular2/router'], function(exports_38, context_38) {
     "use strict";
-    var __moduleName = context_37 && context_37.id;
-    var core_26, router_1;
+    var __moduleName = context_38 && context_38.id;
+    var core_27, router_1;
     var About;
     return {
         setters:[
-            function (core_26_1) {
-                core_26 = core_26_1;
+            function (core_27_1) {
+                core_27 = core_27_1;
             },
             function (router_1_1) {
                 router_1 = router_1_1;
@@ -2655,10 +2841,10 @@ System.register("components/about/about", ['angular2/core', 'angular2/router'], 
                     this.id = params.get('id');
                 }
                 About = __decorate([
-                    core_26.Component({
+                    core_27.Component({
                         selector: 'about'
                     }),
-                    core_26.View({
+                    core_27.View({
                         template: "\n\t\tWelcome to the about page! This is the ID: {{id}}\n\t"
                     }), 
                     __metadata('design:paramtypes', [(typeof (_a = typeof router_1.RouteParams !== 'undefined' && router_1.RouteParams) === 'function' && _a) || Object])
@@ -2666,19 +2852,19 @@ System.register("components/about/about", ['angular2/core', 'angular2/router'], 
                 return About;
                 var _a;
             }());
-            exports_37("About", About);
+            exports_38("About", About);
         }
     }
 });
-System.register("components/dashboard/services/panel.service", ['angular2/core', 'angular2/http'], function(exports_38, context_38) {
+System.register("components/dashboard/services/panel.service", ['angular2/core', 'angular2/http'], function(exports_39, context_39) {
     "use strict";
-    var __moduleName = context_38 && context_38.id;
-    var core_27, http_10;
+    var __moduleName = context_39 && context_39.id;
+    var core_28, http_10;
     var PanelService;
     return {
         setters:[
-            function (core_27_1) {
-                core_27 = core_27_1;
+            function (core_28_1) {
+                core_28 = core_28_1;
             },
             function (http_10_1) {
                 http_10 = http_10_1;
@@ -2689,13 +2875,13 @@ System.register("components/dashboard/services/panel.service", ['angular2/core',
                     this.http = http;
                 }
                 PanelService = __decorate([
-                    core_27.Injectable(), 
+                    core_28.Injectable(), 
                     __metadata('design:paramtypes', [(typeof (_a = typeof http_10.Http !== 'undefined' && http_10.Http) === 'function' && _a) || Object])
                 ], PanelService);
                 return PanelService;
                 var _a;
             }());
-            exports_38("PanelService", PanelService);
+            exports_39("PanelService", PanelService);
         }
     }
 });

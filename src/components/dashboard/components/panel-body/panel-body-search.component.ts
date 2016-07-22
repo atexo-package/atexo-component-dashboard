@@ -36,7 +36,7 @@ import {AtexoSpinner} from '../../../../common/components/atexo-spinner.componen
 
                                 <span class="input-group-btn">
                                     <button type="button"
-                                            class="btn btn-default btn-sm quick-search-btn"
+                                            class="btn btn-primary btn-sm quick-search-btn"
                                             id="quickSearchBtn">
                                         <i class="fa fa-search fa-flip-horizontal"></i>
                                         <span class="sr-only">Lancer la recherche</span>

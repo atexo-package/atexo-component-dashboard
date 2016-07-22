@@ -1,4 +1,4 @@
-import {Component, Directive, View, ElementRef, Input, Inject, Attribute} from 'angular2/core';
+import {Component, Directive, View, ElementRef, Input, Attribute} from 'angular2/core';
 import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgClass} from 'angular2/common';
 import {RouteParams} from 'angular2/router';
 import {HTTP_PROVIDERS, Http, RequestOptions, Request, Response, RequestMethod} from 'angular2/http';
@@ -73,6 +73,9 @@ declare var c3:any;
             <div class="error" *ngIf="xhrStatusDisplayError">
                 <p class="text-danger text-center"><strong>Données temporairement indisponible</strong></p>
             </div>
+            <div class="clearfix">
+                <div class="signature-atexo pull-right"></div>
+            </div>
 
             `,
     pipes: [ToClassPipe],
@@ -83,6 +86,7 @@ export class PanelBodyChart {
 
     @Input() panelBodyObj;
     panelBodyChartProvider:PanelBodyChartProvider;
+
 
     public xhrStatusDisplaySpinner:boolean = true;
     public xhrStatusDisplayResources:boolean = false;
@@ -127,19 +131,26 @@ export class PanelBodyChart {
 
     // events
     public chartClicked(e:any) {
-        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.name + '  ' + (Math.round(e.data.ratio * 1000) / 10) + '%';
-
+        if (this.chartType === 'donut') {
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).style = 'font-size: 3em; text-align: center; baseline-shift: -24%; fill:' + e.element.style.fill + ';';
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).setAttribute('text-anchor', 'middle');
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.value;
+        }
     }
 
     public chartMouseOvered(e:any) {
-        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.value;
+        if (this.chartType === 'donut') {
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).style = 'font-size: 3em; text-align: center; baseline-shift: -24%; fill:' + e.element.style.fill + ';';
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).setAttribute('text-anchor', 'middle');
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.value;
+        }
     }
 
     public chartMouseOuted(e:any) {
         e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = '';
     }
 
-    public preventDefault(event:Event){
+    public preventDefault(event:Event) {
         event.preventDefault();
     }
 
@@ -157,12 +168,10 @@ export class PanelBodyChart {
                     this.getChartArrayData();
                     this.chartData = this.chartArrayData;
                 }
-
             },
             // Http Error
             ((err:Response) => {
-
-                if (err.status === 404) {
+                if (err.status === 404 || err.status === 401) {
                     this.xhrStatusDisplayError = true;
                     this.xhrStatusDisplaySpinner = false;
                     console.log(err);
@@ -180,8 +189,15 @@ export class PanelBodyChart {
      * @returns {Array<Object>}
      */
     private getChartArrayObject() {
-        this.convert.cvsToJson(this.xhrResponse.text());
-        this.chartArrayObject = this.convert.getData();
+
+        if (this.panelBodyObj.dataType === 'JSON') {
+            let _chartArrayObject = this.xhrResponse.json();
+            this.chartArrayObject = _chartArrayObject;
+        } else {
+            this.convert.cvsToJson(this.xhrResponse.text());
+            this.chartArrayObject = this.convert.getData();
+        }
+
         return this.chartArrayObject;
     }
 
@@ -200,7 +216,8 @@ export class PanelBodyChart {
 
         this.getChartArrayObject();
 
-        this.filterYear = this.convert.getAllPropertyValueByName('annee');
+
+        this.filterYear = Util.getInstance().filterYear();
 
         if (!this.panelBodyObj.chart.axes.filter.active) {
             this.chartArrayData = this.getChartArray(this.chartArrayObject);
@@ -225,9 +242,7 @@ export class PanelBodyChart {
 
     public filterChartArrayObject(property:any, value:any) {
         this.chartArrayData = this.getChartArray(Util.getInstance().Json().getByProperty(this.chartArrayObject, property, value));
-        console.log(this.chartArrayData);
         this.chartData = this.chartArrayData;
-
     }
 
     /**
@@ -265,7 +280,10 @@ export class PanelBodyChart {
                 [_eastingArray.indexOf(obj[_eastingName]) + 1]
                 += Number(obj[_abscissaName]);
         });
-        _chartArrayData.push(new Array(this.panelBodyObj.chart.config.data.x).concat(_eastingLabels));
+        if (isPresent(this.panelBodyObj.chart.config.data.x)) {
+            _chartArrayData.push(new Array(this.panelBodyObj.chart.config.data.x).concat(_eastingLabels));
+        }
+
         return _chartArrayData;
     }
 

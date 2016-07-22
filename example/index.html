@@ -7,8 +7,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="src/js/c3-0.4.10/c3.min.css">
-    <link rel="stylesheet" href="src/css/style.sass.css">
+    <link rel="stylesheet" href="src/css/dashboard.sass.css">
 
+    <!-- IE required polyfills, in this exact order -->
+    <script src="node_modules/es6-shim/es6-shim.min.js"></script>
 
     <script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
     <script src="node_modules/systemjs/dist/system.src.js"></script>
@@ -17,49 +19,12 @@
     <script src="node_modules/angular2/bundles/angular2.dev.js"></script>
     <script src="node_modules/angular2/bundles/router.dev.js"></script>
     <script src="node_modules/angular2/bundles/http.dev.js"></script>
-    <script src="node_modules/chart.js/Chart.js"></script>
-    <script src="node_modules/d3/d3.js"></script>
+    <script src="node_modules/d3/d3.min.js"></script>
     <script src="src/js/c3-0.4.10/c3.js"></script>
-    <script src="node_modules/atexo-component-dashboard/dist/atexo-component-dashboard.system.js"></script>
-
-
 
 
     <script src="node_modules/jquery/dist/jquery.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
-    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.3/angular2-polyfills.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.20/system.src.js"></script>
-    <script src="node_modules/rxjs/bundles/Rx.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.3/angular2.dev.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.3/router.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.3/http.min.js"></script>
-    <script src="node_modules/chartjs/Chart.js"></script>
-    <script src="node_modules/atexo-component-dashboard/dist/atexo-component-dashboard.system.js"></script>
-
-
-
-
-    <script src="//code.jquery.com/jquery-1.12.0.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script-->
-    
-    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.3/angular2-polyfills.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.20/system.src.js"></script>
-    <script src="node_modules/rxjs/bundles/Rx.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.3/angular2.dev.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.3/router.dev.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.3/http.dev.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script-->
-
-
-    <!--script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
-    <script src="node_modules/systemjs/dist/system.src.js"></script>
-    <script src="node_modules/rxjs/bundles/Rx.js"></script>
-    <script src="node_modules/angular2/bundles/angular2.dev.js"></script>
-    <script src="node_modules/angular2/bundles/router.dev.js"></script>
-    <script src="node_modules/angular2/bundles/http.dev.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script-->
 
     <script>
         System.config({
@@ -71,6 +36,10 @@
             }
         });
         System.import('app/bootstrap').then(null, console.error.bind(console));
+
+        var C = {
+            baseUrl: '/'
+        }
     </script>
 </head>
 <body>

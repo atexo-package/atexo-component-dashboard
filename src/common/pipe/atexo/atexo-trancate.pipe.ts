@@ -23,7 +23,7 @@ export class TrancatePipe implements PipeTransform {
 
     transform(value:string, args:any[]):any {
         this.length = isPresent(args[0]) ? args[0] : 100;
-        this.placeholderEnd = isPresent(args[1]) ? args[1] : ' ...';
+        this.placeholderEnd = (value.length < this.length) ? '' : isPresent(args[1]) ? args[1] : ' ...';
         return value.substring(0, this.length).concat(this.placeholderEnd);
     }
 }

@@ -56,6 +56,23 @@ export class Util {
         return new URLParams();
     }
 
+    filterYear(offset?:number) {
+        let _year:number = new Date().getFullYear(),
+            _offset:number = 5,
+            arrayYear:Array<number> = [],
+            i:number;
+        if (isPresent(offset)) {
+            _offset = offset;
+        }
+
+        for (i = 0; i < _offset; i++) {
+            arrayYear.push(_year--);
+        }
+
+        return arrayYear;
+
+    }
+
     arrayObjectFindIndex(arr:Array<any>, callback) {
         let len:number = arr.length,
             index:number,
@@ -399,7 +416,7 @@ class Json {
             result:boolean = true;
         for (; i < length; i++) {
 
-            if (arrayJson[property[i]] !== value[i]) {
+            if (arrayJson[property[i]].toString() !== value[i].toString()) {
                 result = false;
                 return result;
             }

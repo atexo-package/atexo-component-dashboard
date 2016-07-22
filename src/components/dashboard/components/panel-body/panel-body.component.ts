@@ -9,6 +9,7 @@ import {PanelBodyChart} from '../panel-body/panel-body-chart.component';
 import {PanelBodySearch} from '../panel-body/panel-body-search.component';
 import {PanelBodyEditor} from '../panel-body/panel-body-editor.component';
 import {PanelBodyArticle} from '../panel-body/panel-body-article.component';
+import {PanelBodyMap} from '../panel-body/panel-body-map.component';
 
 @Component({
     selector: 'panel-body'
@@ -16,13 +17,14 @@ import {PanelBodyArticle} from '../panel-body/panel-body-article.component';
 
 @View({
     template: `
+            <panel-body-map  *ngIf="panelBodyObj.type.category === 'MAP'" [panelBodyObj]="panelBodyObj"></panel-body-map>
             <panel-body-list  *ngIf="panelBodyObj.type.category === 'LIST'" [panelBodyObj]="panelBodyObj"></panel-body-list>
             <panel-body-chart  *ngIf="panelBodyObj.type.category === 'CHART'" [panelBodyObj]="panelBodyObj"></panel-body-chart>
             <panel-body-search  *ngIf="panelBodyObj.type.category === 'SEARCH'" [panelBodyObj]="panelBodyObj"></panel-body-search>
             <panel-body-editor  *ngIf="panelBodyObj.type.category === 'EDITOR'" [panelBodyObj]="panelBodyObj"></panel-body-editor>
             <panel-body-article  *ngIf="panelBodyObj.type.category === 'ARTICLE'" [panelBodyObj]="panelBodyObj"></panel-body-article>
             `,
-    directives: [PanelBodyList, PanelBodyChart, PanelBodySearch, PanelBodyArticle, PanelBodyEditor],
+    directives: [PanelBodyList, PanelBodyChart, PanelBodySearch, PanelBodyArticle, PanelBodyEditor, PanelBodyMap],
     pipes: [ToClassPipe]
 })
 export class PanelBody {

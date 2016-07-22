@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <base href="<!-- @echo HREF -->">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="src/js/c3-0.4.10/c3.min.css">
+    <link rel="stylesheet" href="src/css/dashboard.sass.css">
+
+    <!-- IE required polyfills, in this exact order -->
+    <script src="<!-- @echo LIB_PATH -->/es6-shim/es6-shim.min.js"></script>
+
+    <script src="<!-- @echo LIB_PATH -->/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="<!-- @echo LIB_PATH -->/systemjs/dist/system.src.js"></script>
+    <script src="<!-- @echo LIB_PATH -->/rxjs/bundles/Rx.js"></script>
+
+    <script src="<!-- @echo LIB_PATH -->/angular2/bundles/angular2.dev.js"></script>
+    <script src="<!-- @echo LIB_PATH -->/angular2/bundles/router.dev.js"></script>
+    <script src="<!-- @echo LIB_PATH -->/angular2/bundles/http.dev.js"></script>
+    <script src="<!-- @echo LIB_PATH -->/d3/d3.min.js"></script>
+    <script src="src/js/c3-0.4.10/c3.js"></script>
+
+
+    <script src="<!-- @echo LIB_PATH -->/jquery/dist/jquery.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <script>
+        System.config({
+            packages: {
+                app: {
+                    format: 'register',
+                    defaultExtension: 'js'
+                }
+            }
+        });
+        System.import('app/bootstrap').then(null, console.error.bind(console));
+
+        var C = {
+            baseUrl: '<!-- @echo BASE_URL -->'
+        }
+    </script>
+</head>
+<body>
+<my-app>Loading...</my-app>
+</body>
+</html>

@@ -1,16 +1,15 @@
 {
   "name": "atexo-component-dashboard",
   "description": "Component of Atexo Dashboard",
-  "version": "1.1.1",
+  "version": "1.1.12",
   "author": {
     "name": "Anis ABID",
-    "email": "anab.tn@gmail.com",
-    "url": "https://anisabid.com"
+    "email": "anis.abid@atexo.com"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atexo-package/atexo-component-dashboard.git"
+    "url": "git+https://gitlab.local-trust.com/anis.abid/atexo-component-dashboard"
   },
   "main": "dist/atexo-component-dashboard.js",
   "typings": "dist/atexo-component-dashboard.d.ts",
@@ -18,19 +17,21 @@
     "build": "rimraf dist & gulp build"
   },
   "devDependencies": {
+    "bower": "^1.7.7",
+    "glob": "latest",
     "gulp": "latest",
     "gulp-clean": "latest",
     "gulp-sass": "latest",
-    "glob": "latest",
+    "npm-shrinkwrap": "^5.4.1",
     "typescript": "1.8.*"
   },
   "dependencies": {
-    "angular2": "latest",
-    "chart.js": "^1.0.2",
-    "es6-promise": "latest",
-    "es6-shim": "latest",
-    "jquery": "^1.12.0",
-    "jquery-ui": "1.10.4",
-    "rxjs": "latest"
+    "angular2": "2.0.0-beta.0",
+    "atexo-component-dashboard": "^1.1.1",
+    "es6-promise": "^3.0.2",
+    "es6-shim": "^0.33.13",
+    "reflect-metadata": "0.1.2",
+    "rxjs": "5.0.0-beta.0",
+    "systemjs": "0.19.6"
   }
 }

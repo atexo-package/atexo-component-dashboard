@@ -1,0 +1,116 @@
+System.register(['angular2/core', 'angular2/src/facade/lang', '../../../../common/pipe/atexo.pipe', './providers/panel-body-search.provider', '../../../../common/components/atexo-spinner.component'], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var core_1, lang_1, atexo_pipe_1, panel_body_search_provider_1, atexo_spinner_component_1;
+    var PanelBodySearch;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (lang_1_1) {
+                lang_1 = lang_1_1;
+            },
+            function (atexo_pipe_1_1) {
+                atexo_pipe_1 = atexo_pipe_1_1;
+            },
+            function (panel_body_search_provider_1_1) {
+                panel_body_search_provider_1 = panel_body_search_provider_1_1;
+            },
+            function (atexo_spinner_component_1_1) {
+                atexo_spinner_component_1 = atexo_spinner_component_1_1;
+            }],
+        execute: function() {
+            PanelBodySearch = (function () {
+                function PanelBodySearch(panelBodySearchProvider) {
+                    this.items = [];
+                    this.milliseconds = 500;
+                    this.panelBodySearchProvider = panelBodySearchProvider;
+                    this.q = '';
+                    this.display = false;
+                    this.displayQuickSearchSpinner = false;
+                }
+                PanelBodySearch.prototype.ngOnInit = function () {
+                    return true;
+                };
+                PanelBodySearch.prototype.quickSearch = function () {
+                    var _this = this;
+                    //let _panelBodyObj = this.panelBodyObj;
+                    clearTimeout(this.timeOut);
+                    this.timeOut = setTimeout(function () {
+                        _this.panelBodySearchServiceAll();
+                    }, this.milliseconds);
+                };
+                PanelBodySearch.prototype.quickSearchClear = function () {
+                    this.q = '';
+                    this.items = [];
+                    return false;
+                };
+                PanelBodySearch.prototype.quickSearchDisplay = function (display) {
+                    var _this = this;
+                    var _timeOut, _milliseconds = 100;
+                    clearTimeout(_timeOut);
+                    _timeOut = setTimeout(function () {
+                        if (lang_1.isPresent(display)) {
+                            _this.display = display;
+                            _this.focusClass = display;
+                        }
+                        else {
+                            _this.display = (_this.items.length > 0) ? true : false;
+                        }
+                    }, _milliseconds);
+                };
+                PanelBodySearch.prototype.panelBodySearchServiceAll = function () {
+                    var _this = this;
+                    if (this.q) {
+                        var arraySearch = {
+                            motClef: this.q
+                        };
+                        this.displayQuickSearchSpinner = true;
+                        this.panelBodySearchProvider.all(this.panelBodyObj.urlData, arraySearch).subscribe(function (res) {
+                            if (res.status === 200) {
+                                _this.items = res.json();
+                                _this.quickSearchDisplay();
+                                _this.displayQuickSearchSpinner = false;
+                            }
+                        });
+                    }
+                    else {
+                        this.items = [];
+                        this.quickSearchDisplay();
+                    }
+                    return true;
+                };
+                __decorate([
+                    core_1.Input(), 
+                    __metadata('design:type', Object)
+                ], PanelBodySearch.prototype, "panelBodyObj", void 0);
+                PanelBodySearch = __decorate([
+                    core_1.Component({
+                        selector: 'panel-body-search',
+                        providers: [panel_body_search_provider_1.PanelBodySearchProvider]
+                    }),
+                    core_1.View({
+                        template: "\n            <div class=\"{{ panelBodyObj.type.category | toClass}}\">\n                <form role=\"form\" class=\"form-horizontal\">\n                    <div class=\"form-group form-group-sm\">\n                        <div class=\"col-sm-12\">\n                            <div class=\"input-group quick-search\" [ngClass]=\"{focus: focusClass}\">\n                                <input type=\"text\"\n                                       placeholder=\"Mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                       class=\"form-control input-sm quick-search-input\"\n                                       autocomplete=\"off\"\n                                       id=\"quickSearch\"\n                                       [(ngModel)]=\"q\"\n                                       (keyup)=\"quickSearch()\"\n                                       (keyup.escape)=\"quickSearchClear()\"\n                                       (blur)=\"quickSearchDisplay(false)\"\n                                       (focus)=\"quickSearchDisplay(true)\"\n                                       title=\"Recherche rapide par mots cl\u00E9s, intitul\u00E9 ou objet\"\n                                >\n\n                                <span class=\"input-group-btn\">\n                                    <button type=\"button\"\n                                            class=\"btn btn-primary btn-sm quick-search-btn\"\n                                            id=\"quickSearchBtn\">\n                                        <i class=\"fa fa-search fa-flip-horizontal\"></i>\n                                        <span class=\"sr-only\">Lancer la recherche</span>\n                                    </button>\n                                </span>\n                                <a href=\"\"\n                                   title=\"Annuler\"\n                                   name=\"Annuler\"\n                                   class=\"fa fa-close quick-search-clear\"\n                                   *ngIf=\"items.length\"\n                                   (click)=\"quickSearchClear()\"></a>\n\n                                   <atexo-spinner class=\"quick-search-spinner\" *ngIf=\"displayQuickSearchSpinner\"></atexo-spinner>\n\n                                <div class=\"quick-search-result\" *ngIf=\"display\">\n                                    <div class=\"list-group\">\n                                        <a *ngFor=\"#item of items; #i=index\"\n                                           href=\"{{item.url}}\"\n                                           class=\"list-group-item\">\n                                           <span [innerHtml]=\"item.reference\"></span> - <span [innerHtml]=\"item.title\"></span>\n                                        </a>\n                                    </div>\n                                </div>\n                            </div>\n\n                        </div>\n                    </div>\n                </form>\n            </div>\n            ",
+                        pipes: [atexo_pipe_1.ToClassPipe],
+                        directives: [atexo_spinner_component_1.AtexoSpinner]
+                    }), 
+                    __metadata('design:paramtypes', [panel_body_search_provider_1.PanelBodySearchProvider])
+                ], PanelBodySearch);
+                return PanelBodySearch;
+            }());
+            exports_1("PanelBodySearch", PanelBodySearch);
+        }
+    }
+});
+
+//# sourceMappingURL=panel-body-search.component.js.map

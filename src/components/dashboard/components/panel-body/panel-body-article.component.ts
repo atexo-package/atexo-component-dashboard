@@ -28,8 +28,9 @@ import {AtexoSpinner} from '../../../../common/components/atexo-spinner.componen
                             <header class="header">
 
                                 <h4 class="title">
-                                    <a href="#"
-                                       title="{{article.title}}">{{article.title}}</a>
+                                    <a href=""
+                                        (click)="selectArticle(article.id)"
+                                       title="{{article.title}}">&nbsp;{{article.title}}</a>
                                     <span class="date">{{article.date | toDate | date}}</span>
                                 </h4>
 
@@ -70,13 +71,6 @@ import {AtexoSpinner} from '../../../../common/components/atexo-spinner.componen
 
                             <div class="options row">
                                 <div class="col-md-12">
-                                    <div class="pull-left">
-                                        <h4 class="title">
-                                            <a href=""
-                                               title="{{articleSelected.title}}">{{articleSelected.title}}</a>
-                                        </h4>
-                                        <span class="date">{{articleSelected.date | toDate | date}}</span>
-                                    </div>
                                     <div class="pull-right">
                                         <a href=""
                                            title="Close Article"
@@ -85,6 +79,13 @@ import {AtexoSpinner} from '../../../../common/components/atexo-spinner.componen
                                             <i class="fa fa-chevron-left"></i> Retour
                                         </a>
                                     </div>
+                                    <div class="pull-left">
+                                        <h4 class="title">
+                                            {{articleSelected.title}}
+                                        </h4>
+                                        <span class="date">{{articleSelected.date | toDate | date}}</span>
+                                    </div>
+
                                 </div>
                             </div>
 
@@ -143,8 +144,8 @@ export class PanelBodyArticle {
                 this.articles = res.json();
 
                 /*this.articles.forEach((obj) => {
-                    obj['date'] = new Date(1988,3,15);
-                });*/
+                 obj['date'] = new Date(1988,3,15);
+                 });*/
             }
 
         });
@@ -175,6 +176,10 @@ export class PanelBodyArticle {
 
     closeSelectArticle() {
         this.articleSelected = null;
+        return false;
+    }
+
+    preventDefault() {
         return false;
     }
 

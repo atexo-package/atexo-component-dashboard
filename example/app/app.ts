@@ -17,7 +17,7 @@ import { Dashboard } from 'atexo-component-dashboard';
 export class AppComponent {
     public config:Object = {
         json: {
-            baseUrl: 'http://localhost:5600/',
+            baseUrl: W.C.baseUrl,
             panel: 'server/mocks/panel.json',
             alert: 'server/mocks/alert.json'
         }

@@ -6,7 +6,7 @@ import {PanelBody} from '../panel-body/panel-body.component';
 import {ToClassPipe} from '../../../../common/pipe/atexo.pipe';
 
 @Component({
-    selector: 'panel'
+    selector: 'div.panel-component'
     //inputs: ['panelObj']
 })
 
@@ -16,7 +16,7 @@ import {ToClassPipe} from '../../../../common/pipe/atexo.pipe';
                  [ngClass]="{close: closeClass}"
                  *ngIf="panelObj.active">
                 <!-- Header -->
-                <header class="panel-header header panel-heading ui-sortable-handle">
+                <header class="header panel-heading ui-sortable-handle">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="pull-left">

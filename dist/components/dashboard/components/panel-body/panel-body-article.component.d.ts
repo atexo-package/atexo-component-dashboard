@@ -16,4 +16,5 @@ export declare class PanelBodyArticle {
     lessArticles(): boolean;
     selectArticle(id: number): boolean;
     closeSelectArticle(): boolean;
+    preventDefault(): boolean;
 }

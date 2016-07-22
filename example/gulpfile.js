@@ -1,16 +1,18 @@
-var gulp =              require('gulp');
-var sourcemaps =        require('gulp-sourcemaps');
-var tsc =               require('gulp-typescript');
-var tslint =            require('gulp-tslint');
-var rename =            require('gulp-rename');
-var concat =            require('gulp-concat');
+var gulp = require('gulp');
+var sourcemaps = require('gulp-sourcemaps');
+var tsc = require('gulp-typescript');
+var tslint = require('gulp-tslint');
+var rename = require('gulp-rename');
+var concat = require('gulp-concat');
 
-var browserSync =       require('browser-sync');
-var superstatic =       require('superstatic');
-var proxyMiddleware =   require('http-proxy-middleware');
+var browserSync = require('browser-sync');
+var superstatic = require('superstatic');
+var proxyMiddleware = require('http-proxy-middleware');
 
-var tsProject =         tsc.createProject('tsconfig.json');
-var config =            require('./gulp.config')();
+var preprocess = require('gulp-preprocess');
+
+var tsProject = tsc.createProject('tsconfig.json');
+var config = require('./gulp.config')();
 
 
 gulp.task('libs', function () {
@@ -45,23 +47,41 @@ gulp.task('compile-sass', function () {
 
     var sassCssResult = gulp.src(config.indexSass)
         .pipe(sass())
-        .pipe(concat('style.sass.css'))
+        .pipe(concat('dashboard.sass.css'))
         .pipe(gulp.dest(config.cssOutputPath))
         .pipe(sass({
             compress: true
         }))
-        .pipe(rename({suffix: '.sass.min'}))
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest(config.cssOutputPath));
 
     return sassCssResult;
 });
 
-gulp.task('serve', ['ts-lint', 'compile-ts', 'compile-sass'], function () {
+gulp.task('indexHtml', function () {
+    gulp.src('index.src.html')
+        .pipe(preprocess({
+            context: {
+                LIB_PATH: config.build.dev.LIB_PATH,
+                BOWER_PATH: config.build.dev.BOWER_PATH,
+                HREF: config.build.dev.HREF,
+                BASE_URL: config.build.dev.BASE_URL,
+                DEBUG: true
+            }
+        })) //To set environment variables in-line
+        .pipe(rename('index.html'))
+        .pipe(gulp.dest('./'))
+});
+
+gulp.task('serve', ['indexHtml', 'ts-lint', 'compile-ts', 'compile-sass'], function () {
 
     gulp.watch([config.allTs], ['ts-lint', 'compile-ts']);
     gulp.watch([config.allSass], ['compile-sass']);
 
-    var proxy_jasperserver = proxyMiddleware('/jasperserver', {target: 'http://bi-integ.local-trust.com:8080', logLevel: "debug"});
+    var proxy_jasperserver = proxyMiddleware('/jasperserver', {
+        target: 'http://bi-integ.local-trust.com:8080',
+        logLevel: "debug"
+    });
     var proxy_rsem = proxyMiddleware('/api', {target: 'http://rsem-pic/epm.passation', logLevel: "debug"});
 
     browserSync({
@@ -108,8 +128,17 @@ gulp.task('build-prod', function () {
             )
     });
 
-    gulp
-        .src(['index.html'])
+    gulp.src('index.src.html')
+        .pipe(preprocess({
+            context: {
+                LIB_PATH: config.build.prod.LIB_PATH,
+                BOWER_PATH: config.build.prod.BOWER_PATH,
+                HREF: config.build.prod.HREF,
+                BASE_URL: config.build.prod.BASE_URL,
+                DEBUG: true
+            }
+        })) //To set environment variables in-line
+        .pipe(rename('index.html'))
         .pipe(gulp.dest(PATHS.dist.build));
 
 });
@@ -129,28 +158,28 @@ var PATHS = {
             dist: 'font-awesome/fonts/'
         }, {
             src: 'node_modules/jquery/dist/jquery.min.js',
-            dist: 'jquery'
+            dist: 'jquery/dist'
         }, {
             src: 'node_modules/angular2/bundles/angular2-polyfills.js',
-            dist: 'angular2'
+            dist: 'angular2/bundles'
         }, {
             src: 'node_modules/angular2/bundles/angular2.dev.js',
-            dist: 'angular2'
+            dist: 'angular2/bundles'
         }, {
             src: 'node_modules/angular2/bundles/router.dev.js',
-            dist: 'angular2'
+            dist: 'angular2/bundles'
         }, {
             src: 'node_modules/angular2/bundles/http.dev.js',
-            dist: 'angular2'
+            dist: 'angular2/bundles'
         }, {
             src: 'node_modules/systemjs/dist/system.src.js',
-            dist: 'systemjs'
+            dist: 'systemjs/dist'
         }, {
             src: 'node_modules/rxjs/bundles/Rx.js',
-            dist: 'rxjs'
+            dist: 'rxjs/bundles'
         }, {
-            src: 'node_modules/jquery/dist/jquery.min.js',
-            dist: 'jquery'
+            src: 'node_modules/jquery/dist/jquery.js',
+            dist: 'jquery/dist'
         }, {
             src: 'node_modules/jquery-ui/jquery-ui.js',
             dist: 'jquery-ui'
@@ -158,14 +187,17 @@ var PATHS = {
             src: 'node_modules/jquery-ui/themes/smoothness/**/*',
             dist: 'jquery-ui/themes/smoothness'
         }, {
-            src: 'node_modules/chartjs/Chart.js',
-            dist: 'chartjs'
-        }, {
             src: 'node_modules/bootstrap/dist/**/*',
-            dist: 'bootstrap'
+            dist: 'bootstrap/dist'
         }, {
             src: 'node_modules/d3/d3.min.js',
             dist: 'd3'
+        }, {
+            src: 'src/js/c3-0.4.10/c3.min.css',
+            dist: 'src/js/c3-0.4.10/'
+        }, {
+            src: 'src/js/c3-0.4.10/c3.js',
+            dist: 'src/js/c3-0.4.10/'
         }
     ]
 };

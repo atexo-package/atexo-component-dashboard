@@ -39,10 +39,18 @@ var PanelBodyChart = (function () {
         return true;
     };
     PanelBodyChart.prototype.chartClicked = function (e) {
-        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.name + '  ' + (Math.round(e.data.ratio * 1000) / 10) + '%';
+        if (this.chartType === 'donut') {
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).style = 'font-size: 3em; text-align: center; baseline-shift: -24%; fill:' + e.element.style.fill + ';';
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).setAttribute('text-anchor', 'middle');
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.value;
+        }
     };
     PanelBodyChart.prototype.chartMouseOvered = function (e) {
-        e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.value;
+        if (this.chartType === 'donut') {
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).style = 'font-size: 3em; text-align: center; baseline-shift: -24%; fill:' + e.element.style.fill + ';';
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).setAttribute('text-anchor', 'middle');
+            e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = e.data.value;
+        }
     };
     PanelBodyChart.prototype.chartMouseOuted = function (e) {
         e.ngElement.getElementsByClassName('c3-chart-arcs-title').item(0).textContent = '';
@@ -61,7 +69,7 @@ var PanelBodyChart = (function () {
                 _this.chartData = _this.chartArrayData;
             }
         }, (function (err) {
-            if (err.status === 404) {
+            if (err.status === 404 || err.status === 401) {
                 _this.xhrStatusDisplayError = true;
                 _this.xhrStatusDisplaySpinner = false;
                 console.log(err);
@@ -69,14 +77,20 @@ var PanelBodyChart = (function () {
         }));
     };
     PanelBodyChart.prototype.getChartArrayObject = function () {
-        this.convert.cvsToJson(this.xhrResponse.text());
-        this.chartArrayObject = this.convert.getData();
+        if (this.panelBodyObj.dataType === 'JSON') {
+            var _chartArrayObject = this.xhrResponse.json();
+            this.chartArrayObject = _chartArrayObject;
+        }
+        else {
+            this.convert.cvsToJson(this.xhrResponse.text());
+            this.chartArrayObject = this.convert.getData();
+        }
         return this.chartArrayObject;
     };
     PanelBodyChart.prototype.getChartArrayData = function () {
         var _filterName = this.panelBodyObj.chart.axes.filter.name, _filterLabels = this.panelBodyObj.chart.axes.filter.labels, _filterDefault = this.panelBodyObj.chart.axes.filter.default;
         this.getChartArrayObject();
-        this.filterYear = this.convert.getAllPropertyValueByName('annee');
+        this.filterYear = atexo_service_1.Util.getInstance().filterYear();
         if (!this.panelBodyObj.chart.axes.filter.active) {
             this.chartArrayData = this.getChartArray(this.chartArrayObject);
         }
@@ -90,7 +104,6 @@ var PanelBodyChart = (function () {
     };
     PanelBodyChart.prototype.filterChartArrayObject = function (property, value) {
         this.chartArrayData = this.getChartArray(atexo_service_1.Util.getInstance().Json().getByProperty(this.chartArrayObject, property, value));
-        console.log(this.chartArrayData);
         this.chartData = this.chartArrayData;
     };
     PanelBodyChart.prototype.getChartArray = function (arrayObject) {
@@ -108,7 +121,9 @@ var PanelBodyChart = (function () {
             _chartArrayData[_this.arrayOrdered.indexOf(obj[_orderedName])][_eastingArray.indexOf(obj[_eastingName]) + 1]
                 += Number(obj[_abscissaName]);
         });
-        _chartArrayData.push(new Array(this.panelBodyObj.chart.config.data.x).concat(_eastingLabels));
+        if (lang_1.isPresent(this.panelBodyObj.chart.config.data.x)) {
+            _chartArrayData.push(new Array(this.panelBodyObj.chart.config.data.x).concat(_eastingLabels));
+        }
         return _chartArrayData;
     };
     PanelBodyChart.prototype.panelBodyChartServiceGetOptions = function () {
@@ -154,7 +169,7 @@ var PanelBodyChart = (function () {
             providers: [panel_body_chart_provider_1.PanelBodyChartProvider]
         }),
         core_1.View({
-            template: "\n            <div class=\"clearfix sub-header\" *ngIf=\"xhrStatusDisplayResources\">\n                <div class=\"pull-left\">\n                    <form class=\"sub-header-form-horizontal\" action=\"\">\n                        <div *ngIf=\"panelBodyObj.chart.axes.filter.active\" class=\"filter-item\">\n                            <label class=\"control-label\" for=\"\">Ann\u00E9e</label>\n                            <select\n                                [(ngModel)]=\"currentYear\"\n                                class=\"input-select\"\n                                (change)=\"panelBodyChartUpdateFilerYear($event, $event.target.value)\">\n                                <option *ngFor=\"#year of filterYear\" [value]=\"year\" (click)=\"preventDefault($event)\">{{year}}</option>\n                            </select>\n                        </div>\n                    </form>\n                </div>\n                <ul class=\"atexoui-list right horizontal\">\n                    <li *ngFor=\"#type of chartTypes; #i=index\"\n                        [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                        <a\n                           href=\"\"\n                           [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                           (click)=\"panelBodyChartUpdateType(i);\"\n                           title=\"{{type.name}}\"\n                           name=\"{{type.name}}\">\n                            <span class=\"{{type.icons}}\"></span>\n\n                        </a>\n                    </li>\n                </ul>\n            </div>\n            <atexo-spinner *ngIf=\"xhrStatusDisplaySpinner\"></atexo-spinner>\n\n            <div class=\"\">\n                <chart\n                    *ngIf=\"xhrStatusDisplayResources\"\n                    class=\"c3-responsive\"\n                    [data]=\"chartData\"\n                    [type]=\"chartType\"\n                    [configOption]=\"chartConfigOption\"\n                    [configData]=\"chartConfigData\"\n                    (chartClick)=\"chartClicked($event)\"\n                    (chartMouseOver)=\"chartMouseOvered($event)\"\n                    (chartMouseOut)=\"chartMouseOuted($event)\">\n                </chart>\n            </div>\n\n            <div class=\"error\" *ngIf=\"xhrStatusDisplayError\">\n                <p class=\"text-danger text-center\"><strong>Donn\u00E9es temporairement indisponible</strong></p>\n            </div>\n\n            ",
+            template: "\n            <div class=\"clearfix sub-header\" *ngIf=\"xhrStatusDisplayResources\">\n                <div class=\"pull-left\">\n                    <form class=\"sub-header-form-horizontal\" action=\"\">\n                        <div *ngIf=\"panelBodyObj.chart.axes.filter.active\" class=\"filter-item\">\n                            <label class=\"control-label\" for=\"\">Ann\u00E9e</label>\n                            <select\n                                [(ngModel)]=\"currentYear\"\n                                class=\"input-select\"\n                                (change)=\"panelBodyChartUpdateFilerYear($event, $event.target.value)\">\n                                <option *ngFor=\"#year of filterYear\" [value]=\"year\" (click)=\"preventDefault($event)\">{{year}}</option>\n                            </select>\n                        </div>\n                    </form>\n                </div>\n                <ul class=\"atexoui-list right horizontal\">\n                    <li *ngFor=\"#type of chartTypes; #i=index\"\n                        [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\">\n                        <a\n                           href=\"\"\n                           [ngClass]=\"{ available: chartTypes[i].active, disabled: !chartTypes[i].active }\"\n                           (click)=\"panelBodyChartUpdateType(i);\"\n                           title=\"{{type.name}}\"\n                           name=\"{{type.name}}\">\n                            <span class=\"{{type.icons}}\"></span>\n\n                        </a>\n                    </li>\n                </ul>\n            </div>\n            <atexo-spinner *ngIf=\"xhrStatusDisplaySpinner\"></atexo-spinner>\n\n            <div class=\"\">\n                <chart\n                    *ngIf=\"xhrStatusDisplayResources\"\n                    class=\"c3-responsive\"\n                    [data]=\"chartData\"\n                    [type]=\"chartType\"\n                    [configOption]=\"chartConfigOption\"\n                    [configData]=\"chartConfigData\"\n                    (chartClick)=\"chartClicked($event)\"\n                    (chartMouseOver)=\"chartMouseOvered($event)\"\n                    (chartMouseOut)=\"chartMouseOuted($event)\">\n                </chart>\n            </div>\n\n            <div class=\"error\" *ngIf=\"xhrStatusDisplayError\">\n                <p class=\"text-danger text-center\"><strong>Donn\u00E9es temporairement indisponible</strong></p>\n            </div>\n            <div class=\"clearfix\">\n                <div class=\"signature-atexo pull-right\"></div>\n            </div>\n\n            ",
             pipes: [atexo_pipe_1.ToClassPipe],
             directives: [atexo_chart_component_1.AtexoChart, atexo_spinner_component_1.AtexoSpinner]
         }), 

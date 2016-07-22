@@ -3,6 +3,9 @@ export declare class PanelBodyList {
     panelBodyObj: any;
     panelBodyListProvider: PanelBodyListProvider;
     items: Array<any>;
+    xhrStatusDisplaySpinner: boolean;
+    xhrStatusDisplayResources: boolean;
+    xhrStatusDisplayError: boolean;
     private chartData;
     private chartLabels;
     private chartType;

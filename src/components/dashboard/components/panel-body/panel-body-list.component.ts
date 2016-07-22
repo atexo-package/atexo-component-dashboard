@@ -62,6 +62,12 @@ export class PanelBodyList {
     @Input() panelBodyObj;
     panelBodyListProvider:PanelBodyListProvider;
     items:Array<any>;
+
+    public xhrStatusDisplaySpinner:boolean = true;
+    public xhrStatusDisplayResources:boolean = false;
+    public xhrStatusDisplayError:boolean = false;
+
+
     private chartData:Array<any> = [[]];
     private chartLabels:Array<any> = [];
     private chartType:string = 'donut';
@@ -113,21 +119,30 @@ export class PanelBodyList {
 
     panelBodyListServiceAll(url) {
 
-        this.panelBodyListProvider.all(url).subscribe((res:Response) => {
+        this.panelBodyListProvider.all(url).subscribe(
+            (res:Response) => {
 
-            if (res.status === 200) {
-                this.items = res.json();
-                let i:number = 0;
-                this.items.forEach((obj) => {
-                    let arr:Array<any> = [];
-                    arr.push(obj.status.replace('En cours - ', ''));
-                    arr.push(obj.count);
-                    this.chartData.push(arr);
-                    i++;
-                });
+                if (res.status === 200) {
+                    this.items = res.json();
+                    let i:number = 0;
+                    this.items.forEach((obj) => {
+                        let arr:Array<any> = [];
+                        arr.push(obj.status.replace('En cours - ', ''));
+                        arr.push(obj.count);
+                        this.chartData.push(arr);
+                        i++;
+                    });
+                }
+            },
+            // Http Error
+            ((err:Response) => {
 
-            }
-
-        });
+                if (err.status === 404 || err.status === 401) {
+                    this.xhrStatusDisplayError = true;
+                    this.xhrStatusDisplaySpinner = false;
+                    console.log(err);
+                }
+            })
+        );
     }
 }

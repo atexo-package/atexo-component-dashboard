@@ -1,0 +1,353 @@
+// app/common/services/atexo/atexo-util.service.ts
+/**
+ *
+ * @name atexo-util.service.ts
+ *
+ */
+System.register(['angular2/core', 'angular2/http', 'angular2/src/facade/lang', '../../constants/atexo.constant'], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var core_1, http_1, lang_1, atexo_constant_1;
+    var Util, Rewriter, Path, Rest, RequestOptions, RequestHeader, URLParams, Json;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (http_1_1) {
+                http_1 = http_1_1;
+            },
+            function (lang_1_1) {
+                lang_1 = lang_1_1;
+            },
+            function (atexo_constant_1_1) {
+                atexo_constant_1 = atexo_constant_1_1;
+            }],
+        execute: function() {
+            Util = (function () {
+                function Util() {
+                    if (!Util.isCreating) {
+                        throw new Error('[Util] You can\'t call new in Singleton instances!');
+                    }
+                }
+                Util.getInstance = function () {
+                    if (Util.instance == null) {
+                        Util.isCreating = true;
+                        Util.instance = new Util();
+                        Util.isCreating = false;
+                    }
+                    return Util.instance;
+                };
+                Util.prototype.Path = function () {
+                    return new Path();
+                };
+                Util.prototype.Rest = function () {
+                    return new Rest();
+                };
+                Util.prototype.RequestOptions = function () {
+                    return new RequestOptions();
+                };
+                Util.prototype.RequestHeader = function () {
+                    return new RequestHeader();
+                };
+                Util.prototype.Json = function () {
+                    return new Json();
+                };
+                Util.prototype.URLParams = function () {
+                    return new URLParams();
+                };
+                Util.prototype.arrayObjectFindIndex = function (arr, callback) {
+                    var len = arr.length, index, i;
+                    for (i = 0; i < len; i++) {
+                        var e = arr[i];
+                        if (callback(e)) {
+                            index = i;
+                        }
+                    }
+                    if (index === undefined) {
+                        index = -1;
+                    }
+                    return index;
+                };
+                /**
+                 *
+                 * @private newArray
+                 * @name newArray
+                 * @description Create New Table with many lendth items and value equal to default Value
+                 * @param length<number>
+                 * @param defaltValue<any>
+                 * @returns {Array<any>}
+                 */
+                Util.prototype.newArray = function (length, defaultValue) {
+                    var i = 0, _defaultValue = 0, arr = new Array(length);
+                    if (lang_1.isPresent(defaultValue)) {
+                        _defaultValue = defaultValue;
+                    }
+                    for (i; i < length; i++) {
+                        arr[i] = _defaultValue;
+                    }
+                    return arr;
+                };
+                Util.prototype.Grep = function (arr, callback) {
+                    var newArr = [], len = arr.length, i;
+                    for (i = 0; i < len; i++) {
+                        var e = arr[i];
+                        if (callback(e)) {
+                            newArr.push(e);
+                        }
+                    }
+                    return newArr;
+                };
+                Util.prototype.Map = function (arr, callback) {
+                    var newArr = [], len = arr.length, i;
+                    for (i = 0; i < len; i++) {
+                        var e = arr[i];
+                        var n = callback(e);
+                        newArr.push(n);
+                    }
+                    return newArr;
+                };
+                Util.isCreating = false;
+                Util = __decorate([
+                    core_1.Injectable(), 
+                    __metadata('design:paramtypes', [])
+                ], Util);
+                return Util;
+            }());
+            exports_1("Util", Util);
+            Rewriter = (function () {
+                function Rewriter(base, uri) {
+                    this.base = '';
+                    this.uri = '';
+                    this.type = atexo_constant_1.RequestUrlType.Relative;
+                    uri = lang_1.isPresent(uri) ? uri : '';
+                    this.base = base;
+                    this.checkUri(uri);
+                }
+                Rewriter.prototype.checkUri = function (uri) {
+                    if (lang_1.isString(uri)) {
+                        this.type = atexo_constant_1.RequestUrlType.Relative;
+                        this.uri = uri;
+                    }
+                    else {
+                        this.type = uri['type'];
+                        this.uri = uri['url'];
+                    }
+                    return this;
+                };
+                Rewriter.prototype.setPath = function (uri) {
+                    this.checkUri(uri);
+                    return this;
+                };
+                Rewriter.prototype.build = function () {
+                    if (this.type === atexo_constant_1.RequestUrlType.Relative) {
+                        return this.base + this.uri;
+                    }
+                    return this.uri;
+                };
+                return Rewriter;
+            }());
+            Path = (function (_super) {
+                __extends(Path, _super);
+                function Path(path) {
+                    path = lang_1.isPresent(path) ? path : '';
+                    _super.call(this, atexo_constant_1.AtexoPathConstant.base, path);
+                }
+                return Path;
+            }(Rewriter));
+            Rest = (function (_super) {
+                __extends(Rest, _super);
+                function Rest(url) {
+                    url = lang_1.isPresent(url) ? url : '';
+                    _super.call(this, atexo_constant_1.AtexoRestConstant.baseUrl, url);
+                }
+                return Rest;
+            }(Rewriter));
+            RequestOptions = (function () {
+                function RequestOptions() {
+                    this.searchParams = new http_1.URLSearchParams();
+                }
+                RequestOptions.prototype.setSearchParams = function (data) {
+                    if (!lang_1.isPresent(data)) {
+                        return;
+                    }
+                    else {
+                        if (lang_1.isJsObject(data)) {
+                            for (var item in data) {
+                                if (data.hasOwnProperty(item)) {
+                                    this.searchParams.set(item, data[item]);
+                                }
+                            }
+                        }
+                        return this.searchParams;
+                    }
+                };
+                return RequestOptions;
+            }());
+            RequestHeader = (function () {
+                function RequestHeader() {
+                    this.header = new http_1.Headers();
+                }
+                RequestHeader.prototype.setHeaderParams = function (data) {
+                    if (!lang_1.isPresent(data)) {
+                        return;
+                    }
+                    else {
+                        if (lang_1.isJsObject(data)) {
+                            for (var item in data) {
+                                if (data.hasOwnProperty(item)) {
+                                    this.header.append(item, data[item]);
+                                }
+                            }
+                        }
+                        return this.header;
+                    }
+                };
+                return RequestHeader;
+            }());
+            URLParams = (function () {
+                function URLParams() {
+                    return this;
+                }
+                URLParams.prototype.parse = function (_params) {
+                    var params = new http_1.URLSearchParams();
+                    if (lang_1.isPresent(_params)) {
+                        //this.params = new URLSearchParams();
+                        for (var k in _params) {
+                            if (_params.hasOwnProperty(k)) {
+                                params.set(k, _params[k]);
+                            }
+                        }
+                        this.params = params;
+                    }
+                    return this.params;
+                };
+                return URLParams;
+            }());
+            Json = (function () {
+                function Json() {
+                    return this;
+                }
+                Json.prototype.getByProperty = function (arrayJson, property, value) {
+                    var arrayProperty = [], arrayValue = [];
+                    if (lang_1.isPresent(property) && lang_1.isPresent(value)) {
+                        if (lang_1.isString(property) && lang_1.isString(value)) {
+                            arrayProperty.push(property);
+                            arrayValue.push(value);
+                        }
+                        else {
+                            arrayProperty = property;
+                            arrayValue = value;
+                        }
+                    }
+                    if (lang_1.isPresent(arrayJson)) {
+                        this.result = arrayJson;
+                    }
+                    var i = 0, length = this.result.length, arrReturn = [];
+                    for (; i < length; i++) {
+                        if (arrayProperty.length === 0 || arrayValue.length === 0) {
+                            arrReturn.push(this.result[i]);
+                        }
+                        else {
+                            if (this.checkPropertyValue(this.result[i], arrayProperty, arrayValue)) {
+                                arrReturn.push(this.result[i]);
+                            }
+                        }
+                    }
+                    this.result = arrReturn;
+                    return arrReturn;
+                };
+                Json.prototype.groupByProperty = function (property, arrayJson) {
+                    var _this = this;
+                    var arrayProperty = [];
+                    if (lang_1.isString(property)) {
+                        arrayProperty.push(property);
+                    }
+                    else {
+                        arrayProperty = property;
+                    }
+                    if (lang_1.isPresent(arrayJson)) {
+                        this.result = arrayJson;
+                    }
+                    var i = 0, length = this.result.length, arrReturn = [[]], arrEasting = [], arrOrdered = [], easting = this.easting;
+                    this.result.map(function (obj) {
+                        if (arrOrdered.indexOf(obj[arrayProperty[0]]) === -1) {
+                            arrOrdered
+                                .push(obj[arrayProperty[0]]);
+                            arrReturn[arrOrdered.indexOf(obj[arrayProperty[0]])] = Util.getInstance().newArray(_this.easting.length);
+                        }
+                        arrReturn[arrOrdered.indexOf(obj[property[0]])][easting.indexOf(obj[property[1]])] += Number(obj[property[2]]);
+                    });
+                    this.arrayResult = arrReturn;
+                    this.ordered = arrOrdered;
+                    return arrReturn;
+                };
+                Json.prototype.setArrayJson = function (arrayJson) {
+                    this.result = arrayJson;
+                };
+                Json.prototype.getArrayJson = function () {
+                    return this.result;
+                };
+                Json.prototype.getResult = function () {
+                    return this.result;
+                };
+                Json.prototype.getOrdered = function () {
+                    return this.ordered;
+                };
+                Json.prototype.getArrayResult = function () {
+                    return this.arrayResult;
+                };
+                Json.prototype.getEasting = function () {
+                    return this.easting;
+                };
+                Json.prototype.setEasting = function (easting) {
+                    this.easting = easting;
+                    this.setEastingArray();
+                };
+                Json.prototype.setEastingArray = function () {
+                    /*this.easting.map(function (row) {
+                     this.setEastingArray[row] = 0;
+                     });*/
+                    return true;
+                };
+                Json.prototype.getAbscissa = function () {
+                    return this.abscissa;
+                };
+                Json.prototype.setAbscissa = function (abscissa) {
+                    this.abscissa = abscissa;
+                    this.setAbscissaArray();
+                };
+                Json.prototype.setAbscissaArray = function () {
+                    return true;
+                };
+                Json.prototype.checkPropertyValue = function (arrayJson, property, value) {
+                    var i = 0, length = property.length, result = true;
+                    for (; i < length; i++) {
+                        if (arrayJson[property[i]] !== value[i]) {
+                            result = false;
+                            return result;
+                        }
+                    }
+                    return result;
+                };
+                return Json;
+            }());
+        }
+    }
+});
+
+//# sourceMappingURL=atexo-util.service.js.map

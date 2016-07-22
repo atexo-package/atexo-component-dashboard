@@ -14,6 +14,9 @@ var atexo_pipe_1 = require('../../../../common/pipe/atexo.pipe');
 var panel_body_list_provider_1 = require('./providers/panel-body-list.provider');
 var PanelBodyList = (function () {
     function PanelBodyList(panelBodyListProvider) {
+        this.xhrStatusDisplaySpinner = true;
+        this.xhrStatusDisplayResources = false;
+        this.xhrStatusDisplayError = false;
         this.chartData = [[]];
         this.chartLabels = [];
         this.chartType = 'donut';
@@ -66,7 +69,13 @@ var PanelBodyList = (function () {
                     i_1++;
                 });
             }
-        });
+        }, (function (err) {
+            if (err.status === 404 || err.status === 401) {
+                _this.xhrStatusDisplayError = true;
+                _this.xhrStatusDisplaySpinner = false;
+                console.log(err);
+            }
+        }));
     };
     __decorate([
         core_1.Input(), 

@@ -49,6 +49,16 @@ var Util = (function () {
     Util.prototype.URLParams = function () {
         return new URLParams();
     };
+    Util.prototype.filterYear = function (offset) {
+        var _year = new Date().getFullYear(), _offset = 5, arrayYear = [], i;
+        if (lang_1.isPresent(offset)) {
+            _offset = offset;
+        }
+        for (i = 0; i < _offset; i++) {
+            arrayYear.push(_year--);
+        }
+        return arrayYear;
+    };
     Util.prototype.arrayObjectFindIndex = function (arr, callback) {
         var len = arr.length, index, i;
         for (i = 0; i < len; i++) {
@@ -303,7 +313,7 @@ var Json = (function () {
     Json.prototype.checkPropertyValue = function (arrayJson, property, value) {
         var i = 0, length = property.length, result = true;
         for (; i < length; i++) {
-            if (arrayJson[property[i]] !== value[i]) {
+            if (arrayJson[property[i]].toString() !== value[i].toString()) {
                 result = false;
                 return result;
             }

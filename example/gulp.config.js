@@ -6,6 +6,17 @@ module.exports = function () {
         allSass: './src/sass/**/*.sass',
         cssOutputPath: './src/css',
         build: {
+            prod: {
+                HREF: 'http://rsem-pic/dashboard/dashboard-v3/',
+                LIB_PATH: 'lib',
+                BASE_URL: '/dashboard/dashboard-v3/'
+            },
+            dev: {
+                HREF: '/',
+                LIB_PATH: 'node_modules',
+                BASE_URL: '/'
+            }
+
 
         }
     };

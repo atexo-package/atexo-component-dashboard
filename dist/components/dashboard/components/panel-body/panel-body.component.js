@@ -15,6 +15,7 @@ var panel_body_chart_component_1 = require('../panel-body/panel-body-chart.compo
 var panel_body_search_component_1 = require('../panel-body/panel-body-search.component');
 var panel_body_editor_component_1 = require('../panel-body/panel-body-editor.component');
 var panel_body_article_component_1 = require('../panel-body/panel-body-article.component');
+var panel_body_map_component_1 = require('../panel-body/panel-body-map.component');
 var PanelBody = (function () {
     function PanelBody(el) {
         this.el = el;
@@ -32,8 +33,8 @@ var PanelBody = (function () {
             selector: 'panel-body'
         }),
         core_1.View({
-            template: "\n            <panel-body-list  *ngIf=\"panelBodyObj.type.category === 'LIST'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-list>\n            <panel-body-chart  *ngIf=\"panelBodyObj.type.category === 'CHART'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-chart>\n            <panel-body-search  *ngIf=\"panelBodyObj.type.category === 'SEARCH'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-search>\n            <panel-body-editor  *ngIf=\"panelBodyObj.type.category === 'EDITOR'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-editor>\n            <panel-body-article  *ngIf=\"panelBodyObj.type.category === 'ARTICLE'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-article>\n            ",
-            directives: [panel_body_list_component_1.PanelBodyList, panel_body_chart_component_1.PanelBodyChart, panel_body_search_component_1.PanelBodySearch, panel_body_article_component_1.PanelBodyArticle, panel_body_editor_component_1.PanelBodyEditor],
+            template: "\n            <panel-body-map  *ngIf=\"panelBodyObj.type.category === 'MAP'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-map>\n            <panel-body-list  *ngIf=\"panelBodyObj.type.category === 'LIST'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-list>\n            <panel-body-chart  *ngIf=\"panelBodyObj.type.category === 'CHART'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-chart>\n            <panel-body-search  *ngIf=\"panelBodyObj.type.category === 'SEARCH'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-search>\n            <panel-body-editor  *ngIf=\"panelBodyObj.type.category === 'EDITOR'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-editor>\n            <panel-body-article  *ngIf=\"panelBodyObj.type.category === 'ARTICLE'\" [panelBodyObj]=\"panelBodyObj\"></panel-body-article>\n            ",
+            directives: [panel_body_list_component_1.PanelBodyList, panel_body_chart_component_1.PanelBodyChart, panel_body_search_component_1.PanelBodySearch, panel_body_article_component_1.PanelBodyArticle, panel_body_editor_component_1.PanelBodyEditor, panel_body_map_component_1.PanelBodyMap],
             pipes: [atexo_pipe_1.ToClassPipe]
         }), 
         __metadata('design:paramtypes', [core_1.ElementRef])

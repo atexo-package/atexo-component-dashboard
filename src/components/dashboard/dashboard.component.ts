@@ -16,23 +16,23 @@ import {Panel} from './components/panel/panel.component';
 })
 @View({
     template: `
-            <div class="dashboard parent container-fluid">
+            <div class="dashboard parent">
                 <alert></alert>
-                <div class="wrapper" id="sortable" [ngClass]="{'sortable-start': startsortable}">
+                <div class="row" id="sortable" [ngClass]="{'sortable-start': startsortable}">
                     <div localtion="zone-a"
                          class="column container"
                          [ngClass]="zone.zone.custom_class"
                          id="{{zone.zone.id}}"
                          *ngFor="#zone of panelsZonesArray; #i=index">
                         <!-- Panel -->
-                        <panel [panelObj]="panelObj"
+                        <div [panelObj]="panelObj"
                                class="panel-component"
-                               *ngFor="#panelObj of zone.panels; #i=index"></panel>
+                               *ngFor="#panelObj of zone.panels; #i=index"></div>
                         <!-- End Panel -->
                     </div>
                 </div>
             </div>
-            <div class="modal-backdrop  in" *ngIf="progress.showBackdrop()"></div>
+            <!--div class="modal-backdrop  in" *ngIf="progress.showBackdrop()"></div-->
             `,
     directives: [Panel, Alert]
 })
@@ -72,37 +72,11 @@ export class Dashboard {
     }
 
     ngAfterViewChecked() {
-        $('#sortable .column').sortable({
+        /*$('#sortable .column').sortable({
             connectWith: '.column',
             handle: '.panel-heading',
-            // cancel: ".portlet-toggle",
-            placeholder: 'portlet-placeholder ui-corner-all',
-            update: (event, ui) => {
-                //updateCharts();
-                this.startsortable = 'update';
-                console.log('update');
-            },
-            start: () => {
-                //this.startsortable = 'start';
-                console.log('start');
-            },
-            stop: () => {
-                //this.startsortable = 'stop';
-                console.log('stop');
-            },
-            sort: () => {
-                //this.startsortable = 'sort';
-                console.log('sort');
-            },
-            beforeStop: () => {
-                //this.startsortable = 'beforeStop';
-                console.log('beforeStop');
-            },
-            change: () => {
-                //this.startsortable = 'change';
-                console.log('change');
-            }
-        });
+            placeholder: 'portlet-placeholder ui-corner-all'
+        });*/
         return true;
     }
 

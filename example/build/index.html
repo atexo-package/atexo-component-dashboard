@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <base href="http://rsem-pic/dashboard/dashboard-v3/">
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css">
+    <link rel="stylesheet" href="bower_components/c3/c3.css">
+    <link rel="stylesheet" href="src/css/dashboard.sass.css">
+
+
+    <script src="lib/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="lib/systemjs/dist/system.src.js"></script>
+    <script src="lib/rxjs/bundles/Rx.js"></script>
+
+    <script src="lib/angular2/bundles/angular2.dev.js"></script>
+    <script src="lib/angular2/bundles/router.dev.js"></script>
+    <script src="lib/angular2/bundles/http.dev.js"></script>
+
+    <script src="bower_components/d3/d3.min.js"></script>
+    <script src="bower_components/c3/c3.min.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+
+    <script>
+        System.config({
+            packages: {
+                app: {
+                    format: 'register',
+                    defaultExtension: 'js'
+                }
+            }
+        });
+        System.import('app/bootstrap').then(null, console.error.bind(console));
+
+        var C = {
+            baseUrl: '/dashboard/dashboard-v3/'
+        }
+    </script>
+</head>
+<body>
+<my-app>Loading...</my-app>
+</body>
+</html>

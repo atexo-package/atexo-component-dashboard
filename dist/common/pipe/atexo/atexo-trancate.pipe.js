@@ -15,7 +15,7 @@ var TrancatePipe = (function () {
     }
     TrancatePipe.prototype.transform = function (value, args) {
         this.length = lang_1.isPresent(args[0]) ? args[0] : 100;
-        this.placeholderEnd = lang_1.isPresent(args[1]) ? args[1] : ' ...';
+        this.placeholderEnd = (value.length < this.length) ? '' : lang_1.isPresent(args[1]) ? args[1] : ' ...';
         return value.substring(0, this.length).concat(this.placeholderEnd);
     };
     TrancatePipe = __decorate([

@@ -45,31 +45,6 @@ var Dashboard = (function () {
         return true;
     };
     Dashboard.prototype.ngAfterViewChecked = function () {
-        var _this = this;
-        $('#sortable .column').sortable({
-            connectWith: '.column',
-            handle: '.panel-heading',
-            placeholder: 'portlet-placeholder ui-corner-all',
-            update: function (event, ui) {
-                _this.startsortable = 'update';
-                console.log('update');
-            },
-            start: function () {
-                console.log('start');
-            },
-            stop: function () {
-                console.log('stop');
-            },
-            sort: function () {
-                console.log('sort');
-            },
-            beforeStop: function () {
-                console.log('beforeStop');
-            },
-            change: function () {
-                console.log('change');
-            }
-        });
         return true;
     };
     Dashboard.prototype.initConfig = function () {
@@ -105,7 +80,7 @@ var Dashboard = (function () {
             providers: [panel_provider_1.PanelProvider]
         }),
         core_1.View({
-            template: "\n            <div class=\"dashboard parent container-fluid\">\n                <alert></alert>\n                <div class=\"wrapper\" id=\"sortable\" [ngClass]=\"{'sortable-start': startsortable}\">\n                    <div localtion=\"zone-a\"\n                         class=\"column container\"\n                         [ngClass]=\"zone.zone.custom_class\"\n                         id=\"{{zone.zone.id}}\"\n                         *ngFor=\"#zone of panelsZonesArray; #i=index\">\n                        <!-- Panel -->\n                        <panel [panelObj]=\"panelObj\"\n                               class=\"panel-component\"\n                               *ngFor=\"#panelObj of zone.panels; #i=index\"></panel>\n                        <!-- End Panel -->\n                    </div>\n                </div>\n            </div>\n            <div class=\"modal-backdrop  in\" *ngIf=\"progress.showBackdrop()\"></div>\n            ",
+            template: "\n            <div class=\"dashboard parent\">\n                <alert></alert>\n                <div class=\"row\" id=\"sortable\" [ngClass]=\"{'sortable-start': startsortable}\">\n                    <div localtion=\"zone-a\"\n                         class=\"column container\"\n                         [ngClass]=\"zone.zone.custom_class\"\n                         id=\"{{zone.zone.id}}\"\n                         *ngFor=\"#zone of panelsZonesArray; #i=index\">\n                        <!-- Panel -->\n                        <div [panelObj]=\"panelObj\"\n                               class=\"panel-component\"\n                               *ngFor=\"#panelObj of zone.panels; #i=index\"></div>\n                        <!-- End Panel -->\n                    </div>\n                </div>\n            </div>\n            <!--div class=\"modal-backdrop  in\" *ngIf=\"progress.showBackdrop()\"></div-->\n            ",
             directives: [panel_component_1.Panel, alert_component_1.Alert]
         }), 
         __metadata('design:paramtypes', [panel_provider_1.PanelProvider])
